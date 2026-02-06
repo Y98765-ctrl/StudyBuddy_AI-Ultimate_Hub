@@ -2,1263 +2,1160 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
 <title>StudyBuddy AI - Ultimate Hub</title>
-
 <style>
-/* =========================
-   GLOBAL THEME (StudyBuddy)
-========================= */
 :root{
   --bg:#0b1225;
-  --panel:#111a33;
-  --panel2:#0f1730;
-  --card:#141f3f;
+  --card:#111a33;
+  --card2:#0f1830;
   --text:#ffffff;
-  --muted:rgba(255,255,255,.7);
-  --brand:#2563eb;
-  --good:#22c55e;
-  --bad:#ef4444;
-  --line:rgba(255,255,255,.12);
-  --shadow:0 12px 35px rgba(0,0,0,.35);
+  --muted:#aab3c7;
+  --accent:#22c55e;
+  --accent2:#2563eb;
+  --danger:#ef4444;
+  --line:rgba(255,255,255,0.08);
 }
 .light{
   --bg:#f3f4f6;
-  --panel:#ffffff;
-  --panel2:#ffffff;
   --card:#ffffff;
+  --card2:#f8fafc;
   --text:#0b1225;
-  --muted:rgba(0,0,0,.65);
-  --brand:#2563eb;
-  --good:#16a34a;
-  --bad:#dc2626;
-  --line:rgba(0,0,0,.12);
-  --shadow:0 12px 35px rgba(0,0,0,.15);
+  --muted:#5b6477;
+  --accent:#16a34a;
+  --accent2:#2563eb;
+  --danger:#dc2626;
+  --line:rgba(0,0,0,0.08);
 }
 *{box-sizing:border-box}
 body{
   margin:0;
-  background:radial-gradient(circle at top, rgba(37,99,235,.25), transparent 55%), var(--bg);
+  background:var(--bg);
   color:var(--text);
   font-family:Arial,Helvetica,sans-serif;
-  height:100vh;
-  overflow:hidden;
-}
-
-/* =========================
-   LAYOUT
-========================= */
-.app{
-  height:100vh;
-  width:100%;
   display:flex;
+  justify-content:center;
+}
+.app{
+  width:100%;
+  max-width:1100px;
+  min-height:100vh;
+  display:flex;
+  gap:12px;
+  padding:12px;
 }
 .sidebar{
-  width:270px;
-  background:linear-gradient(180deg, var(--panel), var(--panel2));
-  border-right:1px solid var(--line);
+  width:280px;
+  min-width:260px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:12px;
   display:flex;
   flex-direction:column;
+  gap:10px;
 }
 .brand{
-  padding:14px 14px 10px;
-  border-bottom:1px solid var(--line);
-}
-.brand h1{
-  margin:0;
-  font-size:18px;
-  letter-spacing:.2px;
-}
-.brand p{
-  margin:6px 0 0;
-  font-size:12px;
-  opacity:.75;
-}
-.sideBtns{
-  padding:10px;
   display:flex;
-  gap:8px;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:8px 10px;
+  border-radius:12px;
+  background:linear-gradient(135deg, rgba(34,197,94,0.15), rgba(37,99,235,0.12));
+  border:1px solid var(--line);
 }
-.sideBtns button{
-  flex:1;
-  padding:10px 8px;
+.brand b{font-size:14px}
+.brand small{color:var(--muted);display:block;margin-top:2px;font-size:11px}
+.iconBtn{
   border:none;
-  border-radius:10px;
-  cursor:pointer;
-  background:rgba(255,255,255,.08);
+  background:transparent;
   color:var(--text);
+  cursor:pointer;
+  font-size:18px;
 }
-.sideBtns button:hover{filter:brightness(1.1)}
 .nav{
-  padding:10px;
-  overflow:auto;
-  flex:1;
-}
-.nav .navTitle{
-  font-size:12px;
-  opacity:.75;
-  margin:10px 6px 6px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
 }
 .nav button{
   width:100%;
-  text-align:left;
-  padding:12px 12px;
-  margin-bottom:8px;
+  padding:10px 12px;
   border:none;
   border-radius:12px;
   cursor:pointer;
-  background:rgba(255,255,255,.06);
+  background:var(--card2);
   color:var(--text);
-  display:flex;
-  align-items:center;
-  gap:10px;
+  border:1px solid var(--line);
+  text-align:left;
   font-size:14px;
 }
 .nav button.active{
-  background:linear-gradient(135deg, rgba(37,99,235,.95), rgba(37,99,235,.65));
-  box-shadow:0 10px 28px rgba(37,99,235,.22);
+  outline:2px solid rgba(34,197,94,0.35);
+  border-color:rgba(34,197,94,0.35);
 }
-.nav button:hover{filter:brightness(1.1)}
-.footer{
-  padding:10px 12px;
-  border-top:1px solid var(--line);
-  font-size:12px;
-  opacity:.7;
+.sideTools{
+  margin-top:auto;
+  display:flex;
+  gap:8px;
 }
-
-/* =========================
-   MAIN
-========================= */
+.sideTools button{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  background:var(--card2);
+  color:var(--text);
+  border:1px solid var(--line);
+}
 .main{
   flex:1;
   display:flex;
   flex-direction:column;
-  height:100vh;
+  gap:12px;
 }
 .topbar{
-  padding:12px 14px;
-  border-bottom:1px solid var(--line);
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:12px;
   display:flex;
-  gap:10px;
-  align-items:center;
   justify-content:space-between;
-  background:rgba(255,255,255,.03);
+  align-items:center;
+  gap:10px;
 }
-.topbar .left{
+.topbar .title{
   display:flex;
   flex-direction:column;
-  gap:3px;
+  gap:2px;
 }
-.topbar .left .title{
-  font-weight:bold;
-  font-size:15px;
-}
-.topbar .left .sub{
-  font-size:12px;
-  opacity:.75;
-}
-.topbar .right{
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
+.topbar .title b{font-size:15px}
+.topbar .title span{font-size:12px;color:var(--muted)}
 .pill{
   padding:8px 10px;
   border-radius:999px;
   border:1px solid var(--line);
-  background:rgba(255,255,255,.05);
+  background:var(--card2);
+  color:var(--muted);
   font-size:12px;
-  opacity:.9;
 }
 .page{
+  display:none;
+  flex:1;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+}
+.page.active{display:flex}
+.pageInner{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+.sectionHead{
+  padding:12px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+.sectionHead b{font-size:14px}
+.sectionHead .right{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.sectionHead button{
+  padding:8px 10px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  background:var(--card2);
+  color:var(--text);
+  border:1px solid var(--line);
+}
+.content{
   flex:1;
   overflow:auto;
-  padding:14px;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
-  gap:14px;
+  padding:12px;
 }
 .card{
-  background:rgba(255,255,255,.04);
+  background:var(--card2);
   border:1px solid var(--line);
-  border-radius:16px;
-  padding:14px;
-  box-shadow:var(--shadow);
+  border-radius:14px;
+  padding:12px;
+  margin-bottom:10px;
 }
-.card h2{
-  margin:0 0 8px;
-  font-size:16px;
-}
-.card p{
-  margin:0 0 10px;
-  opacity:.8;
-  font-size:13px;
-  line-height:1.35;
-}
-hr{
-  border:none;
-  border-top:1px solid var(--line);
-  margin:12px 0;
-}
-.btnRow{display:flex; gap:8px; flex-wrap:wrap}
-.btn{
-  padding:10px 12px;
-  border:none;
-  border-radius:12px;
-  cursor:pointer;
-  background:linear-gradient(135deg, var(--brand), rgba(37,99,235,.75));
-  color:white;
-  font-weight:bold;
-}
-.btn:hover{filter:brightness(1.1)}
-.btn2{
-  padding:10px 12px;
-  border:1px solid var(--line);
-  border-radius:12px;
-  cursor:pointer;
-  background:rgba(255,255,255,.06);
-  color:var(--text);
-  font-weight:bold;
-}
-.btn2:hover{filter:brightness(1.1)}
-.small{
-  font-size:12px;
-  opacity:.8;
-}
-
-/* =========================
-   CHAT (StudyBuddy)
-========================= */
-.sbWrap{
-  display:flex;
-  flex-direction:column;
-  height:calc(100vh - 74px);
-  max-width:900px;
-  margin:0 auto;
+.grid2{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
   gap:10px;
 }
-.sbTopTools{
+@media(max-width:900px){
+  .app{flex-direction:column}
+  .sidebar{width:100%;min-width:unset}
+}
+.chatWrap{
   display:flex;
-  gap:8px;
-  flex-wrap:wrap;
+  flex-direction:column;
+  height:100%;
 }
-.sbTopTools button{
-  padding:10px 12px;
-  border:none;
-  border-radius:12px;
-  cursor:pointer;
-  background:rgba(255,255,255,.06);
-  color:var(--text);
-  border:1px solid var(--line);
-}
-.sbTopTools button:hover{filter:brightness(1.1)}
-.sbModes{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-.sbModes button{
-  padding:10px 12px;
-  border:none;
-  border-radius:12px;
-  cursor:pointer;
-  background:rgba(255,255,255,.06);
-  color:var(--text);
-  border:1px solid var(--line);
-}
-.sbModes button.active{
-  background:linear-gradient(135deg, rgba(34,197,94,.95), rgba(34,197,94,.55));
-  border-color:rgba(34,197,94,.6);
-}
-.sbChat{
+.chatLog{
   flex:1;
   overflow:auto;
   padding:12px;
-  border-radius:16px;
-  border:1px solid var(--line);
-  background:rgba(0,0,0,.10);
+  display:flex;
+  flex-direction:column;
+  gap:8px;
 }
 .msg{
-  margin:8px 0;
-  padding:10px 14px;
-  border-radius:16px;
-  max-width:85%;
+  max-width:80%;
+  padding:10px 12px;
+  border-radius:14px;
   white-space:pre-wrap;
   line-height:1.35;
-}
-.user{
-  background:linear-gradient(135deg, rgba(37,99,235,.95), rgba(37,99,235,.6));
-  align-self:flex-end;
-}
-.bot{
-  background:rgba(255,255,255,.08);
-  align-self:flex-start;
   border:1px solid var(--line);
 }
-.sbBottom{
+.msg.user{align-self:flex-end;background:rgba(37,99,235,0.22)}
+.msg.bot{align-self:flex-start;background:rgba(31,41,55,0.35)}
+.light .msg.bot{background:rgba(0,0,0,0.06)}
+.chatInput{
   display:flex;
   gap:8px;
+  padding:12px;
+  border-top:1px solid var(--line);
 }
-.sbBottom input{
+.chatInput input{
   flex:1;
   padding:12px;
-  border-radius:14px;
+  border-radius:12px;
   border:1px solid var(--line);
-  background:rgba(255,255,255,.06);
-  color:var(--text);
   outline:none;
+  background:var(--card2);
+  color:var(--text);
 }
-.sbBottom button{
-  padding:12px 16px;
+.chatInput button{
+  padding:12px 14px;
   border:none;
-  border-radius:14px;
+  border-radius:12px;
   cursor:pointer;
-  background:linear-gradient(135deg, rgba(34,197,94,.95), rgba(34,197,94,.6));
-  color:white;
+  background:var(--accent);
+  color:#07120a;
   font-weight:bold;
 }
-
-/* =========================
-   GAMES HUB
-========================= */
+.kbd{
+  font-family:monospace;
+  font-size:12px;
+  color:var(--muted);
+}
 .gameList{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-.gameItem{
-  padding:12px;
-  border-radius:14px;
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.05);
-  cursor:pointer;
-}
-.gameItem:hover{filter:brightness(1.1)}
-.search{
-  width:100%;
-  padding:12px;
-  border-radius:14px;
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.06);
-  color:var(--text);
-  outline:none;
-}
-
-/* =========================
-   CHATTTERLY (LOCAL)
-========================= */
-.authBox{
-  max-width:420px;
-  margin:0 auto;
-  display:flex;
-  flex-direction:column;
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
   gap:10px;
 }
-.authBox input{
+.gameBtn{
   padding:12px;
-  border-radius:12px;
+  border-radius:14px;
   border:1px solid var(--line);
-  background:rgba(255,255,255,.06);
+  background:var(--card2);
   color:var(--text);
-  outline:none;
-}
-.authBox button{
-  padding:12px;
-  border:none;
-  border-radius:12px;
   cursor:pointer;
-  font-weight:bold;
+  text-align:left;
 }
-.authBox .login{background:linear-gradient(135deg, var(--brand), rgba(37,99,235,.7)); color:white}
-.authBox .signup{background:rgba(255,255,255,.08); border:1px solid var(--line); color:var(--text)}
-.authBox .logout{background:linear-gradient(135deg, rgba(239,68,68,.95), rgba(239,68,68,.55)); color:white}
-.authMsg{font-size:12px; opacity:.8}
-
-.localChatBox{
-  max-width:800px;
-  margin:0 auto;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.localChatMessages{
-  height:380px;
-  overflow:auto;
-  border-radius:16px;
-  border:1px solid var(--line);
-  padding:12px;
-  background:rgba(0,0,0,.10);
-  display:flex;
-  flex-direction:column;
-}
-.localChatInput{
-  display:flex;
-  gap:8px;
-}
-.localChatInput input{
-  flex:1;
-  padding:12px;
-  border-radius:14px;
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.06);
+.gameBtn:hover{outline:2px solid rgba(37,99,235,0.22)}
+.badge{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:999px;
+  background:rgba(34,197,94,0.18);
+  border:1px solid rgba(34,197,94,0.25);
   color:var(--text);
-  outline:none;
+  font-size:11px;
 }
-.localChatInput button{
-  padding:12px 16px;
-  border:none;
-  border-radius:14px;
-  cursor:pointer;
-  background:linear-gradient(135deg, rgba(16,163,127,.95), rgba(16,163,127,.6));
-  color:white;
-  font-weight:bold;
-}
-
-/* =========================
-   PRO MINECRAFT GAME (SIM)
-========================= */
-.mcWrap{
-  max-width:980px;
-  margin:0 auto;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-.mcHud{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.stat{
-  flex:1;
-  min-width:170px;
-  padding:12px;
-  border-radius:16px;
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.05);
-}
-.stat b{display:block; font-size:13px}
-.stat span{opacity:.85; font-size:12px}
-.console{
-  border-radius:16px;
-  border:1px solid var(--line);
-  background:rgba(0,0,0,.18);
-  padding:12px;
-  height:240px;
-  overflow:auto;
-  font-family:monospace;
-  font-size:13px;
-}
-.console .log{opacity:.92; margin:4px 0}
-.console .ok{color:#7CFFB2}
-.console .warn{color:#ffd166}
-.console .bad{color:#ff6b6b}
-.mcCmd{
-  display:flex;
-  gap:8px;
-}
-.mcCmd input{
-  flex:1;
-  padding:12px;
-  border-radius:14px;
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.06);
-  color:var(--text);
-  outline:none;
-  font-family:monospace;
-}
-.mcCmd button{
-  padding:12px 16px;
-  border:none;
-  border-radius:14px;
-  cursor:pointer;
-  background:linear-gradient(135deg, rgba(245,158,11,.95), rgba(245,158,11,.55));
-  color:white;
-  font-weight:bold;
-}
-
-/* =========================
-   MOBILE
-========================= */
-@media (max-width:820px){
-  body{overflow:auto}
-  .app{flex-direction:column}
-  .sidebar{width:100%; border-right:none; border-bottom:1px solid var(--line)}
-  .nav{display:flex; gap:8px; flex-wrap:wrap}
-  .nav button{width:auto; flex:1; min-width:160px}
-  .main{height:auto}
-  .sbWrap{height:auto}
-}
+hr.sep{border:none;border-top:1px solid var(--line);margin:10px 0}
+.small{color:var(--muted);font-size:12px}
+.danger{background:var(--danger)!important;color:#fff!important}
 </style>
 </head>
 
 <body>
 <div class="app">
 
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="brand">
-      <h1>StudyBuddy AI - Ultimate Hub</h1>
-      <p>AI + Games + Chat + PRO Minecraft (Offline)</p>
-    </div>
-
-    <div class="sideBtns">
-      <button onclick="toggleTheme()">🌗 Theme</button>
-      <button onclick="hubReset()">🧹 Reset</button>
+      <div>
+        <b>StudyBuddy AI</b>
+        <small>Ultimate Hub • Offline</small>
+      </div>
+      <button class="iconBtn" id="themeBtn" type="button" title="Theme">🌗</button>
     </div>
 
     <div class="nav">
-      <div class="navTitle">PAGES</div>
-
-      <button id="nav-home" class="active" onclick="showPage('home')">🏠 Home</button>
-      <button id="nav-studybuddy" onclick="showPage('studybuddy')">🤖 StudyBuddy AI</button>
-      <button id="nav-games" onclick="showPage('games')">🎮 Infinity Games Hub</button>
-      <button id="nav-chatterly" onclick="showPage('chatterly')">💬 Chatterly (Local)</button>
-      <button id="nav-super" onclick="showPage('super')">🧠 Super ChatGPT Clone</button>
-      <button id="nav-promc" onclick="showPage('promc')">⛏️ PRO Minecraft Game</button>
-
-      <div class="navTitle">INFO</div>
-      <button onclick="about()">ℹ️ About</button>
-      <button onclick="exportAll()">⬇ Export All</button>
+      <button type="button" class="active" data-page="studybuddy">🤖 StudyBuddy AI</button>
+      <button type="button" data-page="gameshub">🎮 Infinity Games Hub</button>
+      <button type="button" data-page="minecraft">⛏️ Pro Minecraft (Mini)</button>
+      <button type="button" data-page="chatterly">💬 Chatterly (Offline)</button>
+      <button type="button" data-page="supergpt">🧠 Super ChatGPT Clone</button>
+      <button type="button" data-page="settings">⚙️ Settings</button>
     </div>
 
-    <div class="footer">
-      Offline Single File • No Firebase • No Service Worker
+    <div class="sideTools">
+      <button type="button" id="exportBtn">⬇ Export</button>
+      <button type="button" id="resetBtn" class="danger">Reset</button>
     </div>
   </aside>
 
-  <!-- MAIN -->
   <main class="main">
     <div class="topbar">
-      <div class="left">
-        <div class="title" id="topTitle">Home</div>
-        <div class="sub" id="topSub">Welcome</div>
+      <div class="title">
+        <b id="topTitle">StudyBuddy AI</b>
+        <span id="topSub">All-in-one hub (single file). No service worker.</span>
       </div>
-      <div class="right">
-        <div class="pill" id="statusPill">Ready ✅</div>
-      </div>
+      <div class="pill" id="statusPill">Ready</div>
     </div>
 
-    <div class="page" id="page">
-
-      <!-- HOME -->
-      <section id="home" class="pageSection">
-        <div class="grid">
-          <div class="card">
-            <h2>🚀 Ultimate Hub</h2>
-            <p>
-              This is the BEST version: everything is inside ONE file.
-              Works on GitHub Pages and offline.
-            </p>
-            <div class="btnRow">
-              <button class="btn" onclick="showPage('studybuddy')">Open StudyBuddy AI</button>
-              <button class="btn2" onclick="showPage('promc')">Open PRO Minecraft</button>
-            </div>
-          </div>
-
-          <div class="card">
-            <h2>⭐ Features</h2>
-            <p>
-              ✅ StudyBuddy AI (modes)<br>
-              ✅ Infinity Games Hub (30+ games list)<br>
-              ✅ Chatterly (local login + chat)<br>
-              ✅ Super ChatGPT Clone (offline multi chat)<br>
-              ✅ PRO Minecraft Game (commands + upgrades)<br>
-              ✅ Export + Reset + Theme
-            </p>
-          </div>
-
-          <div class="card">
-            <h2>🕌 Islamic</h2>
-            <p>
-              Includes Islamic mode inside StudyBuddy AI.
-            </p>
-            <button class="btn2" onclick="showPage('studybuddy'); setSBMode('islam')">Open Islamic Mode</button>
+    <!-- ===================== StudyBuddy AI ===================== -->
+    <section class="page active" id="page-studybuddy">
+      <div class="pageInner chatWrap">
+        <div class="sectionHead">
+          <b>🤖 StudyBuddy AI</b>
+          <div class="right">
+            <span class="kbd">Modes:</span>
+            <button type="button" data-mode="chat">💬 Chat</button>
+            <button type="button" data-mode="math">➗ Math</button>
+            <button type="button" data-mode="quiz">🧠 Quiz</button>
+            <button type="button" data-mode="islam">🕌 Islam</button>
           </div>
         </div>
-      </section>
 
-      <!-- STUDYBUDDY -->
-      <section id="studybuddy" class="pageSection" style="display:none">
-        <div class="sbWrap">
-          <div class="sbTopTools">
-            <button onclick="toggleTheme()">🌗 Theme</button>
-            <button onclick="sbExport()">⬇ Export</button>
-            <button onclick="sbReset()">🚪 Reset</button>
-          </div>
+        <div class="chatLog" id="sbChat"></div>
 
-          <div class="sbModes">
-            <button id="sbm-chat" class="active" onclick="setSBMode('chat')">💬 Chat</button>
-            <button id="sbm-math" onclick="setSBMode('math')">➗ Math</button>
-            <button id="sbm-games" onclick="setSBMode('games')">🎮 Games</button>
-            <button id="sbm-quiz" onclick="setSBMode('quiz')">🧠 Quiz</button>
-            <button id="sbm-islam" onclick="setSBMode('islam')">🕌 Islam</button>
-          </div>
+        <div class="chatInput">
+          <input id="sbInput" placeholder="Type here..." />
+          <button type="button" id="sbSendBtn">▶</button>
+        </div>
+      </div>
+    </section>
 
-          <div class="sbChat" id="sbChat"></div>
-
-          <div class="sbBottom">
-            <input id="sbInput" placeholder="Type here..." onkeydown="if(event.key==='Enter')sbSend()" />
-            <button onclick="sbSend()">▶</button>
+    <!-- ===================== Games Hub ===================== -->
+    <section class="page" id="page-gameshub">
+      <div class="pageInner">
+        <div class="sectionHead">
+          <b>🎮 Infinity Games Hub</b>
+          <div class="right">
+            <input id="gameSearch" placeholder="Search games..." style="padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--text);outline:none" />
+            <button type="button" id="reloadGames">↻ Reload</button>
           </div>
         </div>
-      </section>
-
-      <!-- GAMES -->
-      <section id="games" class="pageSection" style="display:none">
-        <div class="card" style="max-width:980px;margin:0 auto;">
-          <h2>🎮 Infinity Games Hub</h2>
-          <p>Search and click games (demo list). You can add full engines later.</p>
-          <input class="search" id="gameSearch" placeholder="Search games..." oninput="searchGames()" />
-          <hr />
+        <div class="content">
+          <div class="card">
+            <b>Unlimited Game List</b>
+            <div class="small">Click any game. (Demo mode)</div>
+          </div>
           <div class="gameList" id="gameList"></div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- CHATTERLY LOCAL -->
-      <section id="chatterly" class="pageSection" style="display:none">
-        <div class="grid" style="max-width:980px;margin:0 auto;">
+    <!-- ===================== Minecraft Mini ===================== -->
+    <section class="page" id="page-minecraft">
+      <div class="pageInner">
+        <div class="sectionHead">
+          <b>⛏️ Pro Minecraft (Mini)</b>
+          <div class="right">
+            <span class="badge" id="mcBadge">Single Player</span>
+            <button type="button" id="mcNewWorld">New World</button>
+          </div>
+        </div>
+
+        <div class="content">
           <div class="card">
-            <h2>💬 Chatterly (Local Version)</h2>
-            <p>
-              This is NOT Firebase. It works offline.
-              Accounts are saved in your browser only.
-            </p>
-            <div class="authBox">
-              <input id="cEmail" placeholder="Email (example@gmail.com)" />
-              <input id="cPass" placeholder="Password" type="password" />
-              <button class="login" onclick="cLogin()">Login</button>
-              <button class="signup" onclick="cSignup()">Sign Up</button>
-              <button class="logout" onclick="cLogout()">Logout</button>
-              <div class="authMsg" id="cMsg"></div>
+            <b>World</b>
+            <div class="small">
+              Controls: WASD / Arrow keys to move • Click tiles to mine/build.
+            </div>
+            <hr class="sep">
+            <canvas id="mcCanvas" width="760" height="420" style="width:100%;max-width:100%;border-radius:14px;border:1px solid var(--line);background:#081028"></canvas>
+          </div>
+
+          <div class="grid2">
+            <div class="card">
+              <b>Player</b>
+              <div id="mcStats" class="small"></div>
+              <hr class="sep">
+              <button type="button" id="mcHeal" style="width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--accent);cursor:pointer;font-weight:bold">Heal</button>
+            </div>
+            <div class="card">
+              <b>Commands</b>
+              <div class="small">Type commands like:</div>
+              <div class="small"><span class="kbd">/kill</span> • <span class="kbd">/revive</span> • <span class="kbd">/destroyworld</span></div>
+              <hr class="sep">
+              <input id="mcCmd" placeholder="/command" style="width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--text);outline:none">
+              <button type="button" id="mcRunCmd" style="margin-top:8px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--accent2);color:#fff;cursor:pointer">Run</button>
+              <div id="mcOut" class="small" style="margin-top:8px"></div>
             </div>
           </div>
 
           <div class="card">
-            <h2>📨 Chat Room</h2>
-            <div class="localChatBox">
-              <div class="localChatMessages" id="cChat"></div>
-              <div class="localChatInput">
-                <input id="cInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')cSend()" />
-                <button onclick="cSend()">Send</button>
-              </div>
-              <div class="small" id="cUserLine">Not logged in</div>
+            <b>Boss System (Infinite)</b>
+            <div class="small">
+              Bosses respawn forever. Defeat count saves in this session.
+            </div>
+            <hr class="sep">
+            <button type="button" id="mcSpawnBoss" style="padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--text);cursor:pointer">Spawn Boss</button>
+            <button type="button" id="mcAttackBoss" style="padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--accent);cursor:pointer;font-weight:bold">Attack</button>
+            <div id="mcBoss" class="small" style="margin-top:8px"></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== Chatterly Offline ===================== -->
+    <section class="page" id="page-chatterly">
+      <div class="pageInner">
+        <div class="sectionHead">
+          <b>💬 Chatterly (Offline)</b>
+          <div class="right">
+            <span class="badge">No Firebase</span>
+            <button type="button" id="chLogout">Logout</button>
+          </div>
+        </div>
+
+        <div class="content">
+          <div class="card" id="chLoginCard">
+            <b>Login</b>
+            <div class="small">Offline demo (local accounts stored in browser).</div>
+            <hr class="sep">
+            <input id="chEmail" placeholder="Email" style="width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--text);outline:none;margin-bottom:8px">
+            <input id="chPass" placeholder="Password" type="password" style="width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--text);outline:none;margin-bottom:8px">
+            <div style="display:flex;gap:8px">
+              <button type="button" id="chLogin" style="flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--accent2);color:#fff;cursor:pointer">Login</button>
+              <button type="button" id="chSignup" style="flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--text);cursor:pointer">Sign Up</button>
+            </div>
+            <div id="chMsg" class="small" style="margin-top:10px"></div>
+          </div>
+
+          <div class="card" id="chChatCard" style="display:none">
+            <b>Chat Room</b>
+            <div class="small">Local multi-user on same browser.</div>
+            <hr class="sep">
+            <div id="chMessages" style="height:260px;overflow:auto;border-radius:12px;border:1px solid var(--line);padding:10px;background:rgba(0,0,0,0.12)"></div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <input id="chInput" placeholder="Type message..." style="flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--text);outline:none">
+              <button type="button" id="chSend" style="padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--accent);cursor:pointer;font-weight:bold">Send</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== Super GPT Clone ===================== -->
+    <section class="page" id="page-supergpt">
+      <div class="pageInner chatWrap">
+        <div class="sectionHead">
+          <b>🧠 Super ChatGPT Clone</b>
+          <div class="right">
+            <button type="button" id="sgNewChat">+ New Chat</button>
+            <button type="button" id="sgDark">Toggle Dark</button>
+          </div>
+        </div>
+
+        <div class="chatLog" id="sgChat"></div>
+
+        <div class="chatInput">
+          <input id="sgInput" placeholder="Type a message..." />
+          <button type="button" id="sgSend">Send</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== Settings ===================== -->
+    <section class="page" id="page-settings">
+      <div class="pageInner">
+        <div class="sectionHead">
+          <b>⚙️ Settings</b>
+          <div class="right">
+            <span class="badge">Single File</span>
+          </div>
+        </div>
+        <div class="content">
+          <div class="card">
+            <b>App Name</b>
+            <div class="small">StudyBuddy AI - Ultimate Hub</div>
+          </div>
+          <div class="card">
+            <b>Fix for your error</b>
+            <div class="small">
+              All buttons now work because functions are defined and event listeners are used.
+            </div>
+          </div>
+          <div class="card">
+            <b>Data Storage</b>
+            <div class="small">
+              Uses localStorage only (offline). No service worker. No Firebase.
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- SUPER CHATGPT CLONE -->
-      <section id="super" class="pageSection" style="display:none">
-        <div class="grid" style="max-width:1100px;margin:0 auto;">
-          <div class="card">
-            <h2>🧠 Super ChatGPT Clone (Offline)</h2>
-            <p>
-              Multi-chat list + typing effect. No API.
-            </p>
-            <div class="btnRow">
-              <button class="btn" onclick="superNewChat()">+ New Chat</button>
-              <button class="btn2" onclick="superClearAll()">🧹 Clear All</button>
-            </div>
-            <hr />
-            <div class="small">Chats:</div>
-            <div id="superList" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;"></div>
-          </div>
-
-          <div class="card">
-            <h2 id="superTitle">Chat 1</h2>
-            <div class="localChatMessages" id="superChat"></div>
-            <div class="localChatInput">
-              <input id="superInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')superSend()" />
-              <button onclick="superSend()">Send</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- PRO MINECRAFT GAME -->
-      <section id="promc" class="pageSection" style="display:none">
-        <div class="mcWrap">
-          <div class="card">
-            <h2>⛏️ PRO Minecraft Game (Offline Simulator)</h2>
-            <p>
-              This is a PRO command simulator. You can type commands like:
-              <b>/god</b> <b>/kill</b> <b>/revive</b> <b>/destroyworld</b> <b>/boss</b> <b>/infinity</b>
-            </p>
-          </div>
-
-          <div class="mcHud">
-            <div class="stat"><b>Player</b><span id="mcPlayer">Steve</span></div>
-            <div class="stat"><b>HP</b><span id="mcHP">20</span></div>
-            <div class="stat"><b>Power</b><span id="mcPower">Normal</span></div>
-            <div class="stat"><b>Boss Kills</b><span id="mcKills">0</span></div>
-            <div class="stat"><b>World</b><span id="mcWorld">Alive</span></div>
-          </div>
-
-          <div class="console" id="mcConsole"></div>
-
-          <div class="mcCmd">
-            <input id="mcInput" placeholder="Type command... (example: /god)" onkeydown="if(event.key==='Enter')mcRun()" />
-            <button onclick="mcRun()">RUN</button>
-          </div>
-
-          <div class="card">
-            <h2>🔥 Herobrine GOD Command</h2>
-            <p>
-              Type this to get the “powers” version (safe in browser):
-            </p>
-            <button class="btn" onclick="mcQuickGod()">/execute-herobrine-god</button>
-          </div>
-        </div>
-      </section>
-
-    </div>
   </main>
 </div>
 
 <script>
 /* =========================
-   HUB NAVIGATION (FIXED)
+   GLOBAL HELPERS
 ========================= */
-const sections = ["home","studybuddy","games","chatterly","super","promc"];
-function showPage(id){
-  sections.forEach(s=>{
-    const el=document.getElementById(s);
-    if(el) el.style.display = (s===id) ? "block" : "none";
-    const nav=document.getElementById("nav-"+s);
-    if(nav) nav.classList.toggle("active", s===id);
-  });
-  const topTitle=document.getElementById("topTitle");
-  const topSub=document.getElementById("topSub");
-  if(id==="home"){topTitle.innerText="Home"; topSub.innerText="Welcome";}
-  if(id==="studybuddy"){topTitle.innerText="StudyBuddy AI"; topSub.innerText="Modes + Export";}
-  if(id==="games"){topTitle.innerText="Infinity Games Hub"; topSub.innerText="Unlimited list";}
-  if(id==="chatterly"){topTitle.innerText="Chatterly"; topSub.innerText="Local login + chat";}
-  if(id==="super"){topTitle.innerText="Super ChatGPT Clone"; topSub.innerText="Offline multi chat";}
-  if(id==="promc"){topTitle.innerText="PRO Minecraft Game"; topSub.innerText="Commands + upgrades";}
-  status("Opened: "+id+" ✅");
+const $ = (id)=>document.getElementById(id);
+const qs = (sel)=>document.querySelector(sel);
+const qsa = (sel)=>document.querySelectorAll(sel);
+
+function setStatus(t){ $("statusPill").textContent = t; }
+
+function escapeHTML(s){
+  return (s+"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
 }
 
 /* =========================
-   STATUS
+   NAVIGATION (NO INLINE)
 ========================= */
-function status(t){
-  document.getElementById("statusPill").innerText=t;
+const pageMap = {
+  studybuddy: {id:"page-studybuddy", title:"StudyBuddy AI", sub:"Chat + Math + Quiz + Islam"},
+  gameshub:   {id:"page-gameshub", title:"Infinity Games Hub", sub:"Unlimited games list (demo)"},
+  minecraft:  {id:"page-minecraft", title:"Pro Minecraft (Mini)", sub:"Mini world + bosses + commands"},
+  chatterly:  {id:"page-chatterly", title:"Chatterly (Offline)", sub:"Local accounts + local chat"},
+  supergpt:   {id:"page-supergpt", title:"Super ChatGPT Clone", sub:"Offline rule-based clone"},
+  settings:   {id:"page-settings", title:"Settings", sub:"Theme + export + reset"}
+};
+
+function showPage(key){
+  qsa(".page").forEach(p=>p.classList.remove("active"));
+  qsa(".nav button").forEach(b=>b.classList.remove("active"));
+
+  const info = pageMap[key];
+  if(!info) return;
+
+  $(info.id).classList.add("active");
+  qsa(".nav button").forEach(b=>{
+    if(b.dataset.page===key) b.classList.add("active");
+  });
+
+  $("topTitle").textContent = info.title;
+  $("topSub").textContent = info.sub;
+  setStatus("Ready");
 }
+
+qsa(".nav button").forEach(btn=>{
+  btn.addEventListener("click", ()=>showPage(btn.dataset.page));
+});
 
 /* =========================
    THEME
 ========================= */
 function toggleTheme(){
   document.body.classList.toggle("light");
-  localStorage.setItem("hub_theme", document.body.classList.contains("light") ? "light" : "dark");
+  localStorage.setItem("SB_THEME", document.body.classList.contains("light") ? "light" : "dark");
 }
-(function(){
-  const t=localStorage.getItem("hub_theme");
+$("themeBtn").addEventListener("click", toggleTheme);
+
+(function initTheme(){
+  const t = localStorage.getItem("SB_THEME") || "dark";
   if(t==="light") document.body.classList.add("light");
 })();
 
 /* =========================
-   HUB RESET
+   EXPORT + RESET
 ========================= */
-function hubReset(){
-  if(!confirm("Reset EVERYTHING? (StudyBuddy + Chatterly + Super + Minecraft)")) return;
-  localStorage.removeItem("sb_chatlog");
-  localStorage.removeItem("chatterly_users");
-  localStorage.removeItem("chatterly_session");
-  localStorage.removeItem("chatterly_msgs");
-  localStorage.removeItem("super_chats");
-  localStorage.removeItem("mc_state");
-  location.reload();
-}
-
-/* =========================
-   ABOUT
-========================= */
-function about(){
-  alert("StudyBuddy AI - Ultimate Hub\n\nOffline Single File\nAI + Games + Chat + PRO Minecraft\n\nMade with Allah's help 🤍");
-}
-
-/* =========================
-   EXPORT ALL
-========================= */
-function exportAll(){
-  const sb = localStorage.getItem("sb_chatlog") || "";
-  const c  = localStorage.getItem("chatterly_msgs") || "";
-  const su = localStorage.getItem("super_chats") || "";
-  const mc = localStorage.getItem("mc_state") || "";
-  const out =
-`=== StudyBuddy AI Chat ===
-${sb}
-
-=== Chatterly Messages ===
-${c}
-
-=== Super ChatGPT Chats ===
-${su}
-
-=== PRO Minecraft State ===
-${mc}
-`;
-  const b=new Blob([out],{type:"text/plain"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(b);
-  a.download="UltimateHub_Export.txt";
+$("exportBtn").addEventListener("click", ()=>{
+  const sb = JSON.parse(localStorage.getItem("SB_CHAT")||"[]");
+  const sg = JSON.parse(localStorage.getItem("SG_CHAT")||"[]");
+  const ch = JSON.parse(localStorage.getItem("CH_MSGS")||"[]");
+  const data = {
+    app:"StudyBuddy AI - Ultimate Hub",
+    exportedAt:new Date().toISOString(),
+    studybuddy:sb,
+    supergpt:sg,
+    chatterly:ch
+  };
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "studybuddy_export.json";
   a.click();
-}
+  setStatus("Exported");
+});
+
+$("resetBtn").addEventListener("click", ()=>{
+  if(!confirm("Reset everything?")) return;
+  localStorage.clear();
+  location.reload();
+});
 
 /* =========================
-   STUDYBUDDY AI (FIXED)
+   STUDYBUDDY AI
 ========================= */
-let sbMode="chat";
-let sbChatLog=[];
-const sbChat=document.getElementById("sbChat");
+let sbMode = "chat";
+const sbChat = $("sbChat");
+const sbInput = $("sbInput");
 
-function sbAdd(text,cls){
-  const d=document.createElement("div");
-  d.className="msg "+cls;
-  d.innerText=text;
+function sbAdd(text, who){
+  const d = document.createElement("div");
+  d.className = "msg " + who;
+  d.textContent = text;
   sbChat.appendChild(d);
-  sbChat.scrollTop=sbChat.scrollHeight;
-  sbChatLog.push((cls==="user"?"User: ":"AI: ")+text);
-  localStorage.setItem("sb_chatlog", sbChatLog.join("\n"));
+  sbChat.scrollTop = sbChat.scrollHeight;
+
+  const log = JSON.parse(localStorage.getItem("SB_CHAT")||"[]");
+  log.push({who,text,ts:Date.now(),mode:sbMode});
+  localStorage.setItem("SB_CHAT", JSON.stringify(log));
 }
-function setSBMode(m){
-  sbMode=m;
-  ["chat","math","games","quiz","islam"].forEach(x=>{
-    const b=document.getElementById("sbm-"+x);
-    if(b) b.classList.toggle("active", x===m);
-  });
-  sbAdd("Mode: "+m.toUpperCase(),"bot");
+
+function sbSetMode(m){
+  sbMode = m;
+  sbAdd("Mode: " + m.toUpperCase(), "bot");
+  setStatus("Mode: " + m);
 }
+
+qsa('#page-studybuddy [data-mode]').forEach(b=>{
+  b.addEventListener("click", ()=>sbSetMode(b.dataset.mode));
+});
+
+function sbMath(q){
+  try{
+    if(!/^[0-9+\-*/(). %]+$/.test(q)){
+      sbAdd("Enter valid math only.", "bot"); return;
+    }
+    const ans = Function("return ("+q+")")();
+    sbAdd("Answer: " + ans, "bot");
+  }catch{
+    sbAdd("Math error.", "bot");
+  }
+}
+
+function sbQuiz(){
+  const q = [
+    "🧠 Capital of Pakistan?",
+    "🧠 5 daily prayers names?",
+    "🧠 12 × 7 = ?",
+    "🧠 What is the largest planet?",
+    "🧠 What is H2O?"
+  ];
+  sbAdd(q[Math.floor(Math.random()*q.length)], "bot");
+}
+
+function sbIslam(){
+  const i = [
+    "🕌 Allah is One (Tawheed).",
+    "📖 Quran is guidance for mankind.",
+    "🤲 Dua: Allahumma zidni ilma.",
+    "🕋 Pray 5 times daily.",
+    "🌙 Say: SubhanAllah • Alhamdulillah • Allahu Akbar"
+  ];
+  sbAdd(i[Math.floor(Math.random()*i.length)], "bot");
+}
+
+function sbChatAI(t){
+  const q = t.toLowerCase();
+  if(q.includes("hi") || q.includes("hello")) sbAdd("Hello 😊", "bot");
+  else if(q.includes("who made you")) sbAdd("Made by Yousaf 🌟", "bot");
+  else if(q.includes("help")) sbAdd("I can do: Chat, Math, Quiz, Islam, Games, Minecraft, Chatterly, SuperGPT.", "bot");
+  else sbAdd("Tell me more 🤔", "bot");
+}
+
 function sbSend(){
-  const i=document.getElementById("sbInput");
-  const t=i.value.trim();
+  const t = sbInput.value.trim();
   if(!t) return;
-  i.value="";
-  sbAdd(t,"user");
+  sbInput.value = "";
+  sbAdd(t, "user");
+
   if(sbMode==="math") sbMath(t);
-  else if(sbMode==="games") sbGames();
   else if(sbMode==="quiz") sbQuiz();
   else if(sbMode==="islam") sbIslam();
   else sbChatAI(t);
 }
-function sbChatAI(q){
-  const lower=q.toLowerCase();
-  if(lower.includes("hi")||lower.includes("hello")) sbAdd("Hello 😊 I am StudyBuddy AI!","bot");
-  else if(lower.includes("who made you")) sbAdd("Made by a young Muslim developer 🌟","bot");
-  else if(lower.includes("help")) sbAdd("Tell me what you want: study, math, quiz, islam, games.","bot");
-  else sbAdd("I understand. Tell me more 🤔","bot");
-}
-function sbMath(q){
-  try{
-    if(!/^[0-9+\-*/(). %]+$/.test(q)){
-      sbAdd("Enter valid math only.","bot"); return;
-    }
-    sbAdd("Answer: "+Function("return "+q)(),"bot");
-  }catch{
-    sbAdd("Math error.","bot");
+
+$("sbSendBtn").addEventListener("click", sbSend);
+sbInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") sbSend(); });
+
+(function loadSB(){
+  const log = JSON.parse(localStorage.getItem("SB_CHAT")||"[]");
+  sbChat.innerHTML = "";
+  if(!log.length){
+    sbAdd("Welcome to StudyBuddy AI 🚀", "bot");
+    sbAdd("Choose a page from left menu.", "bot");
+    return;
   }
-}
-function sbGames(){
-  const g=[
-    "🎲 Guess a number from 1 to 10",
-    "🧠 Riddle: What has keys but no locks?",
-    "🎯 Mental math: 8×7?"
-  ];
-  sbAdd(g[Math.floor(Math.random()*g.length)],"bot");
-}
-function sbQuiz(){
-  const q=[
-    "🧠 Capital of Pakistan?",
-    "🧠 Name 5 daily prayers?",
-    "🧠 6 × 6 = ?"
-  ];
-  sbAdd(q[Math.floor(Math.random()*q.length)],"bot");
-}
-function sbIslam(){
-  const i=[
-    "🕌 Allah is One",
-    "📖 Quran is guidance",
-    "🤲 Say: Alhamdulillah",
-    "🕋 Pray 5 times daily",
-    "🌙 Ramadan is a blessed month"
-  ];
-  sbAdd(i[Math.floor(Math.random()*i.length)],"bot");
-}
-function sbExport(){
-  const b=new Blob([sbChatLog.join("\n")],{type:"text/plain"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(b);
-  a.download="StudyBuddyAI_Chat.txt";
-  a.click();
-}
-function sbReset(){
-  if(!confirm("Reset StudyBuddy AI chat?")) return;
-  sbChat.innerHTML="";
-  sbChatLog=[];
-  localStorage.removeItem("sb_chatlog");
-  sbAdd("Welcome to StudyBuddy AI 🚀","bot");
-}
-(function(){
-  const saved=localStorage.getItem("sb_chatlog");
-  if(saved){
-    sbChatLog=saved.split("\n").filter(Boolean);
-    sbChat.innerHTML="";
-    sbChatLog.forEach(line=>{
-      if(line.startsWith("User: ")) sbAdd(line.replace("User: ",""),"user");
-      else if(line.startsWith("AI: ")) sbAdd(line.replace("AI: ",""),"bot");
-    });
-  }else{
-    sbAdd("Welcome to StudyBuddy AI 🚀","bot");
-  }
+  log.forEach(m=>sbAdd(m.text, m.who));
 })();
 
 /* =========================
-   INFINITY GAMES HUB
+   GAMES HUB
 ========================= */
-const gameNames=[
-"Tic Tac Toe","Snake","Memory Flip","Number Guess","Rock Paper Scissors",
-"Math Quiz","Word Guess","Fast Click","Reaction Test","Typing Speed",
-"Color Match","Pattern Memory","Maze","Puzzle","2048 Style",
-"Simon Says","Hangman","Quiz Master","Brain Trainer","Sudoku Mini",
-"Chess Mini","Checkers","Math Duel","Logic Test","True False",
-"Speed Math","Guess Shape","Hidden Object","Tap Challenge","Emoji Match"
+const games = [
+  "Tic Tac Toe","Snake","Memory Flip","Number Guess","Rock Paper Scissors",
+  "Math Quiz","Word Guess","Fast Click","Reaction Test","Typing Speed",
+  "Color Match","Pattern Memory","Maze","Puzzle","2048 Style",
+  "Simon Says","Hangman","Quiz Master","Brain Trainer","Sudoku Mini",
+  "Chess Mini","Checkers","Math Duel","Logic Test","True False",
+  "Speed Math","Guess Shape","Hidden Object","Tap Challenge","Emoji Match",
+  "Word Scramble","Quick Tap","Aim Trainer","Random Riddle","Mini RPG"
 ];
-const gameList=document.getElementById("gameList");
+
 function loadGames(){
-  gameList.innerHTML="";
-  gameNames.forEach(name=>{
-    const d=document.createElement("div");
-    d.className="gameItem";
-    d.innerText="🎮 "+name;
-    d.onclick=()=>alert(name+" (demo)\n\nYou can add full game engine later.");
-    gameList.appendChild(d);
-  });
-}
-loadGames();
-function searchGames(){
-  const q=document.getElementById("gameSearch").value.toLowerCase();
-  document.querySelectorAll(".gameItem").forEach(g=>{
-    g.style.display = g.innerText.toLowerCase().includes(q) ? "block" : "none";
-  });
-}
-
-/* =========================
-   CHATTERLY (LOCAL OFFLINE)
-========================= */
-function getUsers(){
-  return JSON.parse(localStorage.getItem("chatterly_users")||"{}");
-}
-function setUsers(u){
-  localStorage.setItem("chatterly_users", JSON.stringify(u));
-}
-function setSession(email){
-  localStorage.setItem("chatterly_session", email||"");
-}
-function getSession(){
-  return localStorage.getItem("chatterly_session")||"";
-}
-function getMsgs(){
-  return JSON.parse(localStorage.getItem("chatterly_msgs")||"[]");
-}
-function setMsgs(m){
-  localStorage.setItem("chatterly_msgs", JSON.stringify(m));
-}
-function cSetMsg(t, good=false){
-  const el=document.getElementById("cMsg");
-  el.style.color = good ? "var(--good)" : "var(--bad)";
-  el.innerText=t;
-}
-function cSignup(){
-  const email=document.getElementById("cEmail").value.trim().toLowerCase();
-  const pass=document.getElementById("cPass").value.trim();
-  if(!email||!pass) return cSetMsg("Enter email + password");
-  const users=getUsers();
-  if(users[email]) return cSetMsg("Account already exists");
-  users[email]={pass};
-  setUsers(users);
-  cSetMsg("Account created! Now login.", true);
-}
-function cLogin(){
-  const email=document.getElementById("cEmail").value.trim().toLowerCase();
-  const pass=document.getElementById("cPass").value.trim();
-  const users=getUsers();
-  if(!users[email] || users[email].pass!==pass) return cSetMsg("Wrong login");
-  setSession(email);
-  cSetMsg("Logged in: "+email, true);
-  cRender();
-}
-function cLogout(){
-  setSession("");
-  cSetMsg("Logged out", true);
-  cRender();
-}
-function cRender(){
-  const email=getSession();
-  document.getElementById("cUserLine").innerText = email ? ("Logged in as: "+email) : "Not logged in";
-  const chat=document.getElementById("cChat");
-  chat.innerHTML="";
-  const msgs=getMsgs();
-  msgs.forEach(m=>{
-    const div=document.createElement("div");
-    div.className="msg "+(m.email===email?"user":"bot");
-    div.innerText=(m.email===email?"You":"Other")+": "+m.text;
-    chat.appendChild(div);
-  });
-  chat.scrollTop=chat.scrollHeight;
-}
-function cSend(){
-  const email=getSession();
-  if(!email) return cSetMsg("Login first");
-  const input=document.getElementById("cInput");
-  const t=input.value.trim();
-  if(!t) return;
-  input.value="";
-  const msgs=getMsgs();
-  msgs.push({email,text:t,time:Date.now()});
-  setMsgs(msgs);
-  cRender();
-}
-cRender();
-
-/* =========================
-   SUPER CHATGPT CLONE (OFFLINE)
-========================= */
-let superData = JSON.parse(localStorage.getItem("super_chats")||"null");
-if(!superData){
-  superData = { active:0, chats:[ {name:"Chat 1", messages:[{role:"bot", text:"New chat started! Ask me anything 😊"}]} ] };
-  localStorage.setItem("super_chats", JSON.stringify(superData));
-}
-function superSave(){
-  localStorage.setItem("super_chats", JSON.stringify(superData));
-}
-function superRenderList(){
-  const list=document.getElementById("superList");
-  list.innerHTML="";
-  superData.chats.forEach((c,idx)=>{
-    const b=document.createElement("button");
-    b.className="btn2";
-    b.innerText=c.name;
-    b.onclick=()=>{superData.active=idx; superSave(); superRender();};
-    if(idx===superData.active){
-      b.style.borderColor="rgba(16,163,127,.8)";
-    }
+  const list = $("gameList");
+  list.innerHTML = "";
+  games.forEach(name=>{
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "gameBtn";
+    b.innerHTML = `<b>${escapeHTML(name)}</b><div class="small">Demo: engine can be added</div>`;
+    b.addEventListener("click", ()=>alert(name + " is ready (demo)."));
     list.appendChild(b);
   });
 }
-function superRender(){
-  superRenderList();
-  const chat=document.getElementById("superChat");
-  chat.innerHTML="";
-  const c=superData.chats[superData.active];
-  document.getElementById("superTitle").innerText=c.name;
-  c.messages.forEach(m=>{
-    const div=document.createElement("div");
-    div.className="msg "+(m.role==="user"?"user":"bot");
-    div.innerText=m.text;
-    chat.appendChild(div);
+loadGames();
+
+$("reloadGames").addEventListener("click", loadGames);
+
+$("gameSearch").addEventListener("input", ()=>{
+  const q = $("gameSearch").value.toLowerCase();
+  qsa("#gameList .gameBtn").forEach(btn=>{
+    btn.style.display = btn.innerText.toLowerCase().includes(q) ? "block" : "none";
   });
-  chat.scrollTop=chat.scrollHeight;
-}
-function superNewChat(){
-  const n=superData.chats.length+1;
-  superData.chats.push({name:"Chat "+n, messages:[{role:"bot", text:"New chat started! Ask me anything 😊"}]});
-  superData.active=superData.chats.length-1;
-  superSave();
-  superRender();
-}
-function superClearAll(){
-  if(!confirm("Clear all Super ChatGPT chats?")) return;
-  superData = { active:0, chats:[ {name:"Chat 1", messages:[{role:"bot", text:"New chat started! Ask me anything 😊"}]} ] };
-  superSave();
-  superRender();
-}
-function superBotReply(text){
-  const lower=text.toLowerCase();
-  const now=new Date();
-  if(lower.includes("hello")||lower.includes("hi")) return "Hello! I'm your offline ChatGPT clone!";
-  if(lower.includes("who are you")) return "I am a local demo of ChatGPT. I can simulate conversations.";
-  if(lower.includes("what can you do")) return "I can chat offline, answer basic questions, show date/time, and show code.";
-  if(lower.includes("time")) return "Current time: "+now.toLocaleTimeString();
-  if(lower.includes("date")) return "Today's date: "+now.toLocaleDateString();
-  if(lower.includes("code")) return "Example:\nconsole.log('Hello world');";
-  return "Offline demo response. You can add more rules to expand me!";
-}
-function superSend(){
-  const input=document.getElementById("superInput");
-  const t=input.value.trim();
-  if(!t) return;
-  input.value="";
-  const c=superData.chats[superData.active];
-  c.messages.push({role:"user", text:t});
-  superSave();
-  superRender();
-
-  // typing effect
-  const chat=document.getElementById("superChat");
-  const typing=document.createElement("div");
-  typing.className="msg bot";
-  typing.innerText="Typing...";
-  chat.appendChild(typing);
-  chat.scrollTop=chat.scrollHeight;
-
-  setTimeout(()=>{
-    typing.remove();
-    c.messages.push({role:"bot", text:superBotReply(t)});
-    superSave();
-    superRender();
-  }, 650 + Math.random()*600);
-}
-superRender();
+});
 
 /* =========================
-   PRO MINECRAFT GAME (OFFLINE)
+   CHATTERLY OFFLINE
 ========================= */
-let mc = JSON.parse(localStorage.getItem("mc_state")||"null");
-if(!mc){
-  mc = {
-    player:"Steve",
-    hp:20,
-    power:"Normal",
-    kills:0,
-    world:"Alive",
-    alive:true,
-    effects:[],
-    inventory:[]
-  };
-  localStorage.setItem("mc_state", JSON.stringify(mc));
-}
-function mcSave(){ localStorage.setItem("mc_state", JSON.stringify(mc)); }
-function mcRender(){
-  document.getElementById("mcPlayer").innerText = mc.player;
-  document.getElementById("mcHP").innerText = mc.hp + (mc.alive ? "" : " (DEAD)");
-  document.getElementById("mcPower").innerText = mc.power;
-  document.getElementById("mcKills").innerText = mc.kills;
-  document.getElementById("mcWorld").innerText = mc.world;
-}
-function mcLog(text, type="log"){
-  const c=document.getElementById("mcConsole");
-  const div=document.createElement("div");
-  div.className="log "+(type||"log");
-  div.innerText=text;
-  c.appendChild(div);
-  c.scrollTop=c.scrollHeight;
-}
-function mcInit(){
-  mcRender();
-  mcLog("PRO MINECRAFT GAME loaded ✅","ok");
-  mcLog("Try commands: /god /kill /revive /boss /infinity /destroyworld","warn");
-}
-mcInit();
+let chUser = null;
 
-function mcQuickGod(){
-  mcRunCmd("/execute-herobrine-god");
+function chLoad(){
+  const u = JSON.parse(localStorage.getItem("CH_USER")||"null");
+  chUser = u;
+  if(chUser){
+    $("chLoginCard").style.display="none";
+    $("chChatCard").style.display="block";
+    chRenderMessages();
+    $("chMsg").textContent="";
+  }else{
+    $("chLoginCard").style.display="block";
+    $("chChatCard").style.display="none";
+  }
 }
 
-function mcRun(){
-  const i=document.getElementById("mcInput");
-  const cmd=i.value.trim();
-  if(!cmd) return;
-  i.value="";
-  mcRunCmd(cmd);
+function chGetAccounts(){
+  return JSON.parse(localStorage.getItem("CH_ACCOUNTS")||"{}");
 }
-function mcRunCmd(cmd){
-  const raw=cmd;
-  cmd=cmd.trim();
+function chSetAccounts(obj){
+  localStorage.setItem("CH_ACCOUNTS", JSON.stringify(obj));
+}
 
-  mcLog("> "+raw,"log");
+function chSignup(){
+  const email = $("chEmail").value.trim().toLowerCase();
+  const pass = $("chPass").value.trim();
+  if(!email || !pass) { $("chMsg").textContent="Enter email and password."; return; }
+  const acc = chGetAccounts();
+  if(acc[email]) { $("chMsg").textContent="Account already exists."; return; }
+  acc[email] = {pass};
+  chSetAccounts(acc);
+  $("chMsg").textContent="Account created. Now login.";
+}
 
-  const lower=cmd.toLowerCase();
-
-  // basic commands
-  if(lower==="/help"){
-    mcLog("Commands: /god /kill /revive /boss /destroyworld /infinity /resetmc","ok");
+function chLogin(){
+  const email = $("chEmail").value.trim().toLowerCase();
+  const pass = $("chPass").value.trim();
+  const acc = chGetAccounts();
+  if(!acc[email] || acc[email].pass!==pass){
+    $("chMsg").textContent="Wrong email or password.";
     return;
   }
-  if(lower==="/resetmc"){
-    mc = {player:"Steve",hp:20,power:"Normal",kills:0,world:"Alive",alive:true,effects:[],inventory:[]};
-    mcSave(); mcRender();
-    document.getElementById("mcConsole").innerHTML="";
-    mcInit();
+  localStorage.setItem("CH_USER", JSON.stringify({email}));
+  chLoad();
+}
+
+function chLogout(){
+  localStorage.removeItem("CH_USER");
+  chUser=null;
+  chLoad();
+}
+
+function chGetMsgs(){
+  return JSON.parse(localStorage.getItem("CH_MSGS")||"[]");
+}
+function chSetMsgs(m){
+  localStorage.setItem("CH_MSGS", JSON.stringify(m));
+}
+
+function chSend(){
+  if(!chUser) return;
+  const t = $("chInput").value.trim();
+  if(!t) return;
+  $("chInput").value="";
+  const msgs = chGetMsgs();
+  msgs.push({email:chUser.email,text:t,ts:Date.now()});
+  chSetMsgs(msgs);
+  chRenderMessages();
+}
+
+function chRenderMessages(){
+  const box = $("chMessages");
+  const msgs = chGetMsgs();
+  box.innerHTML="";
+  msgs.slice(-200).forEach(m=>{
+    const div = document.createElement("div");
+    div.style.marginBottom="8px";
+    div.style.padding="10px";
+    div.style.borderRadius="12px";
+    div.style.border="1px solid var(--line)";
+    const me = chUser && m.email===chUser.email;
+    div.style.background = me ? "rgba(37,99,235,0.22)" : "rgba(0,0,0,0.10)";
+    div.innerHTML = `<b>${escapeHTML(m.email.split("@")[0])}</b><div>${escapeHTML(m.text)}</div>`;
+    box.appendChild(div);
+  });
+  box.scrollTop = box.scrollHeight;
+}
+
+$("chSignup").addEventListener("click", chSignup);
+$("chLogin").addEventListener("click", chLogin);
+$("chLogout").addEventListener("click", chLogout);
+$("chSend").addEventListener("click", chSend);
+$("chInput").addEventListener("keydown", (e)=>{ if(e.key==="Enter") chSend(); });
+chLoad();
+
+/* =========================
+   SUPER GPT CLONE
+========================= */
+const sgChat = $("sgChat");
+const sgInput = $("sgInput");
+
+function sgAdd(text, who){
+  const d = document.createElement("div");
+  d.className = "msg " + who;
+  d.innerHTML = who==="bot" ? text : escapeHTML(text);
+  sgChat.appendChild(d);
+  sgChat.scrollTop = sgChat.scrollHeight;
+
+  const log = JSON.parse(localStorage.getItem("SG_CHAT")||"[]");
+  log.push({who,text,ts:Date.now()});
+  localStorage.setItem("SG_CHAT", JSON.stringify(log));
+}
+
+function sgBot(text){
+  const lower = text.toLowerCase();
+  const now = new Date();
+  if(lower.includes("hello") || lower.includes("hi")) return "Hello! I'm your offline ChatGPT clone.";
+  if(lower.includes("who are you")) return "I am a local demo assistant (offline).";
+  if(lower.includes("what can you do")) return "I can chat, show time/date, and give basic responses.";
+  if(lower.includes("time")) return "Current time: <b>"+now.toLocaleTimeString()+"</b>";
+  if(lower.includes("date")) return "Today's date: <b>"+now.toLocaleDateString()+"</b>";
+  if(lower.includes("code")) return "<pre style='margin:0;white-space:pre-wrap'>console.log('Hello world');</pre>";
+  if(lower.includes("markdown")) return "<b>Bold</b> <i>Italic</i> <code>inline</code>";
+  return "Offline demo response. Add more rules in code to make me smarter.";
+}
+
+function sgSend(){
+  const t = sgInput.value.trim();
+  if(!t) return;
+  sgInput.value="";
+  sgAdd(t,"user");
+  setTimeout(()=>sgAdd(sgBot(t),"bot"), 300);
+}
+
+$("sgSend").addEventListener("click", sgSend);
+sgInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") sgSend(); });
+
+$("sgNewChat").addEventListener("click", ()=>{
+  localStorage.removeItem("SG_CHAT");
+  sgChat.innerHTML="";
+  sgAdd("New chat started. Ask me anything.", "bot");
+});
+
+$("sgDark").addEventListener("click", toggleTheme);
+
+(function loadSG(){
+  const log = JSON.parse(localStorage.getItem("SG_CHAT")||"[]");
+  sgChat.innerHTML="";
+  if(!log.length){
+    sgAdd("New chat started. Ask me anything.", "bot");
     return;
   }
+  log.forEach(m=>{
+    if(m.who==="bot") sgAdd(m.text,"bot");
+    else sgAdd(m.text,"user");
+  });
+})();
 
-  // /kill
-  if(lower.startsWith("/kill")){
-    if(!mc.alive){
-      mcLog("You are already dead.","bad"); return;
+/* =========================
+   MINECRAFT MINI
+========================= */
+const mc = {
+  w: 19, h: 11, tile: 40,
+  grid: [],
+  player: {x:2,y:2,hp:100,max:100,alive:true,wood:0,stone:0},
+  boss: null,
+  bossKills: 0
+};
+
+const cv = $("mcCanvas");
+const ctx = cv.getContext("2d");
+
+function mcNewWorld(){
+  mc.grid = [];
+  for(let y=0;y<mc.h;y++){
+    const row=[];
+    for(let x=0;x<mc.w;x++){
+      let v="grass";
+      if(y>6) v="stone";
+      if(y===6) v="dirt";
+      if(Math.random()<0.08 && y<6) v="tree";
+      if(Math.random()<0.03 && y>6) v="ore";
+      row.push(v);
     }
-    mc.alive=false;
-    mc.hp=0;
-    mc.power="None";
-    mc.effects=[];
-    mcSave(); mcRender();
-    mcLog("You died. (player killed)","bad");
-    return;
+    mc.grid.push(row);
+  }
+  mc.player.x=2; mc.player.y=2;
+  mc.player.hp=mc.player.max;
+  mc.player.alive=true;
+  mc.player.wood=0; mc.player.stone=0;
+  mc.boss=null;
+  mcDraw();
+  mcUpdateStats();
+  $("mcOut").textContent="New world created.";
+}
+
+function mcColor(t){
+  if(t==="grass") return "#2ecc71";
+  if(t==="dirt") return "#8b5a2b";
+  if(t==="stone") return "#9ca3af";
+  if(t==="tree") return "#166534";
+  if(t==="ore") return "#fbbf24";
+  if(t==="air") return "rgba(0,0,0,0)";
+  return "#111827";
+}
+
+function mcDraw(){
+  ctx.clearRect(0,0,cv.width,cv.height);
+  const tw = Math.floor(cv.width / mc.tile);
+  const th = Math.floor(cv.height / mc.tile);
+
+  for(let y=0;y<mc.h;y++){
+    for(let x=0;x<mc.w;x++){
+      const t = mc.grid[y][x];
+      ctx.fillStyle = mcColor(t);
+      ctx.fillRect(x*mc.tile, y*mc.tile, mc.tile-1, mc.tile-1);
+    }
   }
 
-  // /revive
-  if(lower.startsWith("/revive")){
-    mc.alive=true;
-    mc.hp=20;
-    mc.power="Normal";
-    mcSave(); mcRender();
-    mcLog("You are revived! ❤️","ok");
-    return;
+  // boss
+  if(mc.boss && mc.boss.alive){
+    ctx.fillStyle="#ef4444";
+    ctx.fillRect(mc.boss.x*mc.tile+6, mc.boss.y*mc.tile+6, mc.tile-12, mc.tile-12);
   }
 
-  // /destroyworld
-  if(lower.startsWith("/destroyworld")){
-    mc.world="Destroyed (player safe)";
-    mcSave(); mcRender();
-    mcLog("WORLD DESTROYED 💥 (except player)","bad");
-    return;
+  // player
+  ctx.fillStyle = mc.player.alive ? "#60a5fa" : "#6b7280";
+  ctx.fillRect(mc.player.x*mc.tile+8, mc.player.y*mc.tile+8, mc.tile-16, mc.tile-16);
+
+  // ui
+  ctx.fillStyle="rgba(0,0,0,0.35)";
+  ctx.fillRect(10,10,240,40);
+  ctx.fillStyle="#fff";
+  ctx.font="14px Arial";
+  ctx.fillText("HP: "+mc.player.hp+"/"+mc.player.max+" | Boss Kills: "+mc.bossKills, 18, 36);
+}
+
+function mcUpdateStats(){
+  $("mcStats").innerHTML =
+    "HP: <b>"+mc.player.hp+"</b> / "+mc.player.max+
+    "<br>Wood: <b>"+mc.player.wood+"</b>"+
+    "<br>Stone: <b>"+mc.player.stone+"</b>"+
+    "<br>Alive: <b>"+(mc.player.alive?"Yes":"No")+"</b>";
+}
+
+function mcMove(dx,dy){
+  if(!mc.player.alive) return;
+  const nx = mc.player.x+dx;
+  const ny = mc.player.y+dy;
+  if(nx<0||ny<0||nx>=mc.w||ny>=mc.h) return;
+
+  // can't walk into stone deep
+  const t = mc.grid[ny][nx];
+  if(t==="stone") return;
+
+  mc.player.x=nx;
+  mc.player.y=ny;
+
+  // boss damage if close
+  if(mc.boss && mc.boss.alive){
+    const dist = Math.abs(mc.boss.x-mc.player.x)+Math.abs(mc.boss.y-mc.player.y);
+    if(dist<=1){
+      mc.player.hp -= mc.boss.dmg;
+      if(mc.player.hp<=0){
+        mc.player.hp=0;
+        mc.player.alive=false;
+        $("mcOut").textContent="You died. Use /revive";
+      }
+    }
   }
 
-  // /boss
-  if(lower.startsWith("/boss")){
-    if(!mc.alive){ mcLog("You are dead. Use /revive first.","bad"); return; }
-    mcLog("A boss spawned: WITHER KING 👑","warn");
-    setTimeout(()=>{
-      if(!mc.alive) return;
-      mc.kills += 1;
-      mcSave(); mcRender();
-      mcLog("Boss defeated! +1 kill 🔥","ok");
-    }, 900);
-    return;
+  mcDraw();
+  mcUpdateStats();
+}
+
+document.addEventListener("keydown",(e)=>{
+  if(!$("page-minecraft").classList.contains("active")) return;
+
+  if(e.key==="ArrowUp" || e.key==="w") mcMove(0,-1);
+  if(e.key==="ArrowDown" || e.key==="s") mcMove(0,1);
+  if(e.key==="ArrowLeft" || e.key==="a") mcMove(-1,0);
+  if(e.key==="ArrowRight" || e.key==="d") mcMove(1,0);
+});
+
+cv.addEventListener("click",(e)=>{
+  if(!$("page-minecraft").classList.contains("active")) return;
+  const rect = cv.getBoundingClientRect();
+  const x = Math.floor((e.clientX-rect.left) / (rect.width / cv.width) / mc.tile);
+  const y = Math.floor((e.clientY-rect.top) / (rect.height / cv.height) / mc.tile);
+  if(x<0||y<0||x>=mc.w||y>=mc.h) return;
+
+  const t = mc.grid[y][x];
+  if(t==="tree"){
+    mc.grid[y][x]="air";
+    mc.player.wood++;
+    $("mcOut").textContent="Mined wood +1";
+  }else if(t==="dirt"){
+    mc.grid[y][x]="air";
+    mc.player.stone+=0;
+    $("mcOut").textContent="Mined dirt.";
+  }else if(t==="ore"){
+    mc.grid[y][x]="air";
+    mc.player.stone+=3;
+    $("mcOut").textContent="Mined ore +3 stone";
+  }else if(t==="grass"){
+    // build tree if have wood
+    if(mc.player.wood>0){
+      mc.player.wood--;
+      mc.grid[y][x]="tree";
+      $("mcOut").textContent="Built tree (-1 wood)";
+    }else{
+      $("mcOut").textContent="Need wood to build.";
+    }
   }
 
-  // /infinity
-  if(lower.startsWith("/infinity")){
-    if(!mc.alive){ mcLog("You are dead. Use /revive first.","bad"); return; }
-    mc.power="Infinity";
-    mc.hp=999999;
-    mc.effects=["strength","resistance","regen","speed","jump","night_vision","invisibility"];
-    mc.inventory=["Netherite Sword (OP)","Netherite Armor (OP)","Herobrine Wolf"];
-    mcSave(); mcRender();
-    mcLog("INFINITY MODE ENABLED ♾️","ok");
-    mcLog("Effects: "+mc.effects.join(", "),"ok");
-    mcLog("Inventory: "+mc.inventory.join(", "),"ok");
+  mcDraw();
+  mcUpdateStats();
+});
+
+function mcSpawnBoss(){
+  mc.boss = {
+    x: Math.min(mc.w-2, mc.player.x+4),
+    y: mc.player.y,
+    hp: 60 + Math.floor(Math.random()*60),
+    dmg: 8 + Math.floor(Math.random()*6),
+    alive:true
+  };
+  mcUpdateBossUI();
+  mcDraw();
+  $("mcOut").textContent="Boss spawned!";
+}
+
+function mcUpdateBossUI(){
+  if(!mc.boss || !mc.boss.alive){
+    $("mcBoss").innerHTML = "Boss: <b>None</b>";
     return;
   }
+  $("mcBoss").innerHTML =
+    "Boss HP: <b>"+mc.boss.hp+"</b> • DMG: <b>"+mc.boss.dmg+"</b>";
+}
 
-  // /god or /execute-herobrine-god
-  if(lower==="/god" || lower==="/execute-herobrine-god"){
-    if(!mc.alive){ mcLog("You are dead. Use /revive first.","bad"); return; }
-    mc.power="HEROBRINE GOD";
-    mc.hp=999999;
-    mc.effects=[
-      "strength 255","resistance 255","regeneration 10","fire_resistance",
-      "invisibility","night_vision","speed 5","jump_boost 5",
-      "haste 10","absorption 10","slow_falling","water_breathing",
-      "saturation","health_boost 10","conduit_power"
-    ];
-    mc.inventory=[
-      "Netherite Sword (Sharpness 1000, Fire 1000, KB 1000, Unbreaking 1000)",
-      "Netherite Helmet (Protection 1000)",
-      "Netherite Chestplate (Protection 1000)",
-      "Netherite Leggings (Protection 1000)",
-      "Netherite Boots (Protection 1000
+function mcAttackBoss(){
+  if(!mc.player.alive){ $("mcOut").textContent="You are dead."; return; }
+  if(!mc.boss || !mc.boss.alive){ $("mcOut").textContent="No boss."; return; }
+
+  const dist = Math.abs(mc.boss.x-mc.player.x)+Math.abs(mc.boss.y-mc.player.y);
+  if(dist>2){ $("mcOut").textContent="Go closer to boss."; return; }
+
+  const dmg = 10 + Math.floor(Math.random()*12) + Math.floor(mc.player.stone/2);
+  mc.boss.hp -= dmg;
+
+  if(mc.boss.hp<=0){
+    mc.boss.hp=0;
+    mc.boss.alive=false;
+    mc.bossKills++;
+    mc.player.stone += 5;
+    mc.player.wood += 2;
+    $("mcOut").textContent="Boss defeated! Respawn infinite.";
+  }else{
+    $("mcOut").textContent="You hit boss for "+dmg;
+  }
+
+  mcUpdateBossUI();
+  mcDraw();
+  mcUpdateStats();
+}
+
+function mcRunCommand(){
+  const raw = $("mcCmd").value.trim();
+  if(!raw) return;
+  $("mcCmd").value="";
+
+  const cmd = raw.toLowerCase();
+
+  if(cmd==="/kill"){
+    mc.player.hp=0;
+    mc.player.alive=false;
+    $("mcOut").textContent="Killed player. Use /revive";
+  }
+  else if(cmd==="/revive"){
+    mc.player.alive=true;
+    mc.player.hp=mc.player.max;
+    $("mcOut").textContent="Player revived.";
+  }
+  else if(cmd==="/destroyworld"){
+    // destroy all blocks except keep player tile
+    for(let y=0;y<mc.h;y++){
+      for(let x=0;x<mc.w;x++){
+        if(x===mc.player.x && y===mc.player.y) continue;
+        mc.grid[y][x]="air";
+      }
+    }
+    $("mcOut").textContent="World destroyed (except player).";
+  }
+  else{
+    $("mcOut").textContent="Unknown command.";
+  }
+
+  mcDraw();
+  mcUpdateStats();
+  mcUpdateBossUI();
+}
+
+$("mcNewWorld").addEventListener("click", mcNewWorld);
+$("mcSpawnBoss").addEventListener("click", mcSpawnBoss);
+$("mcAttackBoss").addEventListener("click", mcAttackBoss);
+$("mcRunCmd").addEventListener("click", mcRunCommand);
+$("mcCmd").addEventListener("keydown",(e)=>{ if(e.key==="Enter") mcRunCommand(); });
+$("mcHeal").addEventListener("click", ()=>{
+  if(!mc.player.alive){ $("mcOut").textContent="Dead. Use /revive"; return; }
+  mc.player.hp = Math.min(mc.player.max, mc.player.hp+35);
+  $("mcOut").textContent="Healed +35";
+  mcDraw(); mcUpdateStats();
+});
+
+mcNewWorld();
+mcUpdateBossUI();
+
+/* =========================
+   INIT
+========================= */
+showPage("studybuddy");
+</script>
+</body>
+</html>
