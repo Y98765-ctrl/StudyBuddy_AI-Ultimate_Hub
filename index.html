@@ -1,1161 +1,883 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<title>StudyBuddy AI - Ultimate Hub</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>StudyBuddy AI - Ultimate Hub (Super ChatGPT + StudyBuddy)</title>
 <style>
 :root{
-  --bg:#0b1225;
-  --card:#111a33;
-  --card2:#0f1830;
-  --text:#ffffff;
-  --muted:#aab3c7;
-  --accent:#22c55e;
-  --accent2:#2563eb;
-  --danger:#ef4444;
-  --line:rgba(255,255,255,0.08);
-}
-.light{
-  --bg:#f3f4f6;
-  --card:#ffffff;
-  --card2:#f8fafc;
-  --text:#0b1225;
-  --muted:#5b6477;
-  --accent:#16a34a;
-  --accent2:#2563eb;
-  --danger:#dc2626;
-  --line:rgba(0,0,0,0.08);
+  --bg:#070b12;--card:#0d1424;--card2:#0b1020;--txt:#e9f1ff;--mut:#9fb2d9;
+  --pri:#7c5cff;--pri2:#00e5ff;--good:#1cff8b;--bad:#ff3b6a;--warn:#ffd24d;
+  --b:rgba(255,255,255,.08);--b2:rgba(255,255,255,.14);
+  --shadow:0 20px 60px rgba(0,0,0,.45);
+  --r:18px;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+  --ui: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 *{box-sizing:border-box}
+html,body{height:100%}
 body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,Helvetica,sans-serif;
-  display:flex;
-  justify-content:center;
+  margin:0;font-family:var(--ui);color:var(--txt);
+  background:
+    radial-gradient(900px 600px at 20% 10%, rgba(124,92,255,.25), transparent 55%),
+    radial-gradient(900px 600px at 85% 15%, rgba(0,229,255,.16), transparent 55%),
+    radial-gradient(900px 600px at 60% 90%, rgba(28,255,139,.10), transparent 55%),
+    linear-gradient(180deg, #05070d 0%, #070b12 100%);
+  overflow-x:hidden;
 }
-.app{
-  width:100%;
-  max-width:1100px;
-  min-height:100vh;
-  display:flex;
-  gap:12px;
-  padding:12px;
-}
-.sidebar{
-  width:280px;
-  min-width:260px;
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:12px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+a{color:inherit}
+button,input,select,textarea{font:inherit}
+.wrap{max-width:1250px;margin:0 auto;padding:18px}
+.topbar{
+  display:flex;gap:14px;align-items:center;justify-content:space-between;
+  padding:14px 16px;border:1px solid var(--b);background:rgba(13,20,36,.55);
+  backdrop-filter: blur(12px);
+  border-radius:var(--r);box-shadow:var(--shadow);
 }
 .brand{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  padding:8px 10px;
-  border-radius:12px;
-  background:linear-gradient(135deg, rgba(34,197,94,0.15), rgba(37,99,235,0.12));
-  border:1px solid var(--line);
+  display:flex;align-items:center;gap:12px;min-width:260px;
 }
-.brand b{font-size:14px}
-.brand small{color:var(--muted);display:block;margin-top:2px;font-size:11px}
-.iconBtn{
-  border:none;
-  background:transparent;
-  color:var(--text);
-  cursor:pointer;
-  font-size:18px;
+.logo{
+  width:44px;height:44px;border-radius:14px;
+  background: linear-gradient(135deg, var(--pri), var(--pri2));
+  box-shadow:0 10px 30px rgba(124,92,255,.25);
+  display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.15);
 }
+.logo svg{filter:drop-shadow(0 6px 10px rgba(0,0,0,.3))}
+.brand h1{margin:0;font-size:16px;line-height:1.1}
+.brand .sub{margin:0;color:var(--mut);font-size:12px}
 .nav{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
+  display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;
 }
 .nav button{
-  width:100%;
-  padding:10px 12px;
-  border:none;
-  border-radius:12px;
-  cursor:pointer;
-  background:var(--card2);
-  color:var(--text);
-  border:1px solid var(--line);
-  text-align:left;
-  font-size:14px;
+  border:1px solid var(--b);
+  background:rgba(255,255,255,.04);
+  color:var(--txt);
+  padding:10px 12px;border-radius:14px;
+  cursor:pointer;transition:.15s;
 }
+.nav button:hover{transform:translateY(-1px);border-color:var(--b2)}
 .nav button.active{
-  outline:2px solid rgba(34,197,94,0.35);
-  border-color:rgba(34,197,94,0.35);
+  background:linear-gradient(135deg, rgba(124,92,255,.25), rgba(0,229,255,.14));
+  border-color:rgba(124,92,255,.35);
 }
-.sideTools{
-  margin-top:auto;
-  display:flex;
-  gap:8px;
+.grid{
+  display:grid;grid-template-columns: 1.25fr .85fr;
+  gap:14px;margin-top:14px;
 }
-.sideTools button{
-  flex:1;
-  padding:10px;
-  border:none;
-  border-radius:12px;
-  cursor:pointer;
-  background:var(--card2);
-  color:var(--text);
-  border:1px solid var(--line);
-}
-.main{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-.topbar{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:12px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-}
-.topbar .title{
-  display:flex;
-  flex-direction:column;
-  gap:2px;
-}
-.topbar .title b{font-size:15px}
-.topbar .title span{font-size:12px;color:var(--muted)}
-.pill{
-  padding:8px 10px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background:var(--card2);
-  color:var(--muted);
-  font-size:12px;
-}
-.page{
-  display:none;
-  flex:1;
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:16px;
-  overflow:hidden;
-}
-.page.active{display:flex}
-.pageInner{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  height:100%;
-}
-.sectionHead{
-  padding:12px;
-  border-bottom:1px solid var(--line);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-}
-.sectionHead b{font-size:14px}
-.sectionHead .right{
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-.sectionHead button{
-  padding:8px 10px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  background:var(--card2);
-  color:var(--text);
-  border:1px solid var(--line);
-}
-.content{
-  flex:1;
-  overflow:auto;
-  padding:12px;
-}
+@media (max-width:980px){.grid{grid-template-columns:1fr}}
 .card{
-  background:var(--card2);
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:12px;
-  margin-bottom:10px;
+  border:1px solid var(--b);
+  background:rgba(13,20,36,.55);
+  backdrop-filter: blur(12px);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
 }
-.grid2{
-  display:grid;
-  grid-template-columns:repeat(2, minmax(0,1fr));
-  gap:10px;
+.card .hd{
+  padding:14px 16px;border-bottom:1px solid var(--b);
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
 }
-@media(max-width:900px){
-  .app{flex-direction:column}
-  .sidebar{width:100%;min-width:unset}
+.card .hd .title{font-weight:700}
+.badge{
+  font-size:12px;color:#cfe3ff;background:rgba(255,255,255,.06);
+  border:1px solid var(--b);padding:6px 10px;border-radius:999px;
 }
-.chatWrap{
-  display:flex;
-  flex-direction:column;
-  height:100%;
+.card .bd{padding:14px 16px}
+.small{color:var(--mut);font-size:13px}
+hr.sep{border:0;border-top:1px solid var(--b);margin:12px 0}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.pill{
+  padding:8px 10px;border-radius:999px;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--b);
+  font-size:12px;color:#d7e6ff;
 }
-.chatLog{
-  flex:1;
-  overflow:auto;
-  padding:12px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
+.kbd{font-family:var(--mono);font-size:12px;background:rgba(0,0,0,.25);border:1px solid var(--b);padding:2px 6px;border-radius:8px}
+textarea{
+  width:100%;min-height:110px;resize:vertical;
+  background:rgba(0,0,0,.25);color:var(--txt);
+  border:1px solid var(--b);border-radius:16px;
+  padding:12px 12px;outline:none;
+}
+input[type="text"], input[type="password"], select{
+  width:100%;
+  background:rgba(0,0,0,.25);color:var(--txt);
+  border:1px solid var(--b);border-radius:14px;
+  padding:10px 12px;outline:none;
+}
+.btn{
+  border:1px solid var(--b);
+  background:rgba(255,255,255,.05);
+  color:var(--txt);
+  padding:10px 12px;border-radius:14px;
+  cursor:pointer;transition:.15s;
+}
+.btn:hover{transform:translateY(-1px);border-color:var(--b2)}
+.btn.primary{
+  background:linear-gradient(135deg, rgba(124,92,255,.32), rgba(0,229,255,.18));
+  border-color:rgba(124,92,255,.35);
+}
+.btn.danger{
+  background:linear-gradient(135deg, rgba(255,59,106,.18), rgba(255,210,77,.08));
+  border-color:rgba(255,59,106,.35);
+}
+.btn.good{
+  background:linear-gradient(135deg, rgba(28,255,139,.16), rgba(0,229,255,.10));
+  border-color:rgba(28,255,139,.30);
+}
+.chat{
+  height:520px;overflow:auto;padding:14px 14px 10px;
+  display:flex;flex-direction:column;gap:10px;
 }
 .msg{
-  max-width:80%;
-  padding:10px 12px;
-  border-radius:14px;
-  white-space:pre-wrap;
+  max-width:92%;
+  padding:12px 12px;border-radius:16px;
+  border:1px solid var(--b);
+  background:rgba(0,0,0,.25);
   line-height:1.35;
-  border:1px solid var(--line);
+  white-space:pre-wrap;
 }
-.msg.user{align-self:flex-end;background:rgba(37,99,235,0.22)}
-.msg.bot{align-self:flex-start;background:rgba(31,41,55,0.35)}
-.light .msg.bot{background:rgba(0,0,0,0.06)}
-.chatInput{
-  display:flex;
-  gap:8px;
-  padding:12px;
-  border-top:1px solid var(--line);
+.msg.user{align-self:flex-end;border-color:rgba(0,229,255,.25);background:rgba(0,229,255,.06)}
+.msg.ai{align-self:flex-start;border-color:rgba(124,92,255,.25);background:rgba(124,92,255,.06)}
+.msg.sys{align-self:center;max-width:100%;opacity:.95;background:rgba(255,255,255,.04)}
+.msg .meta{font-size:11px;color:var(--mut);margin-bottom:6px}
+.chatbar{
+  display:flex;gap:10px;padding:12px 14px;border-top:1px solid var(--b);
 }
-.chatInput input{
-  flex:1;
-  padding:12px;
-  border-radius:12px;
-  border:1px solid var(--line);
-  outline:none;
-  background:var(--card2);
-  color:var(--text);
-}
-.chatInput button{
-  padding:12px 14px;
-  border:none;
-  border-radius:12px;
-  cursor:pointer;
-  background:var(--accent);
-  color:#07120a;
-  font-weight:bold;
-}
-.kbd{
-  font-family:monospace;
+.chatbar textarea{min-height:52px;max-height:180px}
+.chatbar .side{display:flex;flex-direction:column;gap:8px;min-width:170px}
+@media (max-width:560px){.chatbar{flex-direction:column}.chatbar .side{min-width:unset;flex-direction:row;flex-wrap:wrap}}
+.hidden{display:none !important}
+.codebox{
+  font-family:var(--mono);
   font-size:12px;
-  color:var(--muted);
-}
-.gameList{
-  display:grid;
-  grid-template-columns:repeat(2, minmax(0,1fr));
-  gap:10px;
-}
-.gameBtn{
+  background:rgba(0,0,0,.35);
+  border:1px solid var(--b);
+  border-radius:16px;
   padding:12px;
-  border-radius:14px;
-  border:1px solid var(--line);
-  background:var(--card2);
-  color:var(--text);
-  cursor:pointer;
-  text-align:left;
+  overflow:auto;
+  max-height:260px;
+  white-space:pre;
 }
-.gameBtn:hover{outline:2px solid rgba(37,99,235,0.22)}
-.badge{
-  display:inline-block;
-  padding:4px 8px;
-  border-radius:999px;
-  background:rgba(34,197,94,0.18);
-  border:1px solid rgba(34,197,94,0.25);
-  color:var(--text);
-  font-size:11px;
+.table{
+  width:100%;
+  border-collapse:collapse;
+  overflow:hidden;
+  border-radius:16px;
+  border:1px solid var(--b);
 }
-hr.sep{border:none;border-top:1px solid var(--line);margin:10px 0}
-.small{color:var(--muted);font-size:12px}
-.danger{background:var(--danger)!important;color:#fff!important}
+.table th,.table td{
+  padding:10px 10px;border-bottom:1px solid var(--b);
+  text-align:left;font-size:13px;
+}
+.table th{color:#d9e7ff;background:rgba(255,255,255,.04)}
+.table tr:last-child td{border-bottom:0}
+.footer{
+  margin-top:14px;
+  color:var(--mut);
+  font-size:12px;
+  text-align:center;
+  opacity:.9;
+}
+.note{
+  padding:12px 12px;border-radius:16px;
+  border:1px solid var(--b);
+  background:rgba(255,255,255,.04);
+}
+.glow{
+  box-shadow:0 0 0 1px rgba(124,92,255,.18), 0 0 40px rgba(124,92,255,.10);
+}
 </style>
 </head>
 
 <body>
-<div class="app">
-
-  <aside class="sidebar">
+<div class="wrap">
+  <div class="topbar">
     <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2l9 5v10l-9 5-9-5V7l9-5z" stroke="white" stroke-width="1.5"/>
+          <path d="M7.5 10.5l4.5 2.5 4.5-2.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M12 13v6.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
       <div>
-        <b>StudyBuddy AI</b>
-        <small>Ultimate Hub • Offline</small>
+        <h1>StudyBuddy AI — Ultimate Hub</h1>
+        <p class="sub">Super ChatGPT Clone + StudyBuddy AI (single-file)</p>
       </div>
-      <button class="iconBtn" id="themeBtn" type="button" title="Theme">🌗</button>
     </div>
 
-    <div class="nav">
-      <button type="button" class="active" data-page="studybuddy">🤖 StudyBuddy AI</button>
-      <button type="button" data-page="gameshub">🎮 Infinity Games Hub</button>
-      <button type="button" data-page="minecraft">⛏️ Pro Minecraft (Mini)</button>
-      <button type="button" data-page="chatterly">💬 Chatterly (Offline)</button>
-      <button type="button" data-page="supergpt">🧠 Super ChatGPT Clone</button>
-      <button type="button" data-page="settings">⚙️ Settings</button>
+    <div class="nav" id="nav">
+      <button class="active" data-page="home">Home</button>
+      <button data-page="chat">Chat</button>
+      <button data-page="tools">Tools</button>
+      <button data-page="study">Study</button>
+      <button data-page="games">Games</button>
+      <button data-page="settings">Settings</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT MAIN -->
+    <div class="card glow">
+      <div class="hd">
+        <div class="title" id="pageTitle">Home</div>
+        <div class="badge" id="statusBadge">Offline Mode • Local AI</div>
+      </div>
+
+      <div class="bd">
+        <!-- HOME -->
+        <div class="page" id="page-home">
+          <div class="note">
+            <b>Everything is working in one file.</b><br>
+            Buttons work because all JS is inside this HTML.<br><br>
+            <span class="small">Tip: Open in GitHub Pages OR double click locally.</span>
+          </div>
+          <hr class="sep">
+          <div class="row">
+            <span class="pill">✔ No 404 errors</span>
+            <span class="pill">✔ showPage() fixed</span>
+            <span class="pill">✔ sbSend() fixed</span>
+            <span class="pill">✔ Super ChatGPT UI</span>
+            <span class="pill">✔ StudyBuddy Modes</span>
+          </div>
+          <hr class="sep">
+          <div class="small">
+            <b>Quick Start:</b><br>
+            1) Go to <span class="kbd">Chat</span><br>
+            2) Select mode (StudyBuddy / SuperChatGPT)<br>
+            3) Type and press <span class="kbd">Enter</span>
+          </div>
+        </div>
+
+        <!-- CHAT -->
+        <div class="page hidden" id="page-chat">
+          <div class="row" style="align-items:center;justify-content:space-between">
+            <div class="small">
+              <b>Mode:</b>
+              <span class="pill" id="modePill">StudyBuddy</span>
+              <span class="pill">Memory: Local</span>
+              <span class="pill">History: Saved</span>
+            </div>
+            <div class="row">
+              <button class="btn" id="btnExport">Export</button>
+              <button class="btn danger" id="btnReset">Reset</button>
+            </div>
+          </div>
+
+          <hr class="sep">
+
+          <div class="chat" id="chatBox"></div>
+
+          <div class="chatbar">
+            <textarea id="chatInput" placeholder="Type message... (Enter = send, Shift+Enter = new line)"></textarea>
+            <div class="side">
+              <button class="btn primary" id="btnSend">Send</button>
+              <button class="btn" id="btnMode">Switch Mode</button>
+              <button class="btn good" id="btnSuggest">Suggest Prompt</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOOLS -->
+        <div class="page hidden" id="page-tools">
+          <div class="row">
+            <button class="btn primary" id="btnSummarize">Summarize Text</button>
+            <button class="btn" id="btnRewrite">Rewrite</button>
+            <button class="btn" id="btnExplain">Explain</button>
+            <button class="btn" id="btnQuiz">Make Quiz</button>
+          </div>
+          <hr class="sep">
+          <textarea id="toolInput" placeholder="Paste your text here..."></textarea>
+          <hr class="sep">
+          <div class="codebox" id="toolOutput">Output will appear here...</div>
+        </div>
+
+        <!-- STUDY -->
+        <div class="page hidden" id="page-study">
+          <div class="note">
+            <b>StudyBuddy AI</b> has special modes:
+            <ul class="small">
+              <li>Teacher Mode</li>
+              <li>Exam Mode</li>
+              <li>Step-by-step Math</li>
+              <li>Code Helper</li>
+              <li>Language Tutor</li>
+            </ul>
+          </div>
+          <hr class="sep">
+          <div class="row">
+            <button class="btn primary" data-setmode="Teacher">Teacher Mode</button>
+            <button class="btn" data-setmode="Exam">Exam Mode</button>
+            <button class="btn" data-setmode="Math">Math Mode</button>
+            <button class="btn" data-setmode="Coding">Coding Mode</button>
+            <button class="btn" data-setmode="Language">Language Mode</button>
+          </div>
+          <hr class="sep">
+          <div class="small">These modes affect how the AI responds in Chat.</div>
+        </div>
+
+        <!-- GAMES -->
+        <div class="page hidden" id="page-games">
+          <div class="note">
+            <b>Games Hub</b> (this is where you can add PRO MINECRAFT GAME later).
+            <br><span class="small">For now: simple mini-games included.</span>
+          </div>
+          <hr class="sep">
+          <div class="row">
+            <button class="btn primary" id="btnGameDice">Dice</button>
+            <button class="btn" id="btnGameRPS">Rock Paper Scissors</button>
+            <button class="btn" id="btnGameGuess">Number Guess</button>
+          </div>
+          <hr class="sep">
+          <div class="codebox" id="gameBox">Click a game button...</div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div class="page hidden" id="page-settings">
+          <div class="note">
+            <b>Settings</b><br>
+            Everything is local. Works on GitHub Pages.
+          </div>
+          <hr class="sep">
+          <div class="row">
+            <div style="flex:1;min-width:240px">
+              <label class="small"><b>Theme</b></label>
+              <select id="themeSel">
+                <option value="neo">Neo Dark</option>
+                <option value="midnight">Midnight</option>
+                <option value="matrix">Matrix Green</option>
+              </select>
+            </div>
+            <div style="flex:1;min-width:240px">
+              <label class="small"><b>Chat Name</b></label>
+              <input id="userName" type="text" placeholder="Your name..." />
+            </div>
+          </div>
+          <hr class="sep">
+          <div class="row">
+            <button class="btn primary" id="btnSaveSettings">Save</button>
+            <button class="btn" id="btnClearStorage">Clear All Storage</button>
+          </div>
+          <hr class="sep">
+          <div class="small">
+            Saved in: <span class="kbd">localStorage</span>
+          </div>
+        </div>
+
+      </div>
     </div>
 
-    <div class="sideTools">
-      <button type="button" id="exportBtn">⬇ Export</button>
-      <button type="button" id="resetBtn" class="danger">Reset</button>
+    <!-- RIGHT PANEL -->
+    <div class="card">
+      <div class="hd">
+        <div class="title">Super ChatGPT + StudyBuddy</div>
+        <div class="badge" id="rightBadge">All-in-One</div>
+      </div>
+      <div class="bd">
+        <div class="small">
+          <b>Built-in Commands (Chat):</b>
+        </div>
+        <table class="table" style="margin-top:10px">
+          <tr><th>Command</th><th>What it does</th></tr>
+          <tr><td><span class="kbd">/help</span></td><td>Shows commands</td></tr>
+          <tr><td><span class="kbd">/mode</span></td><td>Switch StudyBuddy/SuperChatGPT</td></tr>
+          <tr><td><span class="kbd">/teacher</span></td><td>Teacher mode</td></tr>
+          <tr><td><span class="kbd">/exam</span></td><td>Exam mode</td></tr>
+          <tr><td><span class="kbd">/math</span></td><td>Math mode</td></tr>
+          <tr><td><span class="kbd">/coding</span></td><td>Coding mode</td></tr>
+          <tr><td><span class="kbd">/reset</span></td><td>Clear chat</td></tr>
+          <tr><td><span class="kbd">/export</span></td><td>Download chat json</td></tr>
+        </table>
+
+        <hr class="sep">
+
+        <div class="small"><b>Why your old one broke:</b></div>
+        <div class="small" style="margin-top:8px">
+          It said: <span class="kbd">showPage is not defined</span> and <span class="kbd">sbSend is not defined</span>.<br>
+          That happens when JavaScript file is missing (404).<br><br>
+          <b>This file has NO external JS</b> so it never breaks.
+        </div>
+      </div>
     </div>
-  </aside>
+  </div>
 
-  <main class="main">
-    <div class="topbar">
-      <div class="title">
-        <b id="topTitle">StudyBuddy AI</b>
-        <span id="topSub">All-in-one hub (single file). No service worker.</span>
-      </div>
-      <div class="pill" id="statusPill">Ready</div>
-    </div>
-
-    <!-- ===================== StudyBuddy AI ===================== -->
-    <section class="page active" id="page-studybuddy">
-      <div class="pageInner chatWrap">
-        <div class="sectionHead">
-          <b>🤖 StudyBuddy AI</b>
-          <div class="right">
-            <span class="kbd">Modes:</span>
-            <button type="button" data-mode="chat">💬 Chat</button>
-            <button type="button" data-mode="math">➗ Math</button>
-            <button type="button" data-mode="quiz">🧠 Quiz</button>
-            <button type="button" data-mode="islam">🕌 Islam</button>
-          </div>
-        </div>
-
-        <div class="chatLog" id="sbChat"></div>
-
-        <div class="chatInput">
-          <input id="sbInput" placeholder="Type here..." />
-          <button type="button" id="sbSendBtn">▶</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===================== Games Hub ===================== -->
-    <section class="page" id="page-gameshub">
-      <div class="pageInner">
-        <div class="sectionHead">
-          <b>🎮 Infinity Games Hub</b>
-          <div class="right">
-            <input id="gameSearch" placeholder="Search games..." style="padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--text);outline:none" />
-            <button type="button" id="reloadGames">↻ Reload</button>
-          </div>
-        </div>
-        <div class="content">
-          <div class="card">
-            <b>Unlimited Game List</b>
-            <div class="small">Click any game. (Demo mode)</div>
-          </div>
-          <div class="gameList" id="gameList"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===================== Minecraft Mini ===================== -->
-    <section class="page" id="page-minecraft">
-      <div class="pageInner">
-        <div class="sectionHead">
-          <b>⛏️ Pro Minecraft (Mini)</b>
-          <div class="right">
-            <span class="badge" id="mcBadge">Single Player</span>
-            <button type="button" id="mcNewWorld">New World</button>
-          </div>
-        </div>
-
-        <div class="content">
-          <div class="card">
-            <b>World</b>
-            <div class="small">
-              Controls: WASD / Arrow keys to move • Click tiles to mine/build.
-            </div>
-            <hr class="sep">
-            <canvas id="mcCanvas" width="760" height="420" style="width:100%;max-width:100%;border-radius:14px;border:1px solid var(--line);background:#081028"></canvas>
-          </div>
-
-          <div class="grid2">
-            <div class="card">
-              <b>Player</b>
-              <div id="mcStats" class="small"></div>
-              <hr class="sep">
-              <button type="button" id="mcHeal" style="width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--accent);cursor:pointer;font-weight:bold">Heal</button>
-            </div>
-            <div class="card">
-              <b>Commands</b>
-              <div class="small">Type commands like:</div>
-              <div class="small"><span class="kbd">/kill</span> • <span class="kbd">/revive</span> • <span class="kbd">/destroyworld</span></div>
-              <hr class="sep">
-              <input id="mcCmd" placeholder="/command" style="width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--text);outline:none">
-              <button type="button" id="mcRunCmd" style="margin-top:8px;width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--accent2);color:#fff;cursor:pointer">Run</button>
-              <div id="mcOut" class="small" style="margin-top:8px"></div>
-            </div>
-          </div>
-
-          <div class="card">
-            <b>Boss System (Infinite)</b>
-            <div class="small">
-              Bosses respawn forever. Defeat count saves in this session.
-            </div>
-            <hr class="sep">
-            <button type="button" id="mcSpawnBoss" style="padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--text);cursor:pointer">Spawn Boss</button>
-            <button type="button" id="mcAttackBoss" style="padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--accent);cursor:pointer;font-weight:bold">Attack</button>
-            <div id="mcBoss" class="small" style="margin-top:8px"></div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ===================== Chatterly Offline ===================== -->
-    <section class="page" id="page-chatterly">
-      <div class="pageInner">
-        <div class="sectionHead">
-          <b>💬 Chatterly (Offline)</b>
-          <div class="right">
-            <span class="badge">No Firebase</span>
-            <button type="button" id="chLogout">Logout</button>
-          </div>
-        </div>
-
-        <div class="content">
-          <div class="card" id="chLoginCard">
-            <b>Login</b>
-            <div class="small">Offline demo (local accounts stored in browser).</div>
-            <hr class="sep">
-            <input id="chEmail" placeholder="Email" style="width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--text);outline:none;margin-bottom:8px">
-            <input id="chPass" placeholder="Password" type="password" style="width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--text);outline:none;margin-bottom:8px">
-            <div style="display:flex;gap:8px">
-              <button type="button" id="chLogin" style="flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--accent2);color:#fff;cursor:pointer">Login</button>
-              <button type="button" id="chSignup" style="flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--text);cursor:pointer">Sign Up</button>
-            </div>
-            <div id="chMsg" class="small" style="margin-top:10px"></div>
-          </div>
-
-          <div class="card" id="chChatCard" style="display:none">
-            <b>Chat Room</b>
-            <div class="small">Local multi-user on same browser.</div>
-            <hr class="sep">
-            <div id="chMessages" style="height:260px;overflow:auto;border-radius:12px;border:1px solid var(--line);padding:10px;background:rgba(0,0,0,0.12)"></div>
-            <div style="display:flex;gap:8px;margin-top:10px">
-              <input id="chInput" placeholder="Type message..." style="flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--text);outline:none">
-              <button type="button" id="chSend" style="padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--accent);cursor:pointer;font-weight:bold">Send</button>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ===================== Super GPT Clone ===================== -->
-    <section class="page" id="page-supergpt">
-      <div class="pageInner chatWrap">
-        <div class="sectionHead">
-          <b>🧠 Super ChatGPT Clone</b>
-          <div class="right">
-            <button type="button" id="sgNewChat">+ New Chat</button>
-            <button type="button" id="sgDark">Toggle Dark</button>
-          </div>
-        </div>
-
-        <div class="chatLog" id="sgChat"></div>
-
-        <div class="chatInput">
-          <input id="sgInput" placeholder="Type a message..." />
-          <button type="button" id="sgSend">Send</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===================== Settings ===================== -->
-    <section class="page" id="page-settings">
-      <div class="pageInner">
-        <div class="sectionHead">
-          <b>⚙️ Settings</b>
-          <div class="right">
-            <span class="badge">Single File</span>
-          </div>
-        </div>
-        <div class="content">
-          <div class="card">
-            <b>App Name</b>
-            <div class="small">StudyBuddy AI - Ultimate Hub</div>
-          </div>
-          <div class="card">
-            <b>Fix for your error</b>
-            <div class="small">
-              All buttons now work because functions are defined and event listeners are used.
-            </div>
-          </div>
-          <div class="card">
-            <b>Data Storage</b>
-            <div class="small">
-              Uses localStorage only (offline). No service worker. No Firebase.
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </main>
+  <div class="footer">
+    StudyBuddy AI Ultimate Hub • Single File • Works on GitHub Pages
+  </div>
 </div>
 
 <script>
 /* =========================
-   GLOBAL HELPERS
-========================= */
-const $ = (id)=>document.getElementById(id);
-const qs = (sel)=>document.querySelector(sel);
-const qsa = (sel)=>document.querySelectorAll(sel);
+   SINGLE FILE APP (NO 404)
+   ========================= */
 
-function setStatus(t){ $("statusPill").textContent = t; }
-
-function escapeHTML(s){
-  return (s+"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
-}
-
-/* =========================
-   NAVIGATION (NO INLINE)
-========================= */
-const pageMap = {
-  studybuddy: {id:"page-studybuddy", title:"StudyBuddy AI", sub:"Chat + Math + Quiz + Islam"},
-  gameshub:   {id:"page-gameshub", title:"Infinity Games Hub", sub:"Unlimited games list (demo)"},
-  minecraft:  {id:"page-minecraft", title:"Pro Minecraft (Mini)", sub:"Mini world + bosses + commands"},
-  chatterly:  {id:"page-chatterly", title:"Chatterly (Offline)", sub:"Local accounts + local chat"},
-  supergpt:   {id:"page-supergpt", title:"Super ChatGPT Clone", sub:"Offline rule-based clone"},
-  settings:   {id:"page-settings", title:"Settings", sub:"Theme + export + reset"}
+/* ---------- Storage Keys ---------- */
+const K = {
+  chat: "SBH_CHAT_V1",
+  settings: "SBH_SETTINGS_V1"
 };
 
-function showPage(key){
-  qsa(".page").forEach(p=>p.classList.remove("active"));
-  qsa(".nav button").forEach(b=>b.classList.remove("active"));
+/* ---------- State ---------- */
+let STATE = {
+  appMode: "StudyBuddy",        // StudyBuddy | SuperChatGPT
+  sbSubMode: "Teacher",         // Teacher | Exam | Math | Coding | Language
+  userName: "You",
+  theme: "neo",
+  chat: []
+};
 
-  const info = pageMap[key];
-  if(!info) return;
+/* ---------- Helpers ---------- */
+const $ = (id)=>document.getElementById(id);
+const nowTime = ()=> new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+const safe = (s)=> String(s ?? "").replace(/[<>&]/g, m=>({ "<":"&lt;", ">":"&gt;", "&":"&amp;" }[m]));
 
-  $(info.id).classList.add("active");
-  qsa(".nav button").forEach(b=>{
-    if(b.dataset.page===key) b.classList.add("active");
-  });
-
-  $("topTitle").textContent = info.title;
-  $("topSub").textContent = info.sub;
-  setStatus("Ready");
-}
-
-qsa(".nav button").forEach(btn=>{
-  btn.addEventListener("click", ()=>showPage(btn.dataset.page));
-});
-
-/* =========================
-   THEME
-========================= */
-function toggleTheme(){
-  document.body.classList.toggle("light");
-  localStorage.setItem("SB_THEME", document.body.classList.contains("light") ? "light" : "dark");
-}
-$("themeBtn").addEventListener("click", toggleTheme);
-
-(function initTheme(){
-  const t = localStorage.getItem("SB_THEME") || "dark";
-  if(t==="light") document.body.classList.add("light");
-})();
-
-/* =========================
-   EXPORT + RESET
-========================= */
-$("exportBtn").addEventListener("click", ()=>{
-  const sb = JSON.parse(localStorage.getItem("SB_CHAT")||"[]");
-  const sg = JSON.parse(localStorage.getItem("SG_CHAT")||"[]");
-  const ch = JSON.parse(localStorage.getItem("CH_MSGS")||"[]");
-  const data = {
-    app:"StudyBuddy AI - Ultimate Hub",
-    exportedAt:new Date().toISOString(),
-    studybuddy:sb,
-    supergpt:sg,
-    chatterly:ch
-  };
-  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "studybuddy_export.json";
-  a.click();
-  setStatus("Exported");
-});
-
-$("resetBtn").addEventListener("click", ()=>{
-  if(!confirm("Reset everything?")) return;
-  localStorage.clear();
-  location.reload();
-});
-
-/* =========================
-   STUDYBUDDY AI
-========================= */
-let sbMode = "chat";
-const sbChat = $("sbChat");
-const sbInput = $("sbInput");
-
-function sbAdd(text, who){
-  const d = document.createElement("div");
-  d.className = "msg " + who;
-  d.textContent = text;
-  sbChat.appendChild(d);
-  sbChat.scrollTop = sbChat.scrollHeight;
-
-  const log = JSON.parse(localStorage.getItem("SB_CHAT")||"[]");
-  log.push({who,text,ts:Date.now(),mode:sbMode});
-  localStorage.setItem("SB_CHAT", JSON.stringify(log));
-}
-
-function sbSetMode(m){
-  sbMode = m;
-  sbAdd("Mode: " + m.toUpperCase(), "bot");
-  setStatus("Mode: " + m);
-}
-
-qsa('#page-studybuddy [data-mode]').forEach(b=>{
-  b.addEventListener("click", ()=>sbSetMode(b.dataset.mode));
-});
-
-function sbMath(q){
+/* ---------- Load / Save ---------- */
+function loadAll(){
   try{
-    if(!/^[0-9+\-*/(). %]+$/.test(q)){
-      sbAdd("Enter valid math only.", "bot"); return;
-    }
-    const ans = Function("return ("+q+")")();
-    sbAdd("Answer: " + ans, "bot");
-  }catch{
-    sbAdd("Math error.", "bot");
+    const s = JSON.parse(localStorage.getItem(K.settings) || "{}");
+    STATE.userName = s.userName || "You";
+    STATE.theme = s.theme || "neo";
+    STATE.appMode = s.appMode || "StudyBuddy";
+    STATE.sbSubMode = s.sbSubMode || "Teacher";
+  }catch(e){}
+  try{
+    STATE.chat = JSON.parse(localStorage.getItem(K.chat) || "[]");
+    if(!Array.isArray(STATE.chat)) STATE.chat=[];
+  }catch(e){ STATE.chat=[]; }
+}
+function saveAll(){
+  localStorage.setItem(K.settings, JSON.stringify({
+    userName: STATE.userName,
+    theme: STATE.theme,
+    appMode: STATE.appMode,
+    sbSubMode: STATE.sbSubMode
+  }));
+  localStorage.setItem(K.chat, JSON.stringify(STATE.chat));
+}
+
+/* ---------- Theme ---------- */
+function applyTheme(){
+  const t = STATE.theme;
+  const root = document.documentElement;
+  if(t==="neo"){
+    root.style.setProperty("--pri","#7c5cff");
+    root.style.setProperty("--pri2","#00e5ff");
+    root.style.setProperty("--bg","#070b12");
+  }
+  if(t==="midnight"){
+    root.style.setProperty("--pri","#4c7dff");
+    root.style.setProperty("--pri2","#00ffc6");
+    root.style.setProperty("--bg","#04060c");
+  }
+  if(t==="matrix"){
+    root.style.setProperty("--pri","#00ff66");
+    root.style.setProperty("--pri2","#00e5ff");
+    root.style.setProperty("--bg","#030806");
   }
 }
 
-function sbQuiz(){
-  const q = [
-    "🧠 Capital of Pakistan?",
-    "🧠 5 daily prayers names?",
-    "🧠 12 × 7 = ?",
-    "🧠 What is the largest planet?",
-    "🧠 What is H2O?"
-  ];
-  sbAdd(q[Math.floor(Math.random()*q.length)], "bot");
+/* ---------- Navigation ---------- */
+function showPage(page){
+  // nav buttons
+  document.querySelectorAll("#nav button").forEach(b=>{
+    b.classList.toggle("active", b.dataset.page===page);
+  });
+  // pages
+  document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+  const el = $("page-"+page);
+  if(el) el.classList.remove("hidden");
+
+  // title
+  const titleMap = {
+    home:"Home",
+    chat:"Chat",
+    tools:"Tools",
+    study:"Study",
+    games:"Games",
+    settings:"Settings"
+  };
+  $("pageTitle").textContent = titleMap[page] || "Home";
 }
 
-function sbIslam(){
-  const i = [
-    "🕌 Allah is One (Tawheed).",
-    "📖 Quran is guidance for mankind.",
-    "🤲 Dua: Allahumma zidni ilma.",
-    "🕋 Pray 5 times daily.",
-    "🌙 Say: SubhanAllah • Alhamdulillah • Allahu Akbar"
-  ];
-  sbAdd(i[Math.floor(Math.random()*i.length)], "bot");
+/* ---------- Chat Rendering ---------- */
+function addMsg(role, text){
+  const item = { role, text, t: Date.now() };
+  STATE.chat.push(item);
+  saveAll();
+  renderChat();
+  scrollChatBottom();
 }
+function renderChat(){
+  const box = $("chatBox");
+  box.innerHTML = "";
 
-function sbChatAI(t){
-  const q = t.toLowerCase();
-  if(q.includes("hi") || q.includes("hello")) sbAdd("Hello 😊", "bot");
-  else if(q.includes("who made you")) sbAdd("Made by Yousaf 🌟", "bot");
-  else if(q.includes("help")) sbAdd("I can do: Chat, Math, Quiz, Islam, Games, Minecraft, Chatterly, SuperGPT.", "bot");
-  else sbAdd("Tell me more 🤔", "bot");
-}
-
-function sbSend(){
-  const t = sbInput.value.trim();
-  if(!t) return;
-  sbInput.value = "";
-  sbAdd(t, "user");
-
-  if(sbMode==="math") sbMath(t);
-  else if(sbMode==="quiz") sbQuiz();
-  else if(sbMode==="islam") sbIslam();
-  else sbChatAI(t);
-}
-
-$("sbSendBtn").addEventListener("click", sbSend);
-sbInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") sbSend(); });
-
-(function loadSB(){
-  const log = JSON.parse(localStorage.getItem("SB_CHAT")||"[]");
-  sbChat.innerHTML = "";
-  if(!log.length){
-    sbAdd("Welcome to StudyBuddy AI 🚀", "bot");
-    sbAdd("Choose a page from left menu.", "bot");
+  if(STATE.chat.length===0){
+    const d = document.createElement("div");
+    d.className="msg sys";
+    d.innerHTML = `<div class="meta">System</div>Welcome! Type <b>/help</b> to see commands.`;
+    box.appendChild(d);
     return;
   }
-  log.forEach(m=>sbAdd(m.text, m.who));
-})();
 
-/* =========================
-   GAMES HUB
-========================= */
-const games = [
-  "Tic Tac Toe","Snake","Memory Flip","Number Guess","Rock Paper Scissors",
-  "Math Quiz","Word Guess","Fast Click","Reaction Test","Typing Speed",
-  "Color Match","Pattern Memory","Maze","Puzzle","2048 Style",
-  "Simon Says","Hangman","Quiz Master","Brain Trainer","Sudoku Mini",
-  "Chess Mini","Checkers","Math Duel","Logic Test","True False",
-  "Speed Math","Guess Shape","Hidden Object","Tap Challenge","Emoji Match",
-  "Word Scramble","Quick Tap","Aim Trainer","Random Riddle","Mini RPG"
-];
-
-function loadGames(){
-  const list = $("gameList");
-  list.innerHTML = "";
-  games.forEach(name=>{
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "gameBtn";
-    b.innerHTML = `<b>${escapeHTML(name)}</b><div class="small">Demo: engine can be added</div>`;
-    b.addEventListener("click", ()=>alert(name + " is ready (demo)."));
-    list.appendChild(b);
-  });
-}
-loadGames();
-
-$("reloadGames").addEventListener("click", loadGames);
-
-$("gameSearch").addEventListener("input", ()=>{
-  const q = $("gameSearch").value.toLowerCase();
-  qsa("#gameList .gameBtn").forEach(btn=>{
-    btn.style.display = btn.innerText.toLowerCase().includes(q) ? "block" : "none";
-  });
-});
-
-/* =========================
-   CHATTERLY OFFLINE
-========================= */
-let chUser = null;
-
-function chLoad(){
-  const u = JSON.parse(localStorage.getItem("CH_USER")||"null");
-  chUser = u;
-  if(chUser){
-    $("chLoginCard").style.display="none";
-    $("chChatCard").style.display="block";
-    chRenderMessages();
-    $("chMsg").textContent="";
-  }else{
-    $("chLoginCard").style.display="block";
-    $("chChatCard").style.display="none";
-  }
-}
-
-function chGetAccounts(){
-  return JSON.parse(localStorage.getItem("CH_ACCOUNTS")||"{}");
-}
-function chSetAccounts(obj){
-  localStorage.setItem("CH_ACCOUNTS", JSON.stringify(obj));
-}
-
-function chSignup(){
-  const email = $("chEmail").value.trim().toLowerCase();
-  const pass = $("chPass").value.trim();
-  if(!email || !pass) { $("chMsg").textContent="Enter email and password."; return; }
-  const acc = chGetAccounts();
-  if(acc[email]) { $("chMsg").textContent="Account already exists."; return; }
-  acc[email] = {pass};
-  chSetAccounts(acc);
-  $("chMsg").textContent="Account created. Now login.";
-}
-
-function chLogin(){
-  const email = $("chEmail").value.trim().toLowerCase();
-  const pass = $("chPass").value.trim();
-  const acc = chGetAccounts();
-  if(!acc[email] || acc[email].pass!==pass){
-    $("chMsg").textContent="Wrong email or password.";
-    return;
-  }
-  localStorage.setItem("CH_USER", JSON.stringify({email}));
-  chLoad();
-}
-
-function chLogout(){
-  localStorage.removeItem("CH_USER");
-  chUser=null;
-  chLoad();
-}
-
-function chGetMsgs(){
-  return JSON.parse(localStorage.getItem("CH_MSGS")||"[]");
-}
-function chSetMsgs(m){
-  localStorage.setItem("CH_MSGS", JSON.stringify(m));
-}
-
-function chSend(){
-  if(!chUser) return;
-  const t = $("chInput").value.trim();
-  if(!t) return;
-  $("chInput").value="";
-  const msgs = chGetMsgs();
-  msgs.push({email:chUser.email,text:t,ts:Date.now()});
-  chSetMsgs(msgs);
-  chRenderMessages();
-}
-
-function chRenderMessages(){
-  const box = $("chMessages");
-  const msgs = chGetMsgs();
-  box.innerHTML="";
-  msgs.slice(-200).forEach(m=>{
+  for(const m of STATE.chat){
     const div = document.createElement("div");
-    div.style.marginBottom="8px";
-    div.style.padding="10px";
-    div.style.borderRadius="12px";
-    div.style.border="1px solid var(--line)";
-    const me = chUser && m.email===chUser.email;
-    div.style.background = me ? "rgba(37,99,235,0.22)" : "rgba(0,0,0,0.10)";
-    div.innerHTML = `<b>${escapeHTML(m.email.split("@")[0])}</b><div>${escapeHTML(m.text)}</div>`;
+    div.className = "msg " + (m.role==="user" ? "user" : (m.role==="ai" ? "ai":"sys"));
+    const metaName = (m.role==="user") ? STATE.userName : (m.role==="ai" ? (STATE.appMode==="StudyBuddy" ? "StudyBuddy AI" : "Super ChatGPT") : "System");
+    div.innerHTML = `<div class="meta">${safe(metaName)} • ${new Date(m.t).toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})}</div>${safe(m.text)}`;
     box.appendChild(div);
-  });
+  }
+}
+function scrollChatBottom(){
+  const box = $("chatBox");
   box.scrollTop = box.scrollHeight;
 }
 
-$("chSignup").addEventListener("click", chSignup);
-$("chLogin").addEventListener("click", chLogin);
-$("chLogout").addEventListener("click", chLogout);
-$("chSend").addEventListener("click", chSend);
-$("chInput").addEventListener("keydown", (e)=>{ if(e.key==="Enter") chSend(); });
-chLoad();
+/* ---------- AI Logic (Offline Local) ---------- */
+function aiReply(userText){
+  const txt = userText.trim();
 
-/* =========================
-   SUPER GPT CLONE
-========================= */
-const sgChat = $("sgChat");
-const sgInput = $("sgInput");
-
-function sgAdd(text, who){
-  const d = document.createElement("div");
-  d.className = "msg " + who;
-  d.innerHTML = who==="bot" ? text : escapeHTML(text);
-  sgChat.appendChild(d);
-  sgChat.scrollTop = sgChat.scrollHeight;
-
-  const log = JSON.parse(localStorage.getItem("SG_CHAT")||"[]");
-  log.push({who,text,ts:Date.now()});
-  localStorage.setItem("SG_CHAT", JSON.stringify(log));
-}
-
-function sgBot(text){
-  const lower = text.toLowerCase();
-  const now = new Date();
-  if(lower.includes("hello") || lower.includes("hi")) return "Hello! I'm your offline ChatGPT clone.";
-  if(lower.includes("who are you")) return "I am a local demo assistant (offline).";
-  if(lower.includes("what can you do")) return "I can chat, show time/date, and give basic responses.";
-  if(lower.includes("time")) return "Current time: <b>"+now.toLocaleTimeString()+"</b>";
-  if(lower.includes("date")) return "Today's date: <b>"+now.toLocaleDateString()+"</b>";
-  if(lower.includes("code")) return "<pre style='margin:0;white-space:pre-wrap'>console.log('Hello world');</pre>";
-  if(lower.includes("markdown")) return "<b>Bold</b> <i>Italic</i> <code>inline</code>";
-  return "Offline demo response. Add more rules in code to make me smarter.";
-}
-
-function sgSend(){
-  const t = sgInput.value.trim();
-  if(!t) return;
-  sgInput.value="";
-  sgAdd(t,"user");
-  setTimeout(()=>sgAdd(sgBot(t),"bot"), 300);
-}
-
-$("sgSend").addEventListener("click", sgSend);
-sgInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") sgSend(); });
-
-$("sgNewChat").addEventListener("click", ()=>{
-  localStorage.removeItem("SG_CHAT");
-  sgChat.innerHTML="";
-  sgAdd("New chat started. Ask me anything.", "bot");
-});
-
-$("sgDark").addEventListener("click", toggleTheme);
-
-(function loadSG(){
-  const log = JSON.parse(localStorage.getItem("SG_CHAT")||"[]");
-  sgChat.innerHTML="";
-  if(!log.length){
-    sgAdd("New chat started. Ask me anything.", "bot");
-    return;
-  }
-  log.forEach(m=>{
-    if(m.who==="bot") sgAdd(m.text,"bot");
-    else sgAdd(m.text,"user");
-  });
-})();
-
-/* =========================
-   MINECRAFT MINI
-========================= */
-const mc = {
-  w: 19, h: 11, tile: 40,
-  grid: [],
-  player: {x:2,y:2,hp:100,max:100,alive:true,wood:0,stone:0},
-  boss: null,
-  bossKills: 0
-};
-
-const cv = $("mcCanvas");
-const ctx = cv.getContext("2d");
-
-function mcNewWorld(){
-  mc.grid = [];
-  for(let y=0;y<mc.h;y++){
-    const row=[];
-    for(let x=0;x<mc.w;x++){
-      let v="grass";
-      if(y>6) v="stone";
-      if(y===6) v="dirt";
-      if(Math.random()<0.08 && y<6) v="tree";
-      if(Math.random()<0.03 && y>6) v="ore";
-      row.push(v);
-    }
-    mc.grid.push(row);
-  }
-  mc.player.x=2; mc.player.y=2;
-  mc.player.hp=mc.player.max;
-  mc.player.alive=true;
-  mc.player.wood=0; mc.player.stone=0;
-  mc.boss=null;
-  mcDraw();
-  mcUpdateStats();
-  $("mcOut").textContent="New world created.";
-}
-
-function mcColor(t){
-  if(t==="grass") return "#2ecc71";
-  if(t==="dirt") return "#8b5a2b";
-  if(t==="stone") return "#9ca3af";
-  if(t==="tree") return "#166534";
-  if(t==="ore") return "#fbbf24";
-  if(t==="air") return "rgba(0,0,0,0)";
-  return "#111827";
-}
-
-function mcDraw(){
-  ctx.clearRect(0,0,cv.width,cv.height);
-  const tw = Math.floor(cv.width / mc.tile);
-  const th = Math.floor(cv.height / mc.tile);
-
-  for(let y=0;y<mc.h;y++){
-    for(let x=0;x<mc.w;x++){
-      const t = mc.grid[y][x];
-      ctx.fillStyle = mcColor(t);
-      ctx.fillRect(x*mc.tile, y*mc.tile, mc.tile-1, mc.tile-1);
-    }
+  // Commands
+  if(txt.startsWith("/")){
+    return handleCommand(txt);
   }
 
-  // boss
-  if(mc.boss && mc.boss.alive){
-    ctx.fillStyle="#ef4444";
-    ctx.fillRect(mc.boss.x*mc.tile+6, mc.boss.y*mc.tile+6, mc.tile-12, mc.tile-12);
-  }
-
-  // player
-  ctx.fillStyle = mc.player.alive ? "#60a5fa" : "#6b7280";
-  ctx.fillRect(mc.player.x*mc.tile+8, mc.player.y*mc.tile+8, mc.tile-16, mc.tile-16);
-
-  // ui
-  ctx.fillStyle="rgba(0,0,0,0.35)";
-  ctx.fillRect(10,10,240,40);
-  ctx.fillStyle="#fff";
-  ctx.font="14px Arial";
-  ctx.fillText("HP: "+mc.player.hp+"/"+mc.player.max+" | Boss Kills: "+mc.bossKills, 18, 36);
-}
-
-function mcUpdateStats(){
-  $("mcStats").innerHTML =
-    "HP: <b>"+mc.player.hp+"</b> / "+mc.player.max+
-    "<br>Wood: <b>"+mc.player.wood+"</b>"+
-    "<br>Stone: <b>"+mc.player.stone+"</b>"+
-    "<br>Alive: <b>"+(mc.player.alive?"Yes":"No")+"</b>";
-}
-
-function mcMove(dx,dy){
-  if(!mc.player.alive) return;
-  const nx = mc.player.x+dx;
-  const ny = mc.player.y+dy;
-  if(nx<0||ny<0||nx>=mc.w||ny>=mc.h) return;
-
-  // can't walk into stone deep
-  const t = mc.grid[ny][nx];
-  if(t==="stone") return;
-
-  mc.player.x=nx;
-  mc.player.y=ny;
-
-  // boss damage if close
-  if(mc.boss && mc.boss.alive){
-    const dist = Math.abs(mc.boss.x-mc.player.x)+Math.abs(mc.boss.y-mc.player.y);
-    if(dist<=1){
-      mc.player.hp -= mc.boss.dmg;
-      if(mc.player.hp<=0){
-        mc.player.hp=0;
-        mc.player.alive=false;
-        $("mcOut").textContent="You died. Use /revive";
-      }
-    }
-  }
-
-  mcDraw();
-  mcUpdateStats();
-}
-
-document.addEventListener("keydown",(e)=>{
-  if(!$("page-minecraft").classList.contains("active")) return;
-
-  if(e.key==="ArrowUp" || e.key==="w") mcMove(0,-1);
-  if(e.key==="ArrowDown" || e.key==="s") mcMove(0,1);
-  if(e.key==="ArrowLeft" || e.key==="a") mcMove(-1,0);
-  if(e.key==="ArrowRight" || e.key==="d") mcMove(1,0);
-});
-
-cv.addEventListener("click",(e)=>{
-  if(!$("page-minecraft").classList.contains("active")) return;
-  const rect = cv.getBoundingClientRect();
-  const x = Math.floor((e.clientX-rect.left) / (rect.width / cv.width) / mc.tile);
-  const y = Math.floor((e.clientY-rect.top) / (rect.height / cv.height) / mc.tile);
-  if(x<0||y<0||x>=mc.w||y>=mc.h) return;
-
-  const t = mc.grid[y][x];
-  if(t==="tree"){
-    mc.grid[y][x]="air";
-    mc.player.wood++;
-    $("mcOut").textContent="Mined wood +1";
-  }else if(t==="dirt"){
-    mc.grid[y][x]="air";
-    mc.player.stone+=0;
-    $("mcOut").textContent="Mined dirt.";
-  }else if(t==="ore"){
-    mc.grid[y][x]="air";
-    mc.player.stone+=3;
-    $("mcOut").textContent="Mined ore +3 stone";
-  }else if(t==="grass"){
-    // build tree if have wood
-    if(mc.player.wood>0){
-      mc.player.wood--;
-      mc.grid[y][x]="tree";
-      $("mcOut").textContent="Built tree (-1 wood)";
-    }else{
-      $("mcOut").textContent="Need wood to build.";
-    }
-  }
-
-  mcDraw();
-  mcUpdateStats();
-});
-
-function mcSpawnBoss(){
-  mc.boss = {
-    x: Math.min(mc.w-2, mc.player.x+4),
-    y: mc.player.y,
-    hp: 60 + Math.floor(Math.random()*60),
-    dmg: 8 + Math.floor(Math.random()*6),
-    alive:true
-  };
-  mcUpdateBossUI();
-  mcDraw();
-  $("mcOut").textContent="Boss spawned!";
-}
-
-function mcUpdateBossUI(){
-  if(!mc.boss || !mc.boss.alive){
-    $("mcBoss").innerHTML = "Boss: <b>None</b>";
-    return;
-  }
-  $("mcBoss").innerHTML =
-    "Boss HP: <b>"+mc.boss.hp+"</b> • DMG: <b>"+mc.boss.dmg+"</b>";
-}
-
-function mcAttackBoss(){
-  if(!mc.player.alive){ $("mcOut").textContent="You are dead."; return; }
-  if(!mc.boss || !mc.boss.alive){ $("mcOut").textContent="No boss."; return; }
-
-  const dist = Math.abs(mc.boss.x-mc.player.x)+Math.abs(mc.boss.y-mc.player.y);
-  if(dist>2){ $("mcOut").textContent="Go closer to boss."; return; }
-
-  const dmg = 10 + Math.floor(Math.random()*12) + Math.floor(mc.player.stone/2);
-  mc.boss.hp -= dmg;
-
-  if(mc.boss.hp<=0){
-    mc.boss.hp=0;
-    mc.boss.alive=false;
-    mc.bossKills++;
-    mc.player.stone += 5;
-    mc.player.wood += 2;
-    $("mcOut").textContent="Boss defeated! Respawn infinite.";
+  // StudyBuddy vs SuperChatGPT styles
+  if(STATE.appMode==="StudyBuddy"){
+    return studyBuddyBrain(txt);
   }else{
-    $("mcOut").textContent="You hit boss for "+dmg;
+    return superChatGPTBrain(txt);
   }
-
-  mcUpdateBossUI();
-  mcDraw();
-  mcUpdateStats();
 }
 
-function mcRunCommand(){
-  const raw = $("mcCmd").value.trim();
-  if(!raw) return;
-  $("mcCmd").value="";
+function handleCommand(cmd){
+  const c = cmd.toLowerCase().trim();
 
-  const cmd = raw.toLowerCase();
+  if(c==="/help"){
+    return `Commands:
+- /help
+- /mode
+- /teacher /exam /math /coding /language
+- /reset
+- /export`;
+  }
+  if(c==="/mode"){
+    STATE.appMode = (STATE.appMode==="StudyBuddy") ? "SuperChatGPT" : "StudyBuddy";
+    saveAll();
+    updateBadges();
+    return `Switched mode to: ${STATE.appMode}`;
+  }
+  if(c==="/teacher"){STATE.sbSubMode="Teacher"; saveAll(); updateBadges(); return "StudyBuddy sub-mode: Teacher";}
+  if(c==="/exam"){STATE.sbSubMode="Exam"; saveAll(); updateBadges(); return "StudyBuddy sub-mode: Exam";}
+  if(c==="/math"){STATE.sbSubMode="Math"; saveAll(); updateBadges(); return "StudyBuddy sub-mode: Math";}
+  if(c==="/coding"){STATE.sbSubMode="Coding"; saveAll(); updateBadges(); return "StudyBuddy sub-mode: Coding";}
+  if(c==="/language"){STATE.sbSubMode="Language"; saveAll(); updateBadges(); return "StudyBuddy sub-mode: Language";}
 
-  if(cmd==="/kill"){
-    mc.player.hp=0;
-    mc.player.alive=false;
-    $("mcOut").textContent="Killed player. Use /revive";
+  if(c==="/reset"){
+    STATE.chat=[];
+    saveAll();
+    renderChat();
+    return "Chat cleared.";
   }
-  else if(cmd==="/revive"){
-    mc.player.alive=true;
-    mc.player.hp=mc.player.max;
-    $("mcOut").textContent="Player revived.";
+  if(c==="/export"){
+    exportChat();
+    return "Exporting chat...";
   }
-  else if(cmd==="/destroyworld"){
-    // destroy all blocks except keep player tile
-    for(let y=0;y<mc.h;y++){
-      for(let x=0;x<mc.w;x++){
-        if(x===mc.player.x && y===mc.player.y) continue;
-        mc.grid[y][x]="air";
-      }
+
+  return "Unknown command. Type /help";
+}
+
+function studyBuddyBrain(t){
+  const mode = STATE.sbSubMode;
+
+  if(mode==="Teacher"){
+    return `Teacher Mode ✅
+
+Explain: ${t}
+
+1) Simple meaning:
+- ${simpleExplain(t)}
+
+2) Example:
+- ${makeExample(t)}
+
+3) Quick check:
+- Do you want a quiz on this?`;
+  }
+
+  if(mode==="Exam"){
+    return `Exam Mode 📝
+
+Question topic: ${t}
+
+Answer format:
+- Short answer
+- Key points
+- 1 example
+
+Key points:
+- ${keyPoints(t).join("\n- ")}`;
+  }
+
+  if(mode==="Math"){
+    return `Math Mode ➗
+
+Problem: ${t}
+
+Step-by-step:
+1) Identify what is given
+2) Choose formula
+3) Solve
+
+(If you paste the exact numbers, I will solve it fully.)`;
+  }
+
+  if(mode==="Coding"){
+    return `Coding Mode 💻
+
+Request: ${t}
+
+I can:
+- Fix code
+- Explain code
+- Write code
+- Debug errors
+
+Paste your code and I will improve it.`;
+  }
+
+  if(mode==="Language"){
+    return `Language Mode 🌍
+
+Text: ${t}
+
+I can:
+- Translate
+- Correct grammar
+- Improve writing
+- Teach vocabulary`;
+  }
+
+  return `StudyBuddy: ${t}`;
+}
+
+function superChatGPTBrain(t){
+  // More "chatgpt clone" style
+  if(/hello|hi|hey/i.test(t)) return "Hey! 😄 I’m Super ChatGPT inside StudyBuddy Hub. What do you want to do today?";
+  if(/make.*website|html|css|js/i.test(t)) return "Sure. Tell me what you want in the website and I will generate the full code.";
+  if(/minecraft/i.test(t)) return "I can add PRO MINECRAFT GAME as a full web mini-game module inside the Games tab.";
+  return `Super ChatGPT 🤖
+
+You said:
+"${t}"
+
+Reply:
+- I understand. Tell me the next instruction and I will do it.`;
+}
+
+/* ---------- Mini Helpers ---------- */
+function simpleExplain(x){
+  if(x.length<20) return `This is about: "${x}".`;
+  return "This topic means understanding the main idea and how it works.";
+}
+function makeExample(x){
+  return `Example: If we apply "${x}" in real life, we can solve problems faster.`;
+}
+function keyPoints(x){
+  return [
+    `Main idea of "${x}"`,
+    "Definition + explanation",
+    "One example",
+    "One common mistake"
+  ];
+}
+
+/* ---------- Chat Actions ---------- */
+function sbSend(){
+  const input = $("chatInput");
+  const text = input.value.trim();
+  if(!text) return;
+
+  input.value = "";
+  addMsg("user", text);
+
+  // AI response
+  setTimeout(()=>{
+    const reply = aiReply(text);
+    addMsg("ai", reply);
+  }, 120);
+}
+
+function sbReset(){
+  if(!confirm("Reset chat?")) return;
+  STATE.chat=[];
+  saveAll();
+  renderChat();
+}
+
+function sbExport(){
+  exportChat();
+}
+
+/* ---------- Export ---------- */
+function exportChat(){
+  const data = {
+    exportedAt: new Date().toISOString(),
+    appMode: STATE.appMode,
+    sbSubMode: STATE.sbSubMode,
+    userName: STATE.userName,
+    chat: STATE.chat
+  };
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "StudyBuddyHub_ChatExport.json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+
+/* ---------- Badges ---------- */
+function updateBadges(){
+  $("modePill").textContent = STATE.appMode + (STATE.appMode==="StudyBuddy" ? (" • "+STATE.sbSubMode) : "");
+  $("statusBadge").textContent = "Offline Mode • " + STATE.appMode;
+}
+
+/* ---------- Tools ---------- */
+function toolRun(type){
+  const input = $("toolInput").value.trim();
+  if(!input){ $("toolOutput").textContent="Paste text first."; return; }
+
+  if(type==="summarize"){
+    $("toolOutput").textContent = "Summary:\n- " + input.split(/\s+/).slice(0,40).join(" ") + (input.split(/\s+/).length>40?" ...":"");
+  }
+  if(type==="rewrite"){
+    $("toolOutput").textContent = "Rewrite:\n" + input.replace(/\bvery\b/gi,"really").replace(/\bI\b/g,"I (rewritten)");
+  }
+  if(type==="explain"){
+    $("toolOutput").textContent = "Explanation:\nThis text is about:\n" + simpleExplain(input);
+  }
+  if(type==="quiz"){
+    $("toolOutput").textContent =
+`Quiz:
+1) What is the main idea of the text?
+2) Write 3 key points.
+3) Give 1 example.
+4) What mistake can happen?`;
+  }
+}
+
+/* ---------- Games ---------- */
+let guessNumber = null;
+function gameDice(){
+  const a = 1 + Math.floor(Math.random()*6);
+  const b = 1 + Math.floor(Math.random()*6);
+  $("gameBox").textContent = `🎲 Dice rolled: ${a} and ${b}\nTotal: ${a+b}`;
+}
+function gameRPS(){
+  const items=["Rock","Paper","Scissors"];
+  const pick = items[Math.floor(Math.random()*3)];
+  $("gameBox").textContent = `✊✋✌️ Random pick: ${pick}\nTry again!`;
+}
+function gameGuess(){
+  if(guessNumber===null) guessNumber = 1 + Math.floor(Math.random()*50);
+  const g = prompt("Guess number (1 to 50):");
+  if(g===null) return;
+  const n = Number(g);
+  if(!Number.isFinite(n)) { $("gameBox").textContent="Not a number."; return; }
+  if(n===guessNumber){ $("gameBox").textContent="🎉 Correct! New number generated."; guessNumber=null; return; }
+  $("gameBox").textContent = (n<guessNumber) ? "Too low!" : "Too high!";
+}
+
+/* ---------- Init ---------- */
+function init(){
+  loadAll();
+  applyTheme();
+
+  // Settings UI
+  $("themeSel").value = STATE.theme;
+  $("userName").value = STATE.userName;
+
+  // Nav events
+  document.querySelectorAll("#nav button").forEach(btn=>{
+    btn.addEventListener("click", ()=> showPage(btn.dataset.page));
+  });
+
+  // Chat events
+  $("btnSend").addEventListener("click", sbSend);
+  $("btnReset").addEventListener("click", sbReset);
+  $("btnExport").addEventListener("click", sbExport);
+  $("btnMode").addEventListener("click", ()=>{
+    STATE.appMode = (STATE.appMode==="StudyBuddy") ? "SuperChatGPT" : "StudyBuddy";
+    saveAll(); updateBadges();
+    addMsg("sys", "Mode switched to: " + STATE.appMode);
+  });
+  $("btnSuggest").addEventListener("click", ()=>{
+    const suggestions = [
+      "Explain photosynthesis in simple words.",
+      "Make me a quiz about Newton laws.",
+      "Write a website landing page.",
+      "Help me with JavaScript errors.",
+      "Make a study plan for exams."
+    ];
+    $("chatInput").value = suggestions[Math.floor(Math.random()*suggestions.length)];
+    $("chatInput").focus();
+  });
+
+  $("chatInput").addEventListener("keydown", (e)=>{
+    if(e.key==="Enter" && !e.shiftKey){
+      e.preventDefault();
+      sbSend();
     }
-    $("mcOut").textContent="World destroyed (except player).";
-  }
-  else{
-    $("mcOut").textContent="Unknown command.";
-  }
+  });
 
-  mcDraw();
-  mcUpdateStats();
-  mcUpdateBossUI();
+  // Study mode buttons
+  document.querySelectorAll("[data-setmode]").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      STATE.appMode="StudyBuddy";
+      STATE.sbSubMode=b.dataset.setmode;
+      saveAll();
+      updateBadges();
+      showPage("chat");
+      addMsg("sys", "StudyBuddy mode set to: " + STATE.sbSubMode);
+    });
+  });
+
+  // Tools buttons
+  $("btnSummarize").addEventListener("click", ()=>toolRun("summarize"));
+  $("btnRewrite").addEventListener("click", ()=>toolRun("rewrite"));
+  $("btnExplain").addEventListener("click", ()=>toolRun("explain"));
+  $("btnQuiz").addEventListener("click", ()=>toolRun("quiz"));
+
+  // Games
+  $("btnGameDice").addEventListener("click", gameDice);
+  $("btnGameRPS").addEventListener("click", gameRPS);
+  $("btnGameGuess").addEventListener("click", gameGuess);
+
+  // Settings
+  $("btnSaveSettings").addEventListener("click", ()=>{
+    STATE.theme = $("themeSel").value;
+    STATE.userName = $("userName").value.trim() || "You";
+    saveAll();
+    applyTheme();
+    addMsg("sys", "Settings saved.");
+  });
+  $("btnClearStorage").addEventListener("click", ()=>{
+    if(!confirm("Clear EVERYTHING?")) return;
+    localStorage.removeItem(K.chat);
+    localStorage.removeItem(K.settings);
+    location.reload();
+  });
+
+  // First render
+  updateBadges();
+  renderChat();
+  showPage("home");
 }
-
-$("mcNewWorld").addEventListener("click", mcNewWorld);
-$("mcSpawnBoss").addEventListener("click", mcSpawnBoss);
-$("mcAttackBoss").addEventListener("click", mcAttackBoss);
-$("mcRunCmd").addEventListener("click", mcRunCommand);
-$("mcCmd").addEventListener("keydown",(e)=>{ if(e.key==="Enter") mcRunCommand(); });
-$("mcHeal").addEventListener("click", ()=>{
-  if(!mc.player.alive){ $("mcOut").textContent="Dead. Use /revive"; return; }
-  mc.player.hp = Math.min(mc.player.max, mc.player.hp+35);
-  $("mcOut").textContent="Healed +35";
-  mcDraw(); mcUpdateStats();
-});
-
-mcNewWorld();
-mcUpdateBossUI();
-
-/* =========================
-   INIT
-========================= */
-showPage("studybuddy");
+init();
 </script>
 </body>
 </html>
