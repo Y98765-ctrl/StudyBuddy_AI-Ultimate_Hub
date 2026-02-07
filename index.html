@@ -1,881 +1,974 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>StudyBuddy AI - Ultimate Hub (Super ChatGPT + StudyBuddy)</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StudyBuddy AI - Ultimate Hub</title>
+
 <style>
+/* =========================
+   RESET
+========================= */
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: Inter, Arial, sans-serif; }
+button { cursor: pointer; border: none; }
+a { color: inherit; text-decoration: none; }
 :root{
-  --bg:#070b12;--card:#0d1424;--card2:#0b1020;--txt:#e9f1ff;--mut:#9fb2d9;
-  --pri:#7c5cff;--pri2:#00e5ff;--good:#1cff8b;--bad:#ff3b6a;--warn:#ffd24d;
-  --b:rgba(255,255,255,.08);--b2:rgba(255,255,255,.14);
-  --shadow:0 20px 60px rgba(0,0,0,.45);
-  --r:18px;
-  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
-  --ui: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  --bg:#0b1225;
+  --panel:#111a33;
+  --panel2:#1b2750;
+  --text:#ffffff;
+  --muted:#b7c0ff;
+  --btn:#2563eb;
+  --btn2:#10a37f;
+  --danger:#ef4444;
+  --border:rgba(255,255,255,0.12);
+  --card:#0f1833;
+  --bot:#1f2937;
+  --user:#2563eb;
 }
-*{box-sizing:border-box}
-html,body{height:100%}
+.light{
+  --bg:#f3f4f6;
+  --panel:#ffffff;
+  --panel2:#ffffff;
+  --text:#111827;
+  --muted:#4b5563;
+  --btn:#2563eb;
+  --btn2:#10a37f;
+  --danger:#ef4444;
+  --border:rgba(0,0,0,0.12);
+  --card:#ffffff;
+  --bot:#e5e7eb;
+  --user:#2563eb;
+}
+
 body{
-  margin:0;font-family:var(--ui);color:var(--txt);
-  background:
-    radial-gradient(900px 600px at 20% 10%, rgba(124,92,255,.25), transparent 55%),
-    radial-gradient(900px 600px at 85% 15%, rgba(0,229,255,.16), transparent 55%),
-    radial-gradient(900px 600px at 60% 90%, rgba(28,255,139,.10), transparent 55%),
-    linear-gradient(180deg, #05070d 0%, #070b12 100%);
-  overflow-x:hidden;
+  height:100vh;
+  display:flex;
+  background:var(--bg);
+  color:var(--text);
+  overflow:hidden;
 }
-a{color:inherit}
-button,input,select,textarea{font:inherit}
-.wrap{max-width:1250px;margin:0 auto;padding:18px}
+
+/* =========================
+   SIDEBAR (ChatGPT Clone)
+========================= */
+.sidebar{
+  width:280px;
+  background:linear-gradient(180deg, #202123, #0f1115);
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  border-right:1px solid #2a2a2a;
+}
+.light .sidebar{
+  background:linear-gradient(180deg, #ffffff, #f3f4f6);
+  color:#111;
+  border-right:1px solid rgba(0,0,0,0.12);
+}
+.sb-head{
+  padding:14px 14px;
+  font-weight:800;
+  font-size:16px;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.light .sb-head{ border-bottom:1px solid rgba(0,0,0,0.08); }
+.sb-head small{ opacity:0.7; font-weight:600; }
+
+.sb-actions{
+  display:flex;
+  gap:8px;
+  padding:12px 12px;
+}
+.sb-actions button{
+  flex:1;
+  padding:10px;
+  border-radius:12px;
+  background:rgba(255,255,255,0.08);
+  color:#fff;
+}
+.light .sb-actions button{
+  background:rgba(0,0,0,0.06);
+  color:#111;
+}
+.sb-actions button:hover{ transform: translateY(-1px); }
+
+.chatlist{
+  flex:1;
+  overflow:auto;
+  padding:6px 10px 12px;
+}
+.chatitem{
+  width:100%;
+  padding:10px 12px;
+  border-radius:12px;
+  margin:6px 0;
+  background:rgba(255,255,255,0.06);
+  color:#fff;
+  text-align:left;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+.light .chatitem{
+  background:rgba(0,0,0,0.06);
+  color:#111;
+}
+.chatitem:hover{ background:rgba(255,255,255,0.12); }
+.light .chatitem:hover{ background:rgba(0,0,0,0.1); }
+.chatitem span{ opacity:0.85; font-size:13px; }
+.chatitem b{ font-size:13px; }
+
+.sb-footer{
+  padding:12px;
+  border-top:1px solid rgba(255,255,255,0.1);
+  font-size:12px;
+  opacity:0.85;
+}
+.light .sb-footer{ border-top:1px solid rgba(0,0,0,0.08); }
+
+/* =========================
+   MAIN AREA
+========================= */
+.main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+}
+
 .topbar{
-  display:flex;gap:14px;align-items:center;justify-content:space-between;
-  padding:14px 16px;border:1px solid var(--b);background:rgba(13,20,36,.55);
-  backdrop-filter: blur(12px);
-  border-radius:var(--r);box-shadow:var(--shadow);
+  padding:12px 14px;
+  background:var(--panel);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
 }
 .brand{
-  display:flex;align-items:center;gap:12px;min-width:260px;
+  display:flex;
+  flex-direction:column;
+  line-height:1.1;
 }
-.logo{
-  width:44px;height:44px;border-radius:14px;
-  background: linear-gradient(135deg, var(--pri), var(--pri2));
-  box-shadow:0 10px 30px rgba(124,92,255,.25);
-  display:grid;place-items:center;
-  border:1px solid rgba(255,255,255,.15);
+.brand b{ font-size:16px; }
+.brand small{ opacity:0.7; font-weight:600; }
+.topbar .right{
+  display:flex;
+  gap:8px;
 }
-.logo svg{filter:drop-shadow(0 6px 10px rgba(0,0,0,.3))}
-.brand h1{margin:0;font-size:16px;line-height:1.1}
-.brand .sub{margin:0;color:var(--mut);font-size:12px}
-.nav{
-  display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;
+.topbar .right button{
+  padding:10px 12px;
+  border-radius:12px;
+  background:var(--card);
+  color:var(--text);
+  border:1px solid var(--border);
 }
-.nav button{
-  border:1px solid var(--b);
-  background:rgba(255,255,255,.04);
-  color:var(--txt);
-  padding:10px 12px;border-radius:14px;
-  cursor:pointer;transition:.15s;
+.topbar .right button:hover{ transform: translateY(-1px); }
+
+.modebar{
+  display:flex;
+  gap:8px;
+  padding:10px 12px;
+  background:var(--panel2);
+  border-bottom:1px solid var(--border);
+  overflow:auto;
 }
-.nav button:hover{transform:translateY(-1px);border-color:var(--b2)}
-.nav button.active{
-  background:linear-gradient(135deg, rgba(124,92,255,.25), rgba(0,229,255,.14));
-  border-color:rgba(124,92,255,.35);
+.modebar button{
+  padding:10px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.08);
+  color:var(--text);
+  border:1px solid var(--border);
+  white-space:nowrap;
 }
-.grid{
-  display:grid;grid-template-columns: 1.25fr .85fr;
-  gap:14px;margin-top:14px;
+.light .modebar button{ background:rgba(0,0,0,0.06); }
+.modebar button.active{
+  background:linear-gradient(135deg, var(--btn), #1e40af);
+  border-color:transparent;
 }
-@media (max-width:980px){.grid{grid-template-columns:1fr}}
-.card{
-  border:1px solid var(--b);
-  background:rgba(13,20,36,.55);
-  backdrop-filter: blur(12px);
-  border-radius:var(--r);
-  box-shadow:var(--shadow);
+
+.pages{
+  flex:1;
+  overflow:hidden;
+  display:flex;
 }
-.card .hd{
-  padding:14px 16px;border-bottom:1px solid var(--b);
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
+
+/* =========================
+   CHAT PAGE
+========================= */
+.page{
+  flex:1;
+  display:none;
+  flex-direction:column;
+  height:100%;
 }
-.card .hd .title{font-weight:700}
-.badge{
-  font-size:12px;color:#cfe3ff;background:rgba(255,255,255,.06);
-  border:1px solid var(--b);padding:6px 10px;border-radius:999px;
-}
-.card .bd{padding:14px 16px}
-.small{color:var(--mut);font-size:13px}
-hr.sep{border:0;border-top:1px solid var(--b);margin:12px 0}
-.row{display:flex;gap:10px;flex-wrap:wrap}
-.pill{
-  padding:8px 10px;border-radius:999px;
-  background:rgba(255,255,255,.05);
-  border:1px solid var(--b);
-  font-size:12px;color:#d7e6ff;
-}
-.kbd{font-family:var(--mono);font-size:12px;background:rgba(0,0,0,.25);border:1px solid var(--b);padding:2px 6px;border-radius:8px}
-textarea{
-  width:100%;min-height:110px;resize:vertical;
-  background:rgba(0,0,0,.25);color:var(--txt);
-  border:1px solid var(--b);border-radius:16px;
-  padding:12px 12px;outline:none;
-}
-input[type="text"], input[type="password"], select{
-  width:100%;
-  background:rgba(0,0,0,.25);color:var(--txt);
-  border:1px solid var(--b);border-radius:14px;
-  padding:10px 12px;outline:none;
-}
-.btn{
-  border:1px solid var(--b);
-  background:rgba(255,255,255,.05);
-  color:var(--txt);
-  padding:10px 12px;border-radius:14px;
-  cursor:pointer;transition:.15s;
-}
-.btn:hover{transform:translateY(-1px);border-color:var(--b2)}
-.btn.primary{
-  background:linear-gradient(135deg, rgba(124,92,255,.32), rgba(0,229,255,.18));
-  border-color:rgba(124,92,255,.35);
-}
-.btn.danger{
-  background:linear-gradient(135deg, rgba(255,59,106,.18), rgba(255,210,77,.08));
-  border-color:rgba(255,59,106,.35);
-}
-.btn.good{
-  background:linear-gradient(135deg, rgba(28,255,139,.16), rgba(0,229,255,.10));
-  border-color:rgba(28,255,139,.30);
-}
-.chat{
-  height:520px;overflow:auto;padding:14px 14px 10px;
-  display:flex;flex-direction:column;gap:10px;
+.page.active{ display:flex; }
+
+.chat-window{
+  flex:1;
+  overflow:auto;
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
 }
 .msg{
-  max-width:92%;
-  padding:12px 12px;border-radius:16px;
-  border:1px solid var(--b);
-  background:rgba(0,0,0,.25);
-  line-height:1.35;
+  max-width:75%;
+  padding:10px 12px;
+  border-radius:14px;
   white-space:pre-wrap;
+  line-height:1.4;
+  font-size:14px;
 }
-.msg.user{align-self:flex-end;border-color:rgba(0,229,255,.25);background:rgba(0,229,255,.06)}
-.msg.ai{align-self:flex-start;border-color:rgba(124,92,255,.25);background:rgba(124,92,255,.06)}
-.msg.sys{align-self:center;max-width:100%;opacity:.95;background:rgba(255,255,255,.04)}
-.msg .meta{font-size:11px;color:var(--mut);margin-bottom:6px}
-.chatbar{
-  display:flex;gap:10px;padding:12px 14px;border-top:1px solid var(--b);
-}
-.chatbar textarea{min-height:52px;max-height:180px}
-.chatbar .side{display:flex;flex-direction:column;gap:8px;min-width:170px}
-@media (max-width:560px){.chatbar{flex-direction:column}.chatbar .side{min-width:unset;flex-direction:row;flex-wrap:wrap}}
-.hidden{display:none !important}
-.codebox{
-  font-family:var(--mono);
-  font-size:12px;
-  background:rgba(0,0,0,.35);
-  border:1px solid var(--b);
-  border-radius:16px;
+.msg.user{ background:var(--user); color:#fff; align-self:flex-end; }
+.msg.bot{ background:var(--bot); color:var(--text); align-self:flex-start; }
+
+.input-area{
+  display:flex;
+  gap:10px;
   padding:12px;
-  overflow:auto;
-  max-height:260px;
-  white-space:pre;
+  border-top:1px solid var(--border);
+  background:var(--panel);
 }
-.table{
-  width:100%;
-  border-collapse:collapse;
-  overflow:hidden;
+.input-area input{
+  flex:1;
+  padding:12px 14px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:var(--card);
+  color:var(--text);
+  outline:none;
+}
+.input-area button{
+  padding:12px 16px;
+  border-radius:999px;
+  background:var(--btn2);
+  color:#fff;
+  font-weight:700;
+}
+.input-area button:hover{ transform: translateY(-1px); }
+
+/* =========================
+   LOGIN PAGE
+========================= */
+.auth-wrap{
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+}
+.auth-card{
+  width:420px;
+  max-width:100%;
+  background:var(--panel);
+  border:1px solid var(--border);
   border-radius:16px;
-  border:1px solid var(--b);
+  padding:16px;
 }
-.table th,.table td{
-  padding:10px 10px;border-bottom:1px solid var(--b);
-  text-align:left;font-size:13px;
+.auth-card h2{ margin-bottom:6px; }
+.auth-card p{ opacity:0.8; margin-bottom:14px; }
+.auth-card input{
+  width:100%;
+  padding:12px 12px;
+  margin:6px 0;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--card);
+  color:var(--text);
+  outline:none;
 }
-.table th{color:#d9e7ff;background:rgba(255,255,255,.04)}
-.table tr:last-child td{border-bottom:0}
-.footer{
-  margin-top:14px;
-  color:var(--mut);
-  font-size:12px;
-  text-align:center;
-  opacity:.9;
+.auth-row{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
 }
+.auth-row button{
+  flex:1;
+  padding:12px;
+  border-radius:12px;
+  color:#fff;
+  font-weight:800;
+}
+.btn-login{ background:var(--btn2); }
+.btn-signup{ background:var(--btn); }
+.btn-guest{ background:#6b7280; }
+.btn-logout{ background:var(--danger); }
+
 .note{
-  padding:12px 12px;border-radius:16px;
-  border:1px solid var(--b);
-  background:rgba(255,255,255,.04);
+  margin-top:10px;
+  font-size:12px;
+  opacity:0.85;
 }
-.glow{
-  box-shadow:0 0 0 1px rgba(124,92,255,.18), 0 0 40px rgba(124,92,255,.10);
+
+/* =========================
+   MINECRAFT MINI GAME
+========================= */
+.game-wrap{
+  flex:1;
+  overflow:auto;
+  padding:14px;
+}
+.game-card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:14px;
+}
+.game-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+}
+.game-title b{ font-size:16px; }
+.game-title small{ opacity:0.8; }
+
+.mc{
+  display:grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap:6px;
+  margin-top:12px;
+}
+.block{
+  height:34px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  user-select:none;
+}
+.block:hover{ transform: scale(1.03); }
+.dirt{ background:#6b4f2a; }
+.stone{ background:#6b7280; }
+.wood{ background:#7c4a2d; }
+.diamond{ background:#0ea5e9; }
+.empty{ background:rgba(255,255,255,0.05); }
+
+.inv{
+  margin-top:12px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.inv span{
+  padding:8px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid var(--border);
+  font-weight:700;
+}
+.light .inv span{ background:rgba(0,0,0,0.06); }
+
+hr{ border:none; border-top:1px solid var(--border); margin:12px 0; }
+
+@media (max-width: 900px){
+  .sidebar{ width:240px; }
+}
+@media (max-width: 700px){
+  .sidebar{ display:none; }
 }
 </style>
 </head>
 
 <body>
-<div class="wrap">
-  <div class="topbar">
-    <div class="brand">
-      <div class="logo" aria-hidden="true">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M12 2l9 5v10l-9 5-9-5V7l9-5z" stroke="white" stroke-width="1.5"/>
-          <path d="M7.5 10.5l4.5 2.5 4.5-2.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M12 13v6.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-      </div>
+  <!-- =========================
+       SIDEBAR
+  ========================= -->
+  <aside class="sidebar">
+    <div class="sb-head">
       <div>
-        <h1>StudyBuddy AI — Ultimate Hub</h1>
-        <p class="sub">Super ChatGPT Clone + StudyBuddy AI (single-file)</p>
+        StudyBuddy AI
+        <br><small>Ultimate Hub</small>
+      </div>
+      <small id="sbUserTag">Guest</small>
+    </div>
+
+    <div class="sb-actions">
+      <button onclick="newChat()">+ New</button>
+      <button onclick="toggleTheme()">🌗</button>
+    </div>
+
+    <div class="chatlist" id="chatList"></div>
+
+    <div class="sb-footer">
+      Offline • No API • LocalStorage
+    </div>
+  </aside>
+
+  <!-- =========================
+       MAIN
+  ========================= -->
+  <main class="main">
+
+    <div class="topbar">
+      <div class="brand">
+        <b id="topTitle">StudyBuddy AI</b>
+        <small id="topSub">Mode: Chat</small>
+      </div>
+
+      <div class="right">
+        <button onclick="exportChat()">⬇ Export</button>
+        <button onclick="resetChat()">🧹 Reset</button>
+        <button onclick="logout()" id="logoutBtnTop" style="display:none;">Logout</button>
       </div>
     </div>
 
-    <div class="nav" id="nav">
-      <button class="active" data-page="home">Home</button>
-      <button data-page="chat">Chat</button>
-      <button data-page="tools">Tools</button>
-      <button data-page="study">Study</button>
-      <button data-page="games">Games</button>
-      <button data-page="settings">Settings</button>
-    </div>
-  </div>
-
-  <div class="grid">
-    <!-- LEFT MAIN -->
-    <div class="card glow">
-      <div class="hd">
-        <div class="title" id="pageTitle">Home</div>
-        <div class="badge" id="statusBadge">Offline Mode • Local AI</div>
-      </div>
-
-      <div class="bd">
-        <!-- HOME -->
-        <div class="page" id="page-home">
-          <div class="note">
-            <b>Everything is working in one file.</b><br>
-            Buttons work because all JS is inside this HTML.<br><br>
-            <span class="small">Tip: Open in GitHub Pages OR double click locally.</span>
-          </div>
-          <hr class="sep">
-          <div class="row">
-            <span class="pill">✔ No 404 errors</span>
-            <span class="pill">✔ showPage() fixed</span>
-            <span class="pill">✔ sbSend() fixed</span>
-            <span class="pill">✔ Super ChatGPT UI</span>
-            <span class="pill">✔ StudyBuddy Modes</span>
-          </div>
-          <hr class="sep">
-          <div class="small">
-            <b>Quick Start:</b><br>
-            1) Go to <span class="kbd">Chat</span><br>
-            2) Select mode (StudyBuddy / SuperChatGPT)<br>
-            3) Type and press <span class="kbd">Enter</span>
-          </div>
-        </div>
-
-        <!-- CHAT -->
-        <div class="page hidden" id="page-chat">
-          <div class="row" style="align-items:center;justify-content:space-between">
-            <div class="small">
-              <b>Mode:</b>
-              <span class="pill" id="modePill">StudyBuddy</span>
-              <span class="pill">Memory: Local</span>
-              <span class="pill">History: Saved</span>
-            </div>
-            <div class="row">
-              <button class="btn" id="btnExport">Export</button>
-              <button class="btn danger" id="btnReset">Reset</button>
-            </div>
-          </div>
-
-          <hr class="sep">
-
-          <div class="chat" id="chatBox"></div>
-
-          <div class="chatbar">
-            <textarea id="chatInput" placeholder="Type message... (Enter = send, Shift+Enter = new line)"></textarea>
-            <div class="side">
-              <button class="btn primary" id="btnSend">Send</button>
-              <button class="btn" id="btnMode">Switch Mode</button>
-              <button class="btn good" id="btnSuggest">Suggest Prompt</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- TOOLS -->
-        <div class="page hidden" id="page-tools">
-          <div class="row">
-            <button class="btn primary" id="btnSummarize">Summarize Text</button>
-            <button class="btn" id="btnRewrite">Rewrite</button>
-            <button class="btn" id="btnExplain">Explain</button>
-            <button class="btn" id="btnQuiz">Make Quiz</button>
-          </div>
-          <hr class="sep">
-          <textarea id="toolInput" placeholder="Paste your text here..."></textarea>
-          <hr class="sep">
-          <div class="codebox" id="toolOutput">Output will appear here...</div>
-        </div>
-
-        <!-- STUDY -->
-        <div class="page hidden" id="page-study">
-          <div class="note">
-            <b>StudyBuddy AI</b> has special modes:
-            <ul class="small">
-              <li>Teacher Mode</li>
-              <li>Exam Mode</li>
-              <li>Step-by-step Math</li>
-              <li>Code Helper</li>
-              <li>Language Tutor</li>
-            </ul>
-          </div>
-          <hr class="sep">
-          <div class="row">
-            <button class="btn primary" data-setmode="Teacher">Teacher Mode</button>
-            <button class="btn" data-setmode="Exam">Exam Mode</button>
-            <button class="btn" data-setmode="Math">Math Mode</button>
-            <button class="btn" data-setmode="Coding">Coding Mode</button>
-            <button class="btn" data-setmode="Language">Language Mode</button>
-          </div>
-          <hr class="sep">
-          <div class="small">These modes affect how the AI responds in Chat.</div>
-        </div>
-
-        <!-- GAMES -->
-        <div class="page hidden" id="page-games">
-          <div class="note">
-            <b>Games Hub</b> (this is where you can add PRO MINECRAFT GAME later).
-            <br><span class="small">For now: simple mini-games included.</span>
-          </div>
-          <hr class="sep">
-          <div class="row">
-            <button class="btn primary" id="btnGameDice">Dice</button>
-            <button class="btn" id="btnGameRPS">Rock Paper Scissors</button>
-            <button class="btn" id="btnGameGuess">Number Guess</button>
-          </div>
-          <hr class="sep">
-          <div class="codebox" id="gameBox">Click a game button...</div>
-        </div>
-
-        <!-- SETTINGS -->
-        <div class="page hidden" id="page-settings">
-          <div class="note">
-            <b>Settings</b><br>
-            Everything is local. Works on GitHub Pages.
-          </div>
-          <hr class="sep">
-          <div class="row">
-            <div style="flex:1;min-width:240px">
-              <label class="small"><b>Theme</b></label>
-              <select id="themeSel">
-                <option value="neo">Neo Dark</option>
-                <option value="midnight">Midnight</option>
-                <option value="matrix">Matrix Green</option>
-              </select>
-            </div>
-            <div style="flex:1;min-width:240px">
-              <label class="small"><b>Chat Name</b></label>
-              <input id="userName" type="text" placeholder="Your name..." />
-            </div>
-          </div>
-          <hr class="sep">
-          <div class="row">
-            <button class="btn primary" id="btnSaveSettings">Save</button>
-            <button class="btn" id="btnClearStorage">Clear All Storage</button>
-          </div>
-          <hr class="sep">
-          <div class="small">
-            Saved in: <span class="kbd">localStorage</span>
-          </div>
-        </div>
-
-      </div>
+    <div class="modebar">
+      <button id="m_chat" class="active" onclick="setMode('chat')">💬 Chat</button>
+      <button id="m_exam" onclick="setMode('exam')">📝 Exam</button>
+      <button id="m_code" onclick="setMode('code')">💻 Coding</button>
+      <button id="m_math" onclick="setMode('math')">➗ Math</button>
+      <button id="m_islam" onclick="setMode('islam')">🕌 Islam</button>
+      <button id="m_games" onclick="setMode('games')">🎮 Games</button>
+      <button id="m_login" onclick="showPage('auth')">🔐 Login</button>
     </div>
 
-    <!-- RIGHT PANEL -->
-    <div class="card">
-      <div class="hd">
-        <div class="title">Super ChatGPT + StudyBuddy</div>
-        <div class="badge" id="rightBadge">All-in-One</div>
-      </div>
-      <div class="bd">
-        <div class="small">
-          <b>Built-in Commands (Chat):</b>
-        </div>
-        <table class="table" style="margin-top:10px">
-          <tr><th>Command</th><th>What it does</th></tr>
-          <tr><td><span class="kbd">/help</span></td><td>Shows commands</td></tr>
-          <tr><td><span class="kbd">/mode</span></td><td>Switch StudyBuddy/SuperChatGPT</td></tr>
-          <tr><td><span class="kbd">/teacher</span></td><td>Teacher mode</td></tr>
-          <tr><td><span class="kbd">/exam</span></td><td>Exam mode</td></tr>
-          <tr><td><span class="kbd">/math</span></td><td>Math mode</td></tr>
-          <tr><td><span class="kbd">/coding</span></td><td>Coding mode</td></tr>
-          <tr><td><span class="kbd">/reset</span></td><td>Clear chat</td></tr>
-          <tr><td><span class="kbd">/export</span></td><td>Download chat json</td></tr>
-        </table>
+    <div class="pages">
 
-        <hr class="sep">
-
-        <div class="small"><b>Why your old one broke:</b></div>
-        <div class="small" style="margin-top:8px">
-          It said: <span class="kbd">showPage is not defined</span> and <span class="kbd">sbSend is not defined</span>.<br>
-          That happens when JavaScript file is missing (404).<br><br>
-          <b>This file has NO external JS</b> so it never breaks.
+      <!-- CHAT PAGE -->
+      <section class="page active" id="page_chat">
+        <div class="chat-window" id="chatWindow"></div>
+        <div class="input-area">
+          <input id="userInput" placeholder="Type a message..." />
+          <button onclick="send()">Send</button>
         </div>
-      </div>
+      </section>
+
+      <!-- AUTH PAGE -->
+      <section class="page" id="page_auth">
+        <div class="auth-wrap">
+          <div class="auth-card">
+            <h2>Login / Signup</h2>
+            <p>Use email + password. (Saved offline in your browser)</p>
+
+            <input id="authEmail" type="email" placeholder="Email" />
+            <input id="authPass" type="password" placeholder="Password" />
+
+            <div class="auth-row">
+              <button class="btn-login" onclick="login()">Login</button>
+              <button class="btn-signup" onclick="signup()">Sign Up</button>
+            </div>
+
+            <div class="auth-row">
+              <button class="btn-guest" onclick="guestMode()">Continue as Guest</button>
+              <button class="btn-logout" onclick="logout()">Logout</button>
+            </div>
+
+            <div class="note" id="authMsg"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GAME PAGE -->
+      <section class="page" id="page_games">
+        <div class="game-wrap">
+          <div class="game-card">
+            <div class="game-title">
+              <div>
+                <b>⛏️ Minecraft Mini (Offline)</b><br>
+                <small>Click blocks to mine. Find diamonds!</small>
+              </div>
+              <button onclick="mcReset()" style="padding:10px 12px;border-radius:12px;background:var(--btn);color:#fff;font-weight:800;">
+                New World
+              </button>
+            </div>
+
+            <hr>
+
+            <div class="mc" id="mcGrid"></div>
+
+            <div class="inv" id="mcInv"></div>
+
+            <hr>
+
+            <small style="opacity:0.85">
+              Tip: Diamonds are rare 💎
+            </small>
+          </div>
+        </div>
+      </section>
+
     </div>
-  </div>
-
-  <div class="footer">
-    StudyBuddy AI Ultimate Hub • Single File • Works on GitHub Pages
-  </div>
-</div>
+  </main>
 
 <script>
-/* =========================
-   SINGLE FILE APP (NO 404)
-   ========================= */
+/* =========================================================
+   STORAGE KEYS
+========================================================= */
+const KEY_USERS = "SB_USERS_V1";
+const KEY_SESSION = "SB_SESSION_V1";
+const KEY_CHATS = "SB_CHATS_V1";
+const KEY_THEME = "SB_THEME_V1";
 
-/* ---------- Storage Keys ---------- */
-const K = {
-  chat: "SBH_CHAT_V1",
-  settings: "SBH_SETTINGS_V1"
-};
+/* =========================================================
+   GLOBAL STATE
+========================================================= */
+let mode = "chat";
+let currentUser = null; // {email}
+let chats = []; // array of {id,title,messages:[{role,text}]}
+let currentChatId = null;
 
-/* ---------- State ---------- */
-let STATE = {
-  appMode: "StudyBuddy",        // StudyBuddy | SuperChatGPT
-  sbSubMode: "Teacher",         // Teacher | Exam | Math | Coding | Language
-  userName: "You",
-  theme: "neo",
-  chat: []
-};
+/* =========================================================
+   ELEMENTS
+========================================================= */
+const chatWindow = document.getElementById("chatWindow");
+const chatList = document.getElementById("chatList");
+const userInput = document.getElementById("userInput");
+const topSub = document.getElementById("topSub");
+const sbUserTag = document.getElementById("sbUserTag");
+const logoutBtnTop = document.getElementById("logoutBtnTop");
 
-/* ---------- Helpers ---------- */
-const $ = (id)=>document.getElementById(id);
-const nowTime = ()=> new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
-const safe = (s)=> String(s ?? "").replace(/[<>&]/g, m=>({ "<":"&lt;", ">":"&gt;", "&":"&amp;" }[m]));
-
-/* ---------- Load / Save ---------- */
-function loadAll(){
-  try{
-    const s = JSON.parse(localStorage.getItem(K.settings) || "{}");
-    STATE.userName = s.userName || "You";
-    STATE.theme = s.theme || "neo";
-    STATE.appMode = s.appMode || "StudyBuddy";
-    STATE.sbSubMode = s.sbSubMode || "Teacher";
-  }catch(e){}
-  try{
-    STATE.chat = JSON.parse(localStorage.getItem(K.chat) || "[]");
-    if(!Array.isArray(STATE.chat)) STATE.chat=[];
-  }catch(e){ STATE.chat=[]; }
+/* =========================================================
+   HELPERS
+========================================================= */
+function uid(){
+  return "c_" + Math.random().toString(16).slice(2) + "_" + Date.now();
 }
-function saveAll(){
-  localStorage.setItem(K.settings, JSON.stringify({
-    userName: STATE.userName,
-    theme: STATE.theme,
-    appMode: STATE.appMode,
-    sbSubMode: STATE.sbSubMode
-  }));
-  localStorage.setItem(K.chat, JSON.stringify(STATE.chat));
+function nowTitle(){
+  const d = new Date();
+  return "Chat " + d.toLocaleString();
 }
-
-/* ---------- Theme ---------- */
-function applyTheme(){
-  const t = STATE.theme;
-  const root = document.documentElement;
-  if(t==="neo"){
-    root.style.setProperty("--pri","#7c5cff");
-    root.style.setProperty("--pri2","#00e5ff");
-    root.style.setProperty("--bg","#070b12");
-  }
-  if(t==="midnight"){
-    root.style.setProperty("--pri","#4c7dff");
-    root.style.setProperty("--pri2","#00ffc6");
-    root.style.setProperty("--bg","#04060c");
-  }
-  if(t==="matrix"){
-    root.style.setProperty("--pri","#00ff66");
-    root.style.setProperty("--pri2","#00e5ff");
-    root.style.setProperty("--bg","#030806");
-  }
+function escapeHTML(s){
+  return s.replace(/[&<>"']/g, m => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[m]));
+}
+function saveTheme(){
+  localStorage.setItem(KEY_THEME, document.body.classList.contains("light") ? "light" : "dark");
+}
+function loadTheme(){
+  const t = localStorage.getItem(KEY_THEME);
+  if(t === "light") document.body.classList.add("light");
 }
 
-/* ---------- Navigation ---------- */
-function showPage(page){
-  // nav buttons
-  document.querySelectorAll("#nav button").forEach(b=>{
-    b.classList.toggle("active", b.dataset.page===page);
-  });
-  // pages
-  document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
-  const el = $("page-"+page);
-  if(el) el.classList.remove("hidden");
-
-  // title
-  const titleMap = {
-    home:"Home",
-    chat:"Chat",
-    tools:"Tools",
-    study:"Study",
-    games:"Games",
-    settings:"Settings"
-  };
-  $("pageTitle").textContent = titleMap[page] || "Home";
+/* =========================================================
+   AUTH SYSTEM (LOCAL)
+========================================================= */
+function loadUsers(){
+  return JSON.parse(localStorage.getItem(KEY_USERS) || "{}");
+}
+function saveUsers(users){
+  localStorage.setItem(KEY_USERS, JSON.stringify(users));
+}
+function setSession(email){
+  localStorage.setItem(KEY_SESSION, JSON.stringify({email}));
+}
+function getSession(){
+  return JSON.parse(localStorage.getItem(KEY_SESSION) || "null");
+}
+function clearSession(){
+  localStorage.removeItem(KEY_SESSION);
+}
+function userKey(){
+  return currentUser ? ("user:" + currentUser.email.toLowerCase()) : "guest";
 }
 
-/* ---------- Chat Rendering ---------- */
-function addMsg(role, text){
-  const item = { role, text, t: Date.now() };
-  STATE.chat.push(item);
-  saveAll();
-  renderChat();
-  scrollChatBottom();
+/* =========================================================
+   CHAT STORAGE PER USER
+========================================================= */
+function loadAllChats(){
+  return JSON.parse(localStorage.getItem(KEY_CHATS) || "{}");
 }
-function renderChat(){
-  const box = $("chatBox");
-  box.innerHTML = "";
+function saveAllChats(obj){
+  localStorage.setItem(KEY_CHATS, JSON.stringify(obj));
+}
+function loadChatsForCurrentUser(){
+  const all = loadAllChats();
+  const k = userKey();
+  chats = all[k] || [];
+  if(!Array.isArray(chats)) chats = [];
+}
+function saveChatsForCurrentUser(){
+  const all = loadAllChats();
+  const k = userKey();
+  all[k] = chats;
+  saveAllChats(all);
+}
 
-  if(STATE.chat.length===0){
-    const d = document.createElement("div");
-    d.className="msg sys";
-    d.innerHTML = `<div class="meta">System</div>Welcome! Type <b>/help</b> to see commands.`;
-    box.appendChild(d);
+/* =========================================================
+   UI PAGES
+========================================================= */
+function showPage(name){
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  if(name === "chat") document.getElementById("page_chat").classList.add("active");
+  if(name === "auth") document.getElementById("page_auth").classList.add("active");
+  if(name === "games") document.getElementById("page_games").classList.add("active");
+}
+
+/* =========================================================
+   MODE SYSTEM
+========================================================= */
+function setMode(m){
+  mode = m;
+
+  document.querySelectorAll(".modebar button").forEach(b => b.classList.remove("active"));
+  const btn = document.getElementById("m_" + m);
+  if(btn) btn.classList.add("active");
+
+  if(m === "games"){
+    showPage("games");
+    topSub.innerText = "Mode: Games";
     return;
   }
 
-  for(const m of STATE.chat){
+  showPage("chat");
+  topSub.innerText = "Mode: " + m.toUpperCase();
+
+  addBot("Mode changed to: " + m.toUpperCase());
+}
+
+/* =========================================================
+   CHAT UI
+========================================================= */
+function renderChat(){
+  chatWindow.innerHTML = "";
+  const chat = chats.find(c => c.id === currentChatId);
+  if(!chat) return;
+
+  chat.messages.forEach(m => {
     const div = document.createElement("div");
-    div.className = "msg " + (m.role==="user" ? "user" : (m.role==="ai" ? "ai":"sys"));
-    const metaName = (m.role==="user") ? STATE.userName : (m.role==="ai" ? (STATE.appMode==="StudyBuddy" ? "StudyBuddy AI" : "Super ChatGPT") : "System");
-    div.innerHTML = `<div class="meta">${safe(metaName)} • ${new Date(m.t).toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"})}</div>${safe(m.text)}`;
-    box.appendChild(div);
-  }
-}
-function scrollChatBottom(){
-  const box = $("chatBox");
-  box.scrollTop = box.scrollHeight;
+    div.className = "msg " + (m.role === "user" ? "user" : "bot");
+    div.innerText = m.text;
+    chatWindow.appendChild(div);
+  });
+
+  chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
-/* ---------- AI Logic (Offline Local) ---------- */
-function aiReply(userText){
-  const txt = userText.trim();
-
-  // Commands
-  if(txt.startsWith("/")){
-    return handleCommand(txt);
-  }
-
-  // StudyBuddy vs SuperChatGPT styles
-  if(STATE.appMode==="StudyBuddy"){
-    return studyBuddyBrain(txt);
-  }else{
-    return superChatGPTBrain(txt);
-  }
-}
-
-function handleCommand(cmd){
-  const c = cmd.toLowerCase().trim();
-
-  if(c==="/help"){
-    return `Commands:
-- /help
-- /mode
-- /teacher /exam /math /coding /language
-- /reset
-- /export`;
-  }
-  if(c==="/mode"){
-    STATE.appMode = (STATE.appMode==="StudyBuddy") ? "SuperChatGPT" : "StudyBuddy";
-    saveAll();
-    updateBadges();
-    return `Switched mode to: ${STATE.appMode}`;
-  }
-  if(c==="/teacher"){STATE.sbSubMode="Teacher"; saveAll(); updateBadges(); return "StudyBuddy sub-mode: Teacher";}
-  if(c==="/exam"){STATE.sbSubMode="Exam"; saveAll(); updateBadges(); return "StudyBuddy sub-mode: Exam";}
-  if(c==="/math"){STATE.sbSubMode="Math"; saveAll(); updateBadges(); return "StudyBuddy sub-mode: Math";}
-  if(c==="/coding"){STATE.sbSubMode="Coding"; saveAll(); updateBadges(); return "StudyBuddy sub-mode: Coding";}
-  if(c==="/language"){STATE.sbSubMode="Language"; saveAll(); updateBadges(); return "StudyBuddy sub-mode: Language";}
-
-  if(c==="/reset"){
-    STATE.chat=[];
-    saveAll();
-    renderChat();
-    return "Chat cleared.";
-  }
-  if(c==="/export"){
-    exportChat();
-    return "Exporting chat...";
-  }
-
-  return "Unknown command. Type /help";
-}
-
-function studyBuddyBrain(t){
-  const mode = STATE.sbSubMode;
-
-  if(mode==="Teacher"){
-    return `Teacher Mode ✅
-
-Explain: ${t}
-
-1) Simple meaning:
-- ${simpleExplain(t)}
-
-2) Example:
-- ${makeExample(t)}
-
-3) Quick check:
-- Do you want a quiz on this?`;
-  }
-
-  if(mode==="Exam"){
-    return `Exam Mode 📝
-
-Question topic: ${t}
-
-Answer format:
-- Short answer
-- Key points
-- 1 example
-
-Key points:
-- ${keyPoints(t).join("\n- ")}`;
-  }
-
-  if(mode==="Math"){
-    return `Math Mode ➗
-
-Problem: ${t}
-
-Step-by-step:
-1) Identify what is given
-2) Choose formula
-3) Solve
-
-(If you paste the exact numbers, I will solve it fully.)`;
-  }
-
-  if(mode==="Coding"){
-    return `Coding Mode 💻
-
-Request: ${t}
-
-I can:
-- Fix code
-- Explain code
-- Write code
-- Debug errors
-
-Paste your code and I will improve it.`;
-  }
-
-  if(mode==="Language"){
-    return `Language Mode 🌍
-
-Text: ${t}
-
-I can:
-- Translate
-- Correct grammar
-- Improve writing
-- Teach vocabulary`;
-  }
-
-  return `StudyBuddy: ${t}`;
-}
-
-function superChatGPTBrain(t){
-  // More "chatgpt clone" style
-  if(/hello|hi|hey/i.test(t)) return "Hey! 😄 I’m Super ChatGPT inside StudyBuddy Hub. What do you want to do today?";
-  if(/make.*website|html|css|js/i.test(t)) return "Sure. Tell me what you want in the website and I will generate the full code.";
-  if(/minecraft/i.test(t)) return "I can add PRO MINECRAFT GAME as a full web mini-game module inside the Games tab.";
-  return `Super ChatGPT 🤖
-
-You said:
-"${t}"
-
-Reply:
-- I understand. Tell me the next instruction and I will do it.`;
-}
-
-/* ---------- Mini Helpers ---------- */
-function simpleExplain(x){
-  if(x.length<20) return `This is about: "${x}".`;
-  return "This topic means understanding the main idea and how it works.";
-}
-function makeExample(x){
-  return `Example: If we apply "${x}" in real life, we can solve problems faster.`;
-}
-function keyPoints(x){
-  return [
-    `Main idea of "${x}"`,
-    "Definition + explanation",
-    "One example",
-    "One common mistake"
-  ];
-}
-
-/* ---------- Chat Actions ---------- */
-function sbSend(){
-  const input = $("chatInput");
-  const text = input.value.trim();
-  if(!text) return;
-
-  input.value = "";
-  addMsg("user", text);
-
-  // AI response
-  setTimeout(()=>{
-    const reply = aiReply(text);
-    addMsg("ai", reply);
-  }, 120);
-}
-
-function sbReset(){
-  if(!confirm("Reset chat?")) return;
-  STATE.chat=[];
-  saveAll();
+function addUser(text){
+  const chat = chats.find(c => c.id === currentChatId);
+  if(!chat) return;
+  chat.messages.push({role:"user", text});
+  saveChatsForCurrentUser();
   renderChat();
 }
 
-function sbExport(){
-  exportChat();
+function addBot(text){
+  const chat = chats.find(c => c.id === currentChatId);
+  if(!chat) return;
+  chat.messages.push({role:"bot", text});
+  saveChatsForCurrentUser();
+  renderChat();
 }
 
-/* ---------- Export ---------- */
-function exportChat(){
-  const data = {
-    exportedAt: new Date().toISOString(),
-    appMode: STATE.appMode,
-    sbSubMode: STATE.sbSubMode,
-    userName: STATE.userName,
-    chat: STATE.chat
+function newChat(){
+  const c = {
+    id: uid(),
+    title: nowTitle(),
+    messages: []
   };
-  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "StudyBuddyHub_ChatExport.json";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url), 1000);
-}
-
-/* ---------- Badges ---------- */
-function updateBadges(){
-  $("modePill").textContent = STATE.appMode + (STATE.appMode==="StudyBuddy" ? (" • "+STATE.sbSubMode) : "");
-  $("statusBadge").textContent = "Offline Mode • " + STATE.appMode;
-}
-
-/* ---------- Tools ---------- */
-function toolRun(type){
-  const input = $("toolInput").value.trim();
-  if(!input){ $("toolOutput").textContent="Paste text first."; return; }
-
-  if(type==="summarize"){
-    $("toolOutput").textContent = "Summary:\n- " + input.split(/\s+/).slice(0,40).join(" ") + (input.split(/\s+/).length>40?" ...":"");
-  }
-  if(type==="rewrite"){
-    $("toolOutput").textContent = "Rewrite:\n" + input.replace(/\bvery\b/gi,"really").replace(/\bI\b/g,"I (rewritten)");
-  }
-  if(type==="explain"){
-    $("toolOutput").textContent = "Explanation:\nThis text is about:\n" + simpleExplain(input);
-  }
-  if(type==="quiz"){
-    $("toolOutput").textContent =
-`Quiz:
-1) What is the main idea of the text?
-2) Write 3 key points.
-3) Give 1 example.
-4) What mistake can happen?`;
-  }
-}
-
-/* ---------- Games ---------- */
-let guessNumber = null;
-function gameDice(){
-  const a = 1 + Math.floor(Math.random()*6);
-  const b = 1 + Math.floor(Math.random()*6);
-  $("gameBox").textContent = `🎲 Dice rolled: ${a} and ${b}\nTotal: ${a+b}`;
-}
-function gameRPS(){
-  const items=["Rock","Paper","Scissors"];
-  const pick = items[Math.floor(Math.random()*3)];
-  $("gameBox").textContent = `✊✋✌️ Random pick: ${pick}\nTry again!`;
-}
-function gameGuess(){
-  if(guessNumber===null) guessNumber = 1 + Math.floor(Math.random()*50);
-  const g = prompt("Guess number (1 to 50):");
-  if(g===null) return;
-  const n = Number(g);
-  if(!Number.isFinite(n)) { $("gameBox").textContent="Not a number."; return; }
-  if(n===guessNumber){ $("gameBox").textContent="🎉 Correct! New number generated."; guessNumber=null; return; }
-  $("gameBox").textContent = (n<guessNumber) ? "Too low!" : "Too high!";
-}
-
-/* ---------- Init ---------- */
-function init(){
-  loadAll();
-  applyTheme();
-
-  // Settings UI
-  $("themeSel").value = STATE.theme;
-  $("userName").value = STATE.userName;
-
-  // Nav events
-  document.querySelectorAll("#nav button").forEach(btn=>{
-    btn.addEventListener("click", ()=> showPage(btn.dataset.page));
-  });
-
-  // Chat events
-  $("btnSend").addEventListener("click", sbSend);
-  $("btnReset").addEventListener("click", sbReset);
-  $("btnExport").addEventListener("click", sbExport);
-  $("btnMode").addEventListener("click", ()=>{
-    STATE.appMode = (STATE.appMode==="StudyBuddy") ? "SuperChatGPT" : "StudyBuddy";
-    saveAll(); updateBadges();
-    addMsg("sys", "Mode switched to: " + STATE.appMode);
-  });
-  $("btnSuggest").addEventListener("click", ()=>{
-    const suggestions = [
-      "Explain photosynthesis in simple words.",
-      "Make me a quiz about Newton laws.",
-      "Write a website landing page.",
-      "Help me with JavaScript errors.",
-      "Make a study plan for exams."
-    ];
-    $("chatInput").value = suggestions[Math.floor(Math.random()*suggestions.length)];
-    $("chatInput").focus();
-  });
-
-  $("chatInput").addEventListener("keydown", (e)=>{
-    if(e.key==="Enter" && !e.shiftKey){
-      e.preventDefault();
-      sbSend();
-    }
-  });
-
-  // Study mode buttons
-  document.querySelectorAll("[data-setmode]").forEach(b=>{
-    b.addEventListener("click", ()=>{
-      STATE.appMode="StudyBuddy";
-      STATE.sbSubMode=b.dataset.setmode;
-      saveAll();
-      updateBadges();
-      showPage("chat");
-      addMsg("sys", "StudyBuddy mode set to: " + STATE.sbSubMode);
-    });
-  });
-
-  // Tools buttons
-  $("btnSummarize").addEventListener("click", ()=>toolRun("summarize"));
-  $("btnRewrite").addEventListener("click", ()=>toolRun("rewrite"));
-  $("btnExplain").addEventListener("click", ()=>toolRun("explain"));
-  $("btnQuiz").addEventListener("click", ()=>toolRun("quiz"));
-
-  // Games
-  $("btnGameDice").addEventListener("click", gameDice);
-  $("btnGameRPS").addEventListener("click", gameRPS);
-  $("btnGameGuess").addEventListener("click", gameGuess);
-
-  // Settings
-  $("btnSaveSettings").addEventListener("click", ()=>{
-    STATE.theme = $("themeSel").value;
-    STATE.userName = $("userName").value.trim() || "You";
-    saveAll();
-    applyTheme();
-    addMsg("sys", "Settings saved.");
-  });
-  $("btnClearStorage").addEventListener("click", ()=>{
-    if(!confirm("Clear EVERYTHING?")) return;
-    localStorage.removeItem(K.chat);
-    localStorage.removeItem(K.settings);
-    location.reload();
-  });
-
-  // First render
-  updateBadges();
+  chats.unshift(c);
+  currentChatId = c.id;
+  saveChatsForCurrentUser();
+  renderChatList();
   renderChat();
-  showPage("home");
+  addBot("Welcome to StudyBuddy AI 🚀\nChoose a mode: Chat, Exam, Coding, Math, Islam, Games.");
+}
+
+function renderChatList(){
+  chatList.innerHTML = "";
+  chats.forEach(c => {
+    const b = document.createElement("button");
+    b.className = "chatitem";
+    b.onclick = () => {
+      currentChatId = c.id;
+      renderChatList();
+      renderChat();
+    };
+
+    const left = document.createElement("div");
+    left.innerHTML = "<b>" + escapeHTML(c.title) + "</b><br><span>" + (c.messages.length + " msgs") + "</span>";
+
+    const right = document.createElement("div");
+    right.style.opacity = "0.7";
+    right.style.fontWeight = "900";
+    right.innerText = (c.id === currentChatId) ? "●" : "";
+
+    b.appendChild(left);
+    b.appendChild(right);
+
+    chatList.appendChild(b);
+  });
+}
+
+/* =========================================================
+   STUDYBUDDY AI BRAIN
+========================================================= */
+function aiChatResponse(q){
+  const lower = q.toLowerCase().trim();
+
+  // Basic
+  if(lower === "hi" || lower === "hello" || lower.includes("hi ") || lower.includes("hello")){
+    return "Hello 😊 I'm StudyBuddy AI!";
+  }
+  if(lower.includes("how are you")){
+    return "Alhamdulillah I'm good 🤍 How can I help you today?";
+  }
+  if(lower.includes("who are you")){
+    return "I am StudyBuddy AI — an offline study + chat assistant with modes, games, and tools.";
+  }
+  if(lower.includes("what can you do")){
+    return "I can chat, help in exams, write code, solve math, give Islamic reminders, and you can play games like Minecraft mini.";
+  }
+  if(lower.includes("who made you") || lower.includes("who created you")){
+    return "I was made by Yousaf (a young Muslim developer) 🌟";
+  }
+
+  // Mode-based
+  if(mode === "exam"){
+    return "📝 Exam Mode:\nSend your question and I will answer in a short, clean exam style.";
+  }
+  if(mode === "code"){
+    return "💻 Coding Mode:\nTell me the language (HTML/JS/Python) and what you want to build.";
+  }
+  if(mode === "math"){
+    if(!/^[0-9+\-*/(). %]+$/.test(q)) return "➗ Please type only math like: 12*(5+3)";
+    try{
+      const ans = Function("return (" + q + ")")();
+      return "Answer: " + ans;
+    }catch{
+      return "Math error. Try again.";
+    }
+  }
+  if(mode === "islam"){
+    const islam = [
+      "🕌 Reminder: Pray 5 times daily.",
+      "🤲 Dua: Allahumma zidni ilma.",
+      "📖 Quran is guidance for all mankind.",
+      "🤍 Say: Alhamdulillah for everything."
+    ];
+    return islam[Math.floor(Math.random()*islam.length)];
+  }
+
+  // Default
+  return "Tell me more 🤔 (Try: what can you do?)";
+}
+
+/* =========================================================
+   SEND MESSAGE
+========================================================= */
+function send(){
+  const text = userInput.value.trim();
+  if(!text) return;
+  userInput.value = "";
+
+  addUser(text);
+
+  // typing effect
+  setTimeout(() => {
+    const reply = aiChatResponse(text);
+    addBot(reply);
+  }, 400 + Math.random()*400);
+}
+
+userInput.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter") send();
+});
+
+/* =========================================================
+   EXPORT + RESET
+========================================================= */
+function exportChat(){
+  const chat = chats.find(c => c.id === currentChatId);
+  if(!chat) return;
+
+  const lines = chat.messages.map(m => (m.role === "user" ? "User: " : "AI: ") + m.text);
+  const blob = new Blob([lines.join("\n\n")], {type:"text/plain"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "StudyBuddyChat.txt";
+  a.click();
+}
+
+function resetChat(){
+  const chat = chats.find(c => c.id === currentChatId);
+  if(!chat) return;
+  chat.messages = [];
+  saveChatsForCurrentUser();
+  renderChat();
+  addBot("Chat cleared ✅");
+}
+
+/* =========================================================
+   THEME
+========================================================= */
+function toggleTheme(){
+  document.body.classList.toggle("light");
+  saveTheme();
+}
+
+/* =========================================================
+   LOGIN / SIGNUP / GUEST
+========================================================= */
+function authMsg(text, good=false){
+  const el = document.getElementById("authMsg");
+  el.style.color = good ? "#22c55e" : "#ef4444";
+  el.innerText = text;
+}
+
+function signup(){
+  const email = document.getElementById("authEmail").value.trim().toLowerCase();
+  const pass = document.getElementById("authPass").value;
+
+  if(!email || !pass) return authMsg("Enter email + password.");
+  if(pass.length < 4) return authMsg("Password must be at least 4 characters.");
+
+  const users = loadUsers();
+  if(users[email]) return authMsg("Account already exists. Please login.");
+
+  users[email] = {password: pass, created: Date.now()};
+  saveUsers(users);
+
+  authMsg("Account created! Now login ✅", true);
+}
+
+function login(){
+  const email = document.getElementById("authEmail").value.trim().toLowerCase();
+  const pass = document.getElementById("authPass").value;
+
+  if(!email || !pass) return authMsg("Enter email + password.");
+
+  const users = loadUsers();
+  if(!users[email]) return authMsg("No account found. Please sign up first.");
+  if(users[email].password !== pass) return authMsg("Wrong password.");
+
+  currentUser = {email};
+  setSession(email);
+
+  afterLogin();
+  authMsg("Login successful ✅", true);
+}
+
+function guestMode(){
+  currentUser = null;
+  clearSession();
+  afterLogin();
+}
+
+function logout(){
+  currentUser = null;
+  clearSession();
+  sbUserTag.innerText = "Guest";
+  logoutBtnTop.style.display = "none";
+  document.getElementById("m_login").innerText = "🔐 Login";
+  loadChatsForCurrentUser();
+  if(chats.length === 0) newChat();
+  renderChatList();
+  showPage("chat");
+  addBot("You are now in Guest mode.");
+}
+
+function afterLogin(){
+  sbUserTag.innerText = currentUser ? currentUser.email.split("@")[0] : "Guest";
+  logoutBtnTop.style.display = currentUser ? "inline-block" : "none";
+  document.getElementById("m_login").innerText = currentUser ? "👤 Account" : "🔐 Login";
+
+  loadChatsForCurrentUser();
+  if(chats.length === 0) newChat();
+  renderChatList();
+  showPage("chat");
+
+  addBot(currentUser ? ("Logged in as: " + currentUser.email + " ✅") : "Guest mode enabled ✅");
+}
+
+/* =========================================================
+   MINECRAFT MINI GAME
+========================================================= */
+let mcWorld = [];
+let mcInv = {dirt:0, stone:0, wood:0, diamond:0};
+
+function mcRandomBlock(){
+  const r = Math.random();
+  if(r < 0.50) return "dirt";
+  if(r < 0.80) return "stone";
+  if(r < 0.95) return "wood";
+  return "diamond"; // rare
+}
+
+function mcEmoji(type){
+  if(type === "dirt") return "🟫";
+  if(type === "stone") return "⬜";
+  if(type === "wood") return "🟤";
+  if(type === "diamond") return "💎";
+  return "";
+}
+
+function mcRender(){
+  const grid = document.getElementById("mcGrid");
+  grid.innerHTML = "";
+
+  mcWorld.forEach((b, idx) => {
+    const div = document.createElement("div");
+    div.className = "block " + (b.type || "empty");
+    div.innerText = b.type ? mcEmoji(b.type) : "";
+    div.title = b.type ? ("Mine: " + b.type) : "Empty";
+
+    div.onclick = () => {
+      if(!b.type) return;
+      mcInv[b.type] = (mcInv[b.type] || 0) + 1;
+      b.type = null;
+      mcRender();
+      mcRenderInv();
+    };
+
+    grid.appendChild(div);
+  });
+}
+
+function mcRenderInv(){
+  const inv = document.getElementById("mcInv");
+  inv.innerHTML = `
+    <span>🟫 Dirt: ${mcInv.dirt}</span>
+    <span>⬜ Stone: ${mcInv.stone}</span>
+    <span>🟤 Wood: ${mcInv.wood}</span>
+    <span>💎 Diamond: ${mcInv.diamond}</span>
+  `;
+}
+
+function mcReset(){
+  mcWorld = [];
+  mcInv = {dirt:0, stone:0, wood:0, diamond:0};
+
+  for(let i=0;i<60;i++){
+    mcWorld.push({type: mcRandomBlock()});
+  }
+  mcRender();
+  mcRenderInv();
+}
+
+/* =========================================================
+   INIT
+========================================================= */
+function init(){
+  loadTheme();
+
+  // session
+  const sess = getSession();
+  if(sess && sess.email){
+    currentUser = {email: sess.email};
+  }
+
+  sbUserTag.innerText = currentUser ? currentUser.email.split("@")[0] : "Guest";
+  logoutBtnTop.style.display = currentUser ? "inline-block" : "none";
+  document.getElementById("m_login").innerText = currentUser ? "👤 Account" : "🔐 Login";
+
+  loadChatsForCurrentUser();
+  if(chats.length === 0) newChat();
+  if(!currentChatId && chats.length) currentChatId = chats[0].id;
+
+  renderChatList();
+  renderChat();
+
+  mcReset();
 }
 init();
 </script>
