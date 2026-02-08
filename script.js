@@ -1,434 +1,338 @@
-/* =========================
-   GLOBAL SETTINGS + STORAGE
-========================= */
+/* =========================================================
+   StudyBuddy AI - Infinity Hub (OFFLINE)
+   - Buttons always work
+   - Login / Signup / Guest
+   - Modes: chat, ai, math, quiz, games, islam
+   - Detailed AI answers (Mode C)
+========================================================= */
 
-let SB_MODE = localStorage.getItem("SB_MODE") || "study";
-let CG_MODE = localStorage.getItem("CG_MODE") || "smart";
-let THEME = localStorage.getItem("THEME") || "dark";
+let mode = "chat";
+let chatLog = [];
+let currentUser = null;
 
-const SB_CHAT_KEY = "SB_CHAT_LOG";
-const CG_CHAT_KEY = "CG_CHAT_LOG";
+/* ---------- DOM ---------- */
+const pageLogin = document.getElementById("page-login");
+const pageApp = document.getElementById("page-app");
 
-function $(id){ return document.getElementById(id); }
+const authEmail = document.getElementById("authEmail");
+const authPass = document.getElementById("authPass");
+const authMsg = document.getElementById("authMsg");
 
-window.onload = () => {
-  applyTheme();
-  showPage("home");
-  setupModesUI();
-  loadChats();
-  fillMinecraftCommand();
-};
+const signupBtn = document.getElementById("signupBtn");
+const loginBtn = document.getElementById("loginBtn");
+const guestBtn = document.getElementById("guestBtn");
 
-/* =========================
-   PAGE SYSTEM (BUTTON FIX)
-========================= */
+const chat = document.getElementById("chat");
+const input = document.getElementById("input");
+const sendBtn = document.getElementById("sendBtn");
 
-function showPage(pageName){
-  // Hide all pages
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("show"));
+const themeBtn = document.getElementById("themeBtn");
+const exportBtn = document.getElementById("exportBtn");
+const resetBtn = document.getElementById("resetBtn");
 
-  // Show selected
-  const page = document.getElementById("page-" + pageName);
-  if(page) page.classList.add("show");
+const userLabel = document.getElementById("userLabel");
+const logoutBtn = document.getElementById("logoutBtn");
 
-  // Nav active
-  document.querySelectorAll(".navbtn").forEach(b => b.classList.remove("active"));
-  const btns = document.querySelectorAll(".navbtn");
-  btns.forEach(btn=>{
-    if(btn.getAttribute("onclick")?.includes("'" + pageName + "'")){
-      btn.classList.add("active");
-    }
-  });
+/* ---------- Safe LocalStorage ---------- */
+function lsGet(key, def=null){
+  try{
+    let v = localStorage.getItem(key);
+    return v ? JSON.parse(v) : def;
+  }catch(e){
+    return def;
+  }
+}
+function lsSet(key, value){
+  try{
+    localStorage.setItem(key, JSON.stringify(value));
+  }catch(e){}
 }
 
-/* =========================
-   THEME
-========================= */
+/* ---------- Pages ---------- */
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
 
+/* ---------- Chat UI ---------- */
+function addMsg(text, who){
+  const d = document.createElement("div");
+  d.className = "msg " + who;
+  d.innerText = text;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+
+  chatLog.push((who==="user" ? "User: " : "AI: ") + text);
+}
+
+/* ---------- Theme ---------- */
 function toggleTheme(){
-  THEME = (THEME === "dark") ? "light" : "dark";
-  localStorage.setItem("THEME", THEME);
-  applyTheme();
+  document.body.classList.toggle("light");
+  lsSet("sb_theme_light", document.body.classList.contains("light"));
 }
 
-function applyTheme(){
-  if(THEME === "light") document.body.classList.add("light");
-  else document.body.classList.remove("light");
-}
-
-/* =========================
-   AUTH SYSTEM (LOCAL)
-========================= */
-
-function openAuth(){
-  $("authModal").classList.add("show");
-  authTab("login");
-}
-
-function closeAuth(){
-  $("authModal").classList.remove("show");
-}
-
-function authTab(tab){
-  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-  document.querySelectorAll(".authPage").forEach(p=>p.classList.remove("show"));
-
-  if(tab==="login"){
-    document.querySelectorAll(".tab")[0].classList.add("active");
-    $("auth-login").classList.add("show");
-  }
-  if(tab==="signup"){
-    document.querySelectorAll(".tab")[1].classList.add("active");
-    $("auth-signup").classList.add("show");
-  }
-  if(tab==="guest"){
-    document.querySelectorAll(".tab")[2].classList.add("active");
-    $("auth-guest").classList.add("show");
-  }
-}
-
-function doSignup(){
-  const email = $("signupEmail").value.trim();
-  const pass = $("signupPass").value.trim();
-  if(!email || !pass) return alert("Enter email and password!");
-
-  localStorage.setItem("USER_EMAIL", email);
-  localStorage.setItem("USER_PASS", pass);
-
-  alert("Account created! Now login.");
-  authTab("login");
-}
-
-function doLogin(){
-  const email = $("loginEmail").value.trim();
-  const pass = $("loginPass").value.trim();
-
-  const savedE = localStorage.getItem("USER_EMAIL");
-  const savedP = localStorage.getItem("USER_PASS");
-
-  if(email === savedE && pass === savedP){
-    localStorage.setItem("LOGGED_IN", "yes");
-    alert("Login success!");
-    closeAuth();
-  }else{
-    alert("Wrong email or password!");
-  }
-}
-
-function useGuest(){
-  localStorage.setItem("LOGGED_IN", "guest");
-  alert("Guest mode enabled!");
-  closeAuth();
-}
-
-/* =========================
-   STUDYBUDDY AI
-========================= */
-
-function setSBMode(mode){
-  SB_MODE = mode;
-  localStorage.setItem("SB_MODE", SB_MODE);
-  setupModesUI();
-  sbSystemMessage("Mode changed to: " + mode.toUpperCase());
-}
-
-function sbSystemMessage(text){
-  addMsg("sbChat", "bot", "📚 StudyBuddy: " + text);
-  saveChats();
-}
-
-function sbSend(){
-  const input = $("sbInput");
-  const text = input.value.trim();
-  if(!text) return;
-
-  addMsg("sbChat", "user", text);
-  input.value = "";
-
-  const reply = sbBrain(text);
-  addMsg("sbChat", "bot", reply);
-
-  saveChats();
-}
-
-function sbBrain(q){
-  const question = q.toLowerCase();
-
-  // Basic
-  if(question.includes("hi") || question.includes("hello"))
-    return "Hello! 👋 I am StudyBuddy AI. Ask me anything.";
-
-  if(question.includes("who are you"))
-    return "I am StudyBuddy AI — your study helper, exam assistant, and coding tutor.";
-
-  if(question.includes("who made you"))
-    return "I was made by YOU 😎 (Yousaf) using HTML, CSS, and JavaScript.";
-
-  if(question.includes("how are you"))
-    return "I am great! Ready to help you study 💙";
-
-  // Modes
-  if(SB_MODE === "exam"){
-    return "📝 Exam Mode Answer:\n" + quickAnswer(question);
-  }
-
-  if(SB_MODE === "coding"){
-    return "💻 Coding Mode:\n" + codingAnswer(question);
-  }
-
-  if(SB_MODE === "summarize"){
-    return "📌 Summarize Mode:\nPaste your text and I will summarize it.";
-  }
-
-  if(SB_MODE === "translate"){
-    return "🌍 Translate Mode:\nTell me what sentence and which language.";
-  }
-
-  // Default study mode
-  return "📚 Study Mode:\n" + quickAnswer(question);
-}
-
-function quickAnswer(q){
-  // Simple built-in knowledge
-  if(q.includes("capital of france")) return "The capital of France is Paris.";
-  if(q.includes("capital of japan")) return "The capital of Japan is Tokyo.";
-  if(q.includes("h2o") || q.includes("water formula")) return "Water formula is H₂O.";
-
-  if(q.includes("artificial intelligence") || q.includes("what is ai")){
-    return "Artificial Intelligence (AI) is technology that allows computers to learn, reason, and solve problems like humans.";
-  }
-
-  if(q.includes("machine learning")){
-    return "Machine Learning is a part of AI where computers learn patterns from data instead of being manually programmed.";
-  }
-
-  if(q.includes("neural network")){
-    return "Neural Networks are AI models inspired by the human brain, used for learning complex patterns.";
-  }
-
-  if(q.includes("sleep")){
-    return "To improve sleep: keep a fixed schedule, avoid screens before bed, and reduce caffeine.";
-  }
-
-  if(q.includes("gift ideas")){
-    return "Gift ideas: custom mug, photo frame, handwritten letter, headphones, books, perfume.";
-  }
-
-  if(q.includes("summarize")){
-    return "Paste your text and I will summarize it for you.";
-  }
-
-  // Math detection (simple)
-  if(q.match(/[0-9]+\s*[\+\-\*\/]\s*[0-9]+/)){
-    try{
-      const safe = q.replace(/[^0-9+\-*/(). ]/g,"");
-      const ans = Function("return " + safe)();
-      return "Answer: " + ans;
-    }catch(e){
-      return "I could not solve that math problem.";
-    }
-  }
-
-  return "I can answer general knowledge, definitions, math, coding help, and study questions. Ask me anything!";
-}
-
-function codingAnswer(q){
-  if(q.includes("best coding languages for ai")){
-    return "Best AI languages: Python, R, Java, C++, JavaScript.\nMost popular: Python.";
-  }
-
-  if(q.includes("function")){
-    return "Example JavaScript function:\n\nfunction add(a,b){\n  return a+b;\n}";
-  }
-
-  return "Tell me what code you want and I will write it.";
-}
-
-function sbExport(){
-  const text = $("sbChat").innerText;
-  downloadText("studybuddy_chat.txt", text);
-}
-
-function sbReset(){
-  $("sbChat").innerHTML = "";
-  saveChats();
-}
-
-/* =========================
-   CHATGPT CLONE
-========================= */
-
-function setCGMode(mode){
-  CG_MODE = mode;
-  localStorage.setItem("CG_MODE", CG_MODE);
-  setupModesUI();
-  addMsg("cgChat","bot","🤖 Mode changed to: " + mode.toUpperCase());
-  saveChats();
-}
-
-function cgSend(){
-  const input = $("cgInput");
-  const text = input.value.trim();
-  if(!text) return;
-
-  addMsg("cgChat", "user", text);
-  input.value = "";
-
-  const reply = cgBrain(text);
-  addMsg("cgChat", "bot", reply);
-
-  saveChats();
-}
-
-function cgBrain(t){
-  const q = t.toLowerCase();
-
-  if(q.includes("hi") || q.includes("hello")) return "Hello 😄 I am your Super ChatGPT Clone!";
-  if(q.includes("who are you")) return "I am your AI chatbot built inside StudyBuddy AI.";
-  if(q.includes("what can you do")) return "I can chat, answer questions, help coding, and give ideas.";
-  if(q.includes("who made you")) return "You made me 😎 (Yousaf).";
-
-  if(CG_MODE === "creative"){
-    return "✨ Creative Answer:\n" + "Here is a creative response: " + t;
-  }
-
-  if(CG_MODE === "coding"){
-    return "💻 Coding Mode:\n" + "Tell me your programming language and I will write the code.";
-  }
-
-  if(CG_MODE === "strict"){
-    return "✅ Strict Answer:\n" + "Please ask one clear question.";
-  }
-
-  return "🤖 Smart Answer:\n" + quickAnswer(q);
-}
-
-function cgExport(){
-  const text = $("cgChat").innerText;
-  downloadText("chatgpt_clone_chat.txt", text);
-}
-
-function cgReset(){
-  $("cgChat").innerHTML = "";
-  saveChats();
-}
-
-/* =========================
-   CHAT UI HELPERS
-========================= */
-
-function addMsg(chatId, who, text){
-  const box = document.createElement("div");
-  box.className = "msg " + who;
-  box.textContent = text;
-
-  $(chatId).appendChild(box);
-  $(chatId).scrollTop = $(chatId).scrollHeight;
-}
-
-function saveChats(){
-  localStorage.setItem(SB_CHAT_KEY, $("sbChat").innerHTML);
-  localStorage.setItem(CG_CHAT_KEY, $("cgChat").innerHTML);
-}
-
-function loadChats(){
-  const sb = localStorage.getItem(SB_CHAT_KEY);
-  const cg = localStorage.getItem(CG_CHAT_KEY);
-
-  if(sb) $("sbChat").innerHTML = sb;
-  if(cg) $("cgChat").innerHTML = cg;
-}
-
-function setupModesUI(){
-  // StudyBuddy chips
-  const sbChips = document.querySelectorAll("#page-study .chip");
-  sbChips.forEach(c=>c.classList.remove("active"));
-  sbChips.forEach(c=>{
-    if(c.innerText.toLowerCase().includes(SB_MODE)) c.classList.add("active");
-  });
-
-  // ChatGPT chips
-  const cgChips = document.querySelectorAll("#page-chat .chip");
-  cgChips.forEach(c=>c.classList.remove("active"));
-  cgChips.forEach(c=>{
-    if(c.innerText.toLowerCase().includes(CG_MODE)) c.classList.add("active");
-  });
-}
-
-/* =========================
-   MINECRAFT COMMANDS
-========================= */
-
-function fillMinecraftCommand(){
-  const cmd =
-`/execute as @p run effect give @p minecraft:strength 999999 255 true
-/effect give @p minecraft:resistance 999999 255 true
-/effect give @p minecraft:regeneration 999999 10 true
-/effect give @p minecraft:fire_resistance 999999 1 true
-/effect give @p minecraft:invisibility 999999 1 true
-/effect give @p minecraft:night_vision 999999 1 true
-/effect give @p minecraft:speed 999999 5 true
-/effect give @p minecraft:jump_boost 999999 5 true
-/effect give @p minecraft:haste 999999 10 true
-/effect give @p minecraft:absorption 999999 10 true
-/effect give @p minecraft:slow_falling 999999 1 true
-/effect give @p minecraft:water_breathing 999999 1 true
-/effect give @p minecraft:saturation 999999 1 true
-/effect give @p minecraft:health_boost 999999 10 true
-/effect give @p minecraft:conduit_power 999999 1 true
-/kill @e[type=!player,distance=..20]
-/particle minecraft:ash ~ ~2 ~ 1 1 1 0 80 force @a
-/title @a title {"text":"HEROBRINE GOD HAS ARRIVED","color":"dark_red","bold":true}
- /give @p minecraft:netherite_sword{Enchantments:[{id:sharpness,lvl:1000},{id:fire_aspect,lvl:1000},{id:knockback,lvl:1000},{id:unbreaking,lvl:1000}],Unbreakable:1b} 1
-/give @p minecraft:netherite_helmet{Enchantments:[{id:protection,lvl:1000},{id:unbreaking,lvl:1000}],Unbreakable:1b} 1
-/give @p minecraft:netherite_chestplate{Enchantments:[{id:protection,lvl:1000},{id:unbreaking,lvl:1000}],Unbreakable:1b} 1
-/give @p minecraft:netherite_leggings{Enchantments:[{id:protection,lvl:1000},{id:unbreaking,lvl:1000}],Unbreakable:1b} 1
-/give @p minecraft:netherite_boots{Enchantments:[{id:protection,lvl:1000},{id:unbreaking,lvl:1000}],Unbreakable:1b} 1
-/summon wolf ~ ~ ~ {CustomName:'{"text":"Herobrine"}',CustomNameVisible:1b,Tame:1b,Invulnerable:1b,PersistenceRequired:1b}`;
-
-  $("mcGodCmd").value = cmd;
-}
-
-function copyText(id){
-  const el = $(id);
-  el.select();
-  el.setSelectionRange(0, 999999);
-  document.execCommand("copy");
-  alert("Copied!");
-}
-
-/* =========================
-   MINI GAMES
-========================= */
-
-function rollDice(){
-  const n = Math.floor(Math.random()*6)+1;
-  $("diceResult").textContent = "🎲 " + n;
-}
-
-function flipCoin(){
-  $("coinResult").textContent = (Math.random()<0.5) ? "HEADS 🟡" : "TAILS ⚪";
-}
-
-function randomNumber(){
-  $("randResult").textContent = Math.floor(Math.random()*1000);
-}
-
-/* =========================
-   DOWNLOAD + CLEAR
-========================= */
-
-function downloadText(filename, text){
-  const blob = new Blob([text], {type:"text/plain"});
+/* ---------- Export ---------- */
+function exportChat(){
+  const blob = new Blob([chatLog.join("\n\n")], {type:"text/plain"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = filename;
+  a.download = "StudyBuddyAI_Chat.txt";
   a.click();
 }
 
-function clearAllData(){
-  if(confirm("Clear all saved data?")){
-    localStorage.clear();
-    location.reload();
+/* ---------- Reset ---------- */
+function resetAll(){
+  if(!confirm("Reset chat?")) return;
+  chat.innerHTML = "";
+  chatLog = [];
+  addMsg("Welcome back to StudyBuddy AI 🚀", "bot");
+}
+
+/* ---------- Modes ---------- */
+function setMode(newMode){
+  mode = newMode;
+
+  document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+  document.querySelector(`.tab[data-mode="${newMode}"]`).classList.add("active");
+
+  addMsg("Mode changed to: " + newMode.toUpperCase(), "bot");
+
+  if(newMode === "games"){
+    addMsg(getGameMenu(), "bot");
+  }
+  if(newMode === "quiz"){
+    addMsg("Quiz Mode: Type 'start quiz' to begin.", "bot");
+  }
+  if(newMode === "ai"){
+    addMsg("AI Learn Mode: Ask about AI/ML/DL/NLP/Ethics etc.", "bot");
   }
 }
+
+/* ---------- Login System (Offline) ---------- */
+function getUsers(){
+  return lsGet("sb_users", {});
+}
+function saveUsers(users){
+  lsSet("sb_users", users);
+}
+
+function signup(){
+  const email = authEmail.value.trim().toLowerCase();
+  const pass = authPass.value.trim();
+
+  if(!email || !pass){
+    authMsg.style.color = "orange";
+    authMsg.innerText = "Please enter email + password.";
+    return;
+  }
+  if(pass.length < 4){
+    authMsg.style.color = "orange";
+    authMsg.innerText = "Password must be at least 4 characters.";
+    return;
+  }
+
+  const users = getUsers();
+  if(users[email]){
+    authMsg.style.color = "red";
+    authMsg.innerText = "Account already exists. Please login.";
+    return;
+  }
+
+  users[email] = { pass: pass, created: Date.now() };
+  saveUsers(users);
+
+  authMsg.style.color = "lightgreen";
+  authMsg.innerText = "Account created! Now press Login.";
+}
+
+function login(){
+  const email = authEmail.value.trim().toLowerCase();
+  const pass = authPass.value.trim();
+
+  const users = getUsers();
+  if(!users[email] || users[email].pass !== pass){
+    authMsg.style.color = "red";
+    authMsg.innerText = "Wrong email or password.";
+    return;
+  }
+
+  currentUser = email;
+  lsSet("sb_currentUser", email);
+
+  startApp(false);
+}
+
+function guest(){
+  currentUser = null;
+  lsSet("sb_currentUser", null);
+  startApp(true);
+}
+
+function logout(){
+  currentUser = null;
+  lsSet("sb_currentUser", null);
+  showPage("page-login");
+  authMsg.innerText = "";
+}
+
+/* ---------- Start App ---------- */
+function startApp(isGuest){
+  showPage("page-app");
+
+  if(isGuest){
+    userLabel.innerText = "👤 Guest Mode (No account)";
+  }else{
+    userLabel.innerText = "✅ Logged in as: " + currentUser;
+  }
+
+  chat.innerHTML = "";
+  chatLog = [];
+  addMsg("Welcome to StudyBuddy AI 🚀", "bot");
+  addMsg("You are in Mode: CHAT. You can change modes using buttons above.", "bot");
+  addMsg("Tip: Ask me about AI, ML, DL, NLP, Computer Vision, Ethics, Gradient Descent, Overfitting, etc.", "bot");
+}
+
+/* ---------- MAIN SEND ---------- */
+function send(){
+  const t = input.value.trim();
+  if(!t) return;
+
+  input.value = "";
+  addMsg(t, "user");
+
+  if(mode === "math") return handleMath(t);
+  if(mode === "quiz") return handleQuiz(t);
+  if(mode === "games") return handleGames(t);
+  if(mode === "islam") return handleIslam(t);
+  if(mode === "ai") return handleAIlearn(t);
+
+  return handleChat(t);
+}
+
+/* =========================================================
+   MODE: CHAT (General AI)
+========================================================= */
+function handleChat(q){
+  const lower = q.toLowerCase();
+
+  // greetings
+  if(lower === "hi" || lower.includes("hello") || lower.includes("hey")){
+    addMsg("Hello 😊 I'm StudyBuddy AI. How can I help you today?", "bot");
+    return;
+  }
+
+  if(lower.includes("how are you")){
+    addMsg("I'm doing great Alhamdulillah 😊\nI'm ready to help you with study, coding, AI, math, quizzes, and more.", "bot");
+    return;
+  }
+
+  if(lower.includes("who are you")){
+    addMsg(
+      "I am StudyBuddy AI — an offline educational assistant.\n\n" +
+      "I help with:\n" +
+      "• AI concepts (ML, DL, NLP, Computer Vision)\n" +
+      "• Study help and explanations\n" +
+      "• Math solving\n" +
+      "• Quizzes\n" +
+      "• Islamic reminders\n\n" +
+      "I work inside your website without needing any API.",
+      "bot"
+    );
+    return;
+  }
+
+  if(lower.includes("what can you do")){
+    addMsg(
+      "I can do a lot! Here are my main abilities:\n\n" +
+      "✅ Explain topics (AI, ML, DL, science, history, etc.)\n" +
+      "✅ Solve math problems\n" +
+      "✅ Create quizzes and test you\n" +
+      "✅ Give study tips and summaries\n" +
+      "✅ Help with coding examples\n" +
+      "✅ Islamic reminders and duas\n\n" +
+      "And I work fully offline on GitHub Pages.",
+      "bot"
+    );
+    return;
+  }
+
+  if(lower.includes("who made you")){
+    addMsg(
+      "I was made by YOU (Yousaf) 💙\n\n" +
+      "You are building a powerful app using HTML, CSS, and JavaScript.\n" +
+      "This is a big achievement — keep going!",
+      "bot"
+    );
+    return;
+  }
+
+  // if AI questions appear in chat mode
+  if(isAIQuestion(lower)){
+    addMsg(getAIAnswer(lower), "bot");
+    return;
+  }
+
+  // fallback
+  addMsg(
+    "I understand your message.\n\n" +
+    "Try asking me something like:\n" +
+    "• What is Artificial Intelligence?\n" +
+    "• Explain AI vs ML vs DL\n" +
+    "• What is Gradient Descent?\n" +
+    "• What is overfitting?\n" +
+    "• What is NLP?\n\n" +
+    "Or switch modes above.",
+    "bot"
+  );
+}
+
+/* =========================================================
+   MODE: AI LEARN (Detailed)
+========================================================= */
+function handleAIlearn(q){
+  const lower = q.toLowerCase();
+
+  if(lower.includes("help") || lower === "ai"){
+    addMsg(
+      "AI Learn Mode Help:\n\n" +
+      "Ask me questions like:\n" +
+      "• What is AI?\n" +
+      "• What is ML and DL?\n" +
+      "• What is Generative AI?\n" +
+      "• What is the Turing Test?\n" +
+      "• What is NLP?\n" +
+      "• What is Computer Vision?\n" +
+      "• What is overfitting?\n" +
+      "• What is gradient descent?\n" +
+      "• What is AI bias?\n" +
+      "• Narrow AI vs AGI\n\n" +
+      "I will answer in detailed Mode C.",
+      "bot"
+    );
+    return;
+  }
+
+  addMsg(getAIAnswer(lower), "bot");
+}
+
+/* =========================================================
+   AI KNOWLEDGE ENGINE (YOUR TOPICS)
+========================================================= */
+function isAIQuestion(t){
+  const keys = [
+    "artificial intelligence","ai","machine learning","ml","deep learning","dl",
+    "generative ai","turing test","neural network","nlp","computer vision",
+    "supervised","unsupervised","reinforcement",
+    "hallucination","overfitting","gradient descent","normalization",
+    "ethical ai","bias","narrow ai","agi","30% rule","loss function","cost function",
+    "agentic ai"
+  ];
+  return keys.some(k => t.includes(k));
+}
+
+function getAIAnswer(t){
+
+  // 1) AI ML DL
+  if(t.includes("ai vs ml") || t.includes("ml vs ai") || t.includes("ai ml dl") || t.includes("deep learning") || t.includes("dl")){
+    return (
+      "✅ AI vs ML
