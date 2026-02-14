@@ -1,42 +1,45 @@
 /* =========================================================
    StudyBuddy AI - Infinity Hub (OFFLINE)
-   FIXED VERSION:
-   - No cut code
-   - Buttons always work
-   - No missing functions
+   script.js
+   - Fixes buttons
+   - Login / Signup / Guest
+   - Modes: chat, ai, math, quiz, games, islam
+   - Islam mode includes DUAS + Transliteration + Meaning
 ========================================================= */
 
 let mode = "chat";
 let chatLog = [];
 let currentUser = null;
 
+const $ = (id) => document.getElementById(id);
+
 /* ---------- DOM ---------- */
-const pageLogin = document.getElementById("page-login");
-const pageApp = document.getElementById("page-app");
+const pageLogin = $("page-login");
+const pageApp = $("page-app");
 
-const authEmail = document.getElementById("authEmail");
-const authPass = document.getElementById("authPass");
-const authMsg = document.getElementById("authMsg");
+const authEmail = $("authEmail");
+const authPass = $("authPass");
+const authMsg = $("authMsg");
 
-const signupBtn = document.getElementById("signupBtn");
-const loginBtn = document.getElementById("loginBtn");
-const guestBtn = document.getElementById("guestBtn");
+const signupBtn = $("signupBtn");
+const loginBtn = $("loginBtn");
+const guestBtn = $("guestBtn");
 
-const chat = document.getElementById("chat");
-const input = document.getElementById("input");
-const sendBtn = document.getElementById("sendBtn");
+const chat = $("chat");
+const input = $("input");
+const sendBtn = $("sendBtn");
 
-const themeBtn = document.getElementById("themeBtn");
-const exportBtn = document.getElementById("exportBtn");
-const resetBtn = document.getElementById("resetBtn");
+const themeBtn = $("themeBtn");
+const exportBtn = $("exportBtn");
+const resetBtn = $("resetBtn");
 
-const userLabel = document.getElementById("userLabel");
-const logoutBtn = document.getElementById("logoutBtn");
+const userLabel = $("userLabel");
+const logoutBtn = $("logoutBtn");
 
 /* ---------- Safe LocalStorage ---------- */
 function lsGet(key, def = null) {
   try {
-    const v = localStorage.getItem(key);
+    let v = localStorage.getItem(key);
     return v ? JSON.parse(v) : def;
   } catch (e) {
     return def;
@@ -50,8 +53,8 @@ function lsSet(key, value) {
 
 /* ---------- Pages ---------- */
 function showPage(id) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  const el = document.getElementById(id);
+  document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
+  const el = $(id);
   if (el) el.classList.add("active");
 }
 
@@ -92,17 +95,24 @@ function resetAll() {
 function setMode(newMode) {
   mode = newMode;
 
-  document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
-  const btn = document.querySelector(`.tab[data-mode="${newMode}"]`);
-  if (btn) btn.classList.add("active");
+  document.querySelectorAll(".tab").forEach((b) => b.classList.remove("active"));
+  const activeBtn = document.querySelector(`.tab[data-mode="${newMode}"]`);
+  if (activeBtn) activeBtn.classList.add("active");
 
   addMsg("Mode changed to: " + newMode.toUpperCase(), "bot");
 
-  if (newMode === "games") addMsg(getGameMenu(), "bot");
-  if (newMode === "quiz") addMsg("Quiz Mode: Type 'start quiz' to begin.", "bot");
-  if (newMode === "ai") addMsg("AI Learn Mode: Ask about AI/ML/DL/NLP/Ethics etc.", "bot");
-  if (newMode === "math") addMsg("Math Mode: Type any math like 12*7 or (5+2)^2", "bot");
-  if (newMode === "islam") addMsg("Islam Mode: Ask duas, reminders, basic Islamic questions.", "bot");
+  if (newMode === "games") {
+    addMsg(getGameMenu(), "bot");
+  }
+  if (newMode === "quiz") {
+    addMsg("Quiz Mode: Type 'start quiz' to begin.", "bot");
+  }
+  if (newMode === "ai") {
+    addMsg("AI Learn Mode: Ask about AI/ML/DL/NLP/Ethics etc.", "bot");
+  }
+  if (newMode === "islam") {
+    addMsg(getIslamMenu(), "bot");
+  }
 }
 
 /* ---------- Login System (Offline) ---------- */
@@ -112,6 +122,7 @@ function getUsers() {
 function saveUsers(users) {
   lsSet("sb_users", users);
 }
+
 function signup() {
   const email = authEmail.value.trim().toLowerCase();
   const pass = authPass.value.trim();
@@ -140,6 +151,7 @@ function signup() {
   authMsg.style.color = "lightgreen";
   authMsg.innerText = "Account created! Now press Login.";
 }
+
 function login() {
   const email = authEmail.value.trim().toLowerCase();
   const pass = authPass.value.trim();
@@ -155,11 +167,13 @@ function login() {
   lsSet("sb_currentUser", email);
   startApp(false);
 }
+
 function guest() {
   currentUser = null;
   lsSet("sb_currentUser", null);
   startApp(true);
 }
+
 function logout() {
   currentUser = null;
   lsSet("sb_currentUser", null);
@@ -177,8 +191,9 @@ function startApp(isGuest) {
   chat.innerHTML = "";
   chatLog = [];
 
-  addMsg("Welcome to StudyBuddy AI 🚀", "bot");
+  addMsg("Assalamualaikum 😊 Welcome to StudyBuddy AI 🚀", "bot");
   addMsg("You are in Mode: CHAT. Use the buttons above to change modes.", "bot");
+  addMsg("Tip: Try Islam Mode for Duas + meanings.", "bot");
 }
 
 /* ---------- MAIN SEND ---------- */
@@ -204,47 +219,48 @@ function send() {
 function handleChat(q) {
   const lower = q.toLowerCase();
 
-  if (lower === "hi" || lower.includes("hello") || lower.includes("hey")) {
+  if (lower === "hi" || lower === "hello" || lower.includes("hey")) {
     addMsg("Hello 😊 I'm StudyBuddy AI. How can I help you today?", "bot");
     return;
   }
+
   if (lower.includes("how are you")) {
-    addMsg("I'm doing great Alhamdulillah 😊\nI'm ready to help you!", "bot");
+    addMsg("I'm doing great Alhamdulillah 😊\nHow can I help you today?", "bot");
     return;
   }
+
   if (lower.includes("who are you")) {
     addMsg(
-      "I am StudyBuddy AI — an offline educational assistant.\n\n" +
-      "I help with:\n" +
-      "• AI concepts (ML, DL, NLP, Computer Vision)\n" +
-      "• Study explanations\n" +
-      "• Math solving\n" +
-      "• Quizzes\n" +
-      "• Islamic reminders\n\n" +
-      "I work inside your website without needing any API.",
+      "I am StudyBuddy AI — your offline educational assistant.\n\n" +
+        "I help with:\n" +
+        "• Study explanations\n" +
+        "• Math\n" +
+        "• AI learning\n" +
+        "• Quizzes\n" +
+        "• Games\n" +
+        "• Islamic Duas\n\n" +
+        "I work fully offline (no API).",
       "bot"
     );
     return;
   }
+
   if (lower.includes("what can you do")) {
     addMsg(
-      "I can:\n\n" +
-      "✅ Explain topics (AI, ML, DL, science, history)\n" +
-      "✅ Solve math\n" +
-      "✅ Create quizzes\n" +
-      "✅ Summarize text\n" +
-      "✅ Give coding examples\n" +
-      "✅ Islamic reminders\n\n" +
-      "All offline on GitHub Pages.",
+      "Here’s what I can do:\n\n" +
+        "✅ Explain topics (AI, science, history, etc.)\n" +
+        "✅ Solve math problems\n" +
+        "✅ Give quizzes\n" +
+        "✅ Help with coding examples\n" +
+        "✅ Islamic duas + meanings\n" +
+        "✅ Offline games menu",
       "bot"
     );
     return;
   }
+
   if (lower.includes("who made you")) {
-    addMsg(
-      "I was made by young muslim developer (Yousaf) 💙\nHe built this app using HTML, CSS, and JavaScript.",
-      "bot"
-    );
+    addMsg("I was made by YOU (Yousaf) 💙", "bot");
     return;
   }
 
@@ -254,12 +270,7 @@ function handleChat(q) {
   }
 
   addMsg(
-    "Try asking:\n" +
-    "• What is AI?\n" +
-    "• AI vs ML vs DL\n" +
-    "• What is NLP?\n" +
-    "• What is gradient descent?\n" +
-    "Or switch modes above.",
+    "Tell me what you want 😊\n\nTry:\n• What is AI?\n• Explain overfitting\n• Dua for leaving home\n• 12*7",
     "bot"
   );
 }
@@ -272,272 +283,176 @@ function handleAIlearn(q) {
   addMsg(getAIAnswer(lower), "bot");
 }
 
-/* =========================================================
-   AI KNOWLEDGE ENGINE (YOUR TOPICS)
-========================================================= */
+/* ---------- AI Knowledge Engine ---------- */
 function isAIQuestion(t) {
   const keys = [
-    "artificial intelligence","ai",
-    "machine learning","ml",
-    "deep learning","dl",
+    "artificial intelligence",
+    "ai",
+    "machine learning",
+    "ml",
+    "deep learning",
+    "dl",
     "generative ai",
     "turing test",
     "neural network",
-    "nlp","natural language processing",
+    "nlp",
     "computer vision",
-    "supervised","unsupervised","reinforcement",
-    "hallucination","overfitting",
+    "supervised",
+    "unsupervised",
+    "reinforcement",
+    "hallucination",
+    "overfitting",
     "gradient descent",
     "normalization",
-    "ethical ai","bias",
-    "narrow ai","agi",
+    "ethical ai",
+    "bias",
+    "narrow ai",
+    "agi",
     "30% rule",
-    "loss function","cost function",
-    "agentic ai"
+    "loss function",
+    "cost function",
+    "agentic ai",
   ];
-  return keys.some(k => t.includes(k));
+  return keys.some((k) => t.includes(k));
 }
 
 function getAIAnswer(t) {
-  // AI ML DL
-  if (t.includes("ai vs ml") || t.includes("ml vs ai") || t.includes("ai ml dl") || t.includes("deep learning") || t.includes(" dl")) {
+  if (t.includes("ai vs ml") || t.includes("ai ml dl") || t.includes("deep learning") || t.includes("dl")) {
     return (
-      "✅ AI vs ML vs DL (Mode C)\n\n" +
-      "• AI (Artificial Intelligence): The big field where machines act intelligently.\n" +
-      "• ML (Machine Learning): A part of AI where the system learns patterns from data.\n" +
-      "• DL (Deep Learning): A part of ML that uses multi-layer neural networks.\n\n" +
-      "Example:\n" +
-      "AI = The whole 'robot brain' idea\n" +
-      "ML = Learning from examples\n" +
-      "DL = Learning using deep neural networks (many layers)"
+      "✅ AI vs ML vs DL\n\n" +
+      "• AI (Artificial Intelligence): Making machines act intelligently.\n" +
+      "• ML (Machine Learning): A part of AI where systems learn from data.\n" +
+      "• DL (Deep Learning): A part of ML using multi-layer neural networks."
     );
   }
 
-  // Generative AI
   if (t.includes("generative ai")) {
     return (
       "✅ Generative AI\n\n" +
-      "Generative AI is AI that can CREATE new content.\n\n" +
-      "It can generate:\n" +
-      "• Text (chatbots)\n" +
-      "• Images\n" +
-      "• Code\n" +
-      "• Music\n\n" +
-      "It does not just classify — it produces new output."
+      "Generative AI creates NEW content like:\n" +
+      "• text\n• images\n• code\n• music\n\n" +
+      "Example: Chatbots, image generators."
     );
   }
 
-  // Turing Test
-  if (t.includes("turing test")) {
+  if (t.includes("turing")) {
     return (
       "✅ Turing Test\n\n" +
-      "The Turing Test checks if a machine can behave so intelligently that a human cannot tell if it is a machine.\n\n" +
-      "If a human chats with it and thinks it is human, it 'passes' the test."
+      "A test to see if a machine can talk like a human so well that a person cannot tell the difference."
     );
   }
 
-  // Neural networks
   if (t.includes("neural network")) {
     return (
       "✅ Neural Networks\n\n" +
-      "A neural network is a model inspired by the brain.\n\n" +
-      "It learns patterns by adjusting weights between layers.\n\n" +
-      "Used for:\n" +
-      "• Image recognition\n" +
-      "• Speech recognition\n" +
-      "• Text generation\n" +
-      "• Predictions"
+      "A neural network is a model inspired by the brain.\n" +
+      "It learns patterns by adjusting weights to reduce error."
     );
   }
 
-  // NLP
-  if (t.includes("nlp") || t.includes("natural language processing")) {
+  if (t.includes("nlp")) {
     return (
       "✅ NLP (Natural Language Processing)\n\n" +
-      "NLP is AI that helps computers understand and work with human language.\n\n" +
-      "Examples:\n" +
-      "• Chatbots\n" +
-      "• Translation\n" +
-      "• Summarization\n" +
-      "• Sentiment analysis"
+      "NLP is AI that helps computers understand human language.\n" +
+      "Examples: translation, chatbots, voice assistants."
     );
   }
 
-  // Computer Vision
   if (t.includes("computer vision")) {
     return (
       "✅ Computer Vision\n\n" +
-      "Computer Vision allows AI to understand images and videos.\n\n" +
-      "Examples:\n" +
-      "• Face detection\n" +
-      "• Object recognition\n" +
-      "• Self-driving cars\n" +
-      "• Medical scans"
+      "Computer Vision is AI that understands images/videos.\n" +
+      "Examples: face detection, object recognition."
     );
   }
 
-  // Learning types
   if (t.includes("supervised")) {
-    return (
-      "✅ Supervised Learning\n\n" +
-      "Supervised learning means the model learns from labeled data.\n\n" +
-      "Example:\n" +
-      "Images labeled 'cat' or 'dog' → model learns to classify."
-    );
+    return "✅ Supervised Learning\n\nLearning using labeled data (input + correct output).";
   }
   if (t.includes("unsupervised")) {
-    return (
-      "✅ Unsupervised Learning\n\n" +
-      "Unsupervised learning means the model learns from unlabeled data.\n\n" +
-      "It finds patterns like:\n" +
-      "• Clustering\n" +
-      "• Grouping similar items"
-    );
+    return "✅ Unsupervised Learning\n\nLearning from unlabeled data (finds patterns itself).";
   }
   if (t.includes("reinforcement")) {
-    return (
-      "✅ Reinforcement Learning\n\n" +
-      "Reinforcement learning is learning by rewards and punishment.\n\n" +
-      "The AI agent tries actions, and gets rewards for correct actions.\n\n" +
-      "Used in:\n" +
-      "• Games\n" +
-      "• Robotics"
-    );
+    return "✅ Reinforcement Learning\n\nLearning by rewards and punishments (trial and error).";
   }
 
-  // Hallucination
   if (t.includes("hallucination")) {
     return (
-      "✅ AI Hallucinations\n\n" +
-      "Hallucinations happen when an AI confidently gives false or made-up information.\n\n" +
-      "This happens because:\n" +
-      "• The model predicts text\n" +
-      "• It does not truly 'know' facts like humans"
+      "✅ Hallucinations in AI\n\n" +
+      "When an AI confidently gives WRONG information.\n" +
+      "This happens because it predicts text, not truth."
     );
   }
 
-  // Overfitting
   if (t.includes("overfitting")) {
     return (
       "✅ Overfitting\n\n" +
-      "Overfitting happens when a model learns training data too perfectly.\n\n" +
-      "Result:\n" +
-      "• Great on training data\n" +
-      "• Bad on new unseen data\n\n" +
-      "Solution:\n" +
-      "• More data\n" +
-      "• Regularization\n" +
-      "• Dropout\n" +
-      "• Simpler model"
+      "When a model memorizes training data too much.\n" +
+      "It performs well on training but fails on new data."
     );
   }
 
-  // Gradient descent
   if (t.includes("gradient descent")) {
     return (
       "✅ Gradient Descent\n\n" +
-      "Gradient Descent is an optimization method used to reduce errors.\n\n" +
-      "It works by:\n" +
-      "1) Measuring error (loss)\n" +
-      "2) Adjusting model parameters\n" +
-      "3) Repeating until loss becomes small"
+      "A method to reduce error by adjusting model weights step-by-step in the direction that lowers loss."
     );
   }
 
-  // Normalization
   if (t.includes("normalization")) {
     return (
       "✅ Data Normalization\n\n" +
-      "Normalization scales input values so training becomes easier.\n\n" +
-      "Example:\n" +
-      "Instead of values 0 to 100000,\n" +
-      "scale to 0 to 1."
+      "Scaling input values (like 0 to 1) so training becomes faster and more stable."
     );
   }
 
-  // Ethical AI
-  if (t.includes("ethical ai")) {
+  if (t.includes("ethical") || t.includes("bias")) {
     return (
-      "✅ Ethical AI\n\n" +
-      "Ethical AI means AI should be:\n" +
-      "• Fair\n" +
-      "• Transparent\n" +
-      "• Accountable\n" +
-      "• Private\n" +
-      "• Secure\n\n" +
-      "It must avoid harming people."
+      "✅ Ethical AI + Bias\n\n" +
+      "Ethical AI needs:\n" +
+      "• fairness\n• transparency\n• accountability\n• privacy\n• security\n\n" +
+      "Bias happens when AI gives unfair results because of biased data."
     );
   }
 
-  // Bias
-  if (t.includes("bias")) {
-    return (
-      "✅ AI Bias\n\n" +
-      "AI bias happens when AI gives unfair results because of biased training data.\n\n" +
-      "Example:\n" +
-      "If training data is unfair, AI will learn unfair patterns."
-    );
-  }
-
-  // Narrow AI vs AGI
   if (t.includes("narrow ai") || t.includes("agi")) {
     return (
       "✅ Narrow AI vs AGI\n\n" +
-      "• Narrow AI: Works on one task only (today’s AI).\n" +
-      "• AGI: Theoretical AI that matches human intelligence in everything.\n\n" +
-      "AGI does not exist yet."
+      "• Narrow AI: does ONE task well (real today).\n" +
+      "• AGI: human-level intelligence in all tasks (theoretical)."
     );
   }
 
-  // 30% rule
   if (t.includes("30% rule")) {
     return (
-      "✅ The 30% Rule\n\n" +
-      "The '30% Rule' is the idea that AI can automate around one-third of workplace tasks.\n\n" +
-      "It means AI helps workers, but does not fully replace all jobs."
+      "✅ 30% Rule\n\n" +
+      "This idea suggests AI can automate around one-third of workplace tasks."
     );
   }
 
-  // Loss / cost
   if (t.includes("loss function") || t.includes("cost function")) {
     return (
-      "✅ Loss Function / Cost Function\n\n" +
-      "A loss (cost) function measures how wrong the model is.\n\n" +
-      "The goal of training is:\n" +
-      "➡ Make the loss as small as possible."
+      "✅ Loss / Cost Function\n\n" +
+      "A function that measures how wrong a model is.\n" +
+      "Training tries to minimize this value."
     );
   }
 
-  // Agentic AI
-  if (t.includes("agentic ai")) {
+  if (t.includes("agentic")) {
     return (
       "✅ Agentic AI\n\n" +
-      "Agentic AI means AI that can take actions by itself to reach a goal.\n\n" +
-      "Example:\n" +
-      "AI that plans steps, searches, decides, and completes tasks."
+      "Agentic AI can take actions by itself to reach a goal (planning + doing)."
     );
   }
 
-  // default answer
   return (
-    "I can answer AI questions like:\n\n" +
+    "Ask me about:\n" +
     "• AI vs ML vs DL\n" +
-    "• Generative AI\n" +
-    "• Turing Test\n" +
-    "• Neural Networks\n" +
     "• NLP\n" +
     "• Computer Vision\n" +
-    "• Supervised vs Unsupervised vs Reinforcement\n" +
-    "• Hallucinations\n" +
     "• Overfitting\n" +
     "• Gradient Descent\n" +
-    "• Normalization\n" +
-    "• Ethical AI & Bias\n" +
-    "• Narrow AI vs AGI\n" +
-    "• 30% Rule\n" +
-    "• Loss/Cost Function\n" +
-    "• Agentic AI\n\n" +
-    "Ask me one of these!"
+    "• Ethical AI"
   );
 }
 
@@ -546,177 +461,275 @@ function getAIAnswer(t) {
 ========================================================= */
 function handleMath(q) {
   try {
-    let expr = q.replace(/\^/g, "**");
-    if (!/^[0-9+\-*/().\s**]+$/.test(expr)) {
-      addMsg("Math Mode: Only numbers and + - * / ( ) allowed.", "bot");
+    if (!/^[0-9+\-*/(). %]+$/.test(q)) {
+      addMsg("Enter valid math only (numbers and + - * / ).", "bot");
       return;
     }
-    // eslint-disable-next-line no-eval
-    const ans = eval(expr);
+    const ans = Function("return " + q)();
     addMsg("Answer: " + ans, "bot");
-  } catch (e) {
-    addMsg("I couldn't solve that. Example: (5+2)*7", "bot");
+  } catch {
+    addMsg("Error in math expression.", "bot");
   }
 }
 
 /* =========================================================
    MODE: QUIZ
 ========================================================= */
-let quizActive = false;
+let quizOn = false;
 let quizScore = 0;
-let quizQ = 0;
+let quizQ = null;
 
 const quizBank = [
-  { q: "What does AI stand for?", a: "artificial intelligence" },
-  { q: "ML is a subset of AI. True or false?", a: "true" },
-  { q: "What is the capital of France?", a: "paris" },
-  { q: "What is H2O?", a: "water" },
-  { q: "What is gradient descent used for?", a: "optimization" }
+  { q: "Capital of Pakistan?", a: "islamabad" },
+  { q: "6 × 6 = ?", a: "36" },
+  { q: "How many daily prayers?", a: "5" },
+  { q: "Capital of France?", a: "paris" },
 ];
 
-function handleQuiz(q) {
-  const lower = q.toLowerCase().trim();
+function handleQuiz(t) {
+  const lower = t.toLowerCase().trim();
 
   if (lower === "start quiz") {
-    quizActive = true;
+    quizOn = true;
     quizScore = 0;
-    quizQ = 0;
-    addMsg("Quiz started! 🎯", "bot");
-    addMsg("Q1: " + quizBank[0].q, "bot");
+    quizQ = null;
+    addMsg("Quiz started! Type your answers.", "bot");
+    askQuiz();
     return;
   }
 
-  if (!quizActive) {
+  if (!quizOn) {
     addMsg("Type: start quiz", "bot");
     return;
   }
 
-  const correct = quizBank[quizQ].a;
-  if (lower.includes(correct)) {
-    quizScore++;
-    addMsg("✅ Correct!", "bot");
-  } else {
-    addMsg("❌ Wrong. Correct answer: " + correct, "bot");
-  }
-
-  quizQ++;
-  if (quizQ >= quizBank.length) {
-    quizActive = false;
-    addMsg("Quiz finished! Score: " + quizScore + "/" + quizBank.length, "bot");
+  if (!quizQ) {
+    askQuiz();
     return;
   }
 
-  addMsg("Q" + (quizQ + 1) + ": " + quizBank[quizQ].q, "bot");
+  if (lower === quizQ.a) {
+    quizScore++;
+    addMsg("✅ Correct! Score: " + quizScore, "bot");
+  } else {
+    addMsg("❌ Wrong. Correct answer: " + quizQ.a, "bot");
+  }
+
+  askQuiz();
+}
+
+function askQuiz() {
+  quizQ = quizBank[Math.floor(Math.random() * quizBank.length)];
+  addMsg("🧠 " + quizQ.q, "bot");
 }
 
 /* =========================================================
    MODE: GAMES
 ========================================================= */
-let ttt = Array(9).fill("");
-let tttTurn = "X";
-let tttActive = false;
-
 function getGameMenu() {
   return (
-    "🎮 Games Menu:\n\n" +
-    "1) Type: ttt   (Tic Tac Toe)\n" +
-    "2) Type: rps   (Rock Paper Scissors)\n\n" +
-    "Minecraft cannot run offline inside HTML like real Minecraft.\n" +
-    "But I can add a block-building mini game later."
+    "🎮 Games Menu (Offline)\n\n" +
+    "Type one of these:\n" +
+    "• minecraft\n" +
+    "• tictactoe\n" +
+    "• riddle\n" +
+    "• guess\n\n" +
+    "More coming soon!"
   );
 }
 
-function handleGames(q) {
-  const t = q.toLowerCase().trim();
+let guessNumber = null;
 
-  if (t === "ttt") {
-    ttt = Array(9).fill("");
-    tttTurn = "X";
-    tttActive = true;
-    addMsg("Tic Tac Toe started! Type a number 1-9.", "bot");
-    addMsg(drawTTT(), "bot");
+function handleGames(t) {
+  const lower = t.toLowerCase().trim();
+
+  if (lower === "menu") {
+    addMsg(getGameMenu(), "bot");
     return;
   }
 
-  if (t === "rps") {
-    addMsg("Rock Paper Scissors! Type: rock / paper / scissors", "bot");
+  if (lower === "minecraft") {
+    addMsg(
+      "⛏️ Minecraft Mini (Text Game)\n\n" +
+        "You spawned in a world!\n" +
+        "Type:\n" +
+        "• mine wood\n" +
+        "• craft table\n" +
+        "• explore\n" +
+        "• build house",
+      "bot"
+    );
     return;
   }
 
-  if (["rock","paper","scissors"].includes(t)) {
-    const ai = ["rock","paper","scissors"][Math.floor(Math.random()*3)];
-    if (ai === t) addMsg("I chose " + ai + ". Draw 🤝", "bot");
-    else if (
-      (t==="rock" && ai==="scissors") ||
-      (t==="paper" && ai==="rock") ||
-      (t==="scissors" && ai==="paper")
-    ) addMsg("I chose " + ai + ". You win 🎉", "bot");
-    else addMsg("I chose " + ai + ". I win 😄", "bot");
+  if (lower === "mine wood") return addMsg("🪵 You collected 5 wood blocks!", "bot");
+  if (lower === "craft table") return addMsg("🛠️ You crafted a crafting table!", "bot");
+  if (lower === "explore") return addMsg("🌲 You explored and found a village!", "bot");
+  if (lower === "build house") return addMsg("🏠 You built a small house. Safe!", "bot");
+
+  if (lower === "tictactoe") {
+    addMsg("❌⭕ TicTacToe coming soon (UI game). For now try guess/riddle.", "bot");
     return;
   }
 
-  if (tttActive && /^[1-9]$/.test(t)) {
-    const pos = parseInt(t, 10) - 1;
-    if (ttt[pos]) {
-      addMsg("That spot is already taken.", "bot");
-      return;
+  if (lower === "riddle") {
+    addMsg("🧠 Riddle: What has keys but no locks?", "bot");
+    return;
+  }
+
+  if (lower === "guess") {
+    guessNumber = Math.floor(Math.random() * 10) + 1;
+    addMsg("🎲 Guess a number from 1 to 10. Type a number.", "bot");
+    return;
+  }
+
+  if (guessNumber !== null && /^[0-9]+$/.test(lower)) {
+    const n = Number(lower);
+    if (n === guessNumber) {
+      addMsg("🎉 Correct! You guessed it!", "bot");
+      guessNumber = null;
+    } else {
+      addMsg("❌ Wrong. Try again!", "bot");
     }
-    ttt[pos] = tttTurn;
-    tttTurn = tttTurn === "X" ? "O" : "X";
-    addMsg(drawTTT(), "bot");
     return;
   }
 
-  addMsg(getGameMenu(), "bot");
+  addMsg("Type: menu (to see games)", "bot");
 }
 
-function drawTTT() {
-  const c = ttt.map(x => x || " ");
+/* =========================================================
+   MODE: ISLAM (DUAS + Transliteration + Meaning)
+========================================================= */
+function getIslamMenu() {
   return (
-    " " + c[0] + " | " + c[1] + " | " + c[2] + "\n" +
-    "---+---+---\n" +
-    " " + c[3] + " | " + c[4] + " | " + c[5] + "\n" +
-    "---+---+---\n" +
-    " " + c[6] + " | " + c[7] + " | " + c[8] + "\n"
+    "🕌 Islam Mode (Duas)\n\n" +
+    "Type one:\n" +
+    "• enter home\n" +
+    "• leave home\n" +
+    "• enter mosque\n" +
+    "• leave mosque\n" +
+    "• trouble dua\n" +
+    "• debt dua\n\n" +
+    "Or type: dua list"
   );
 }
 
-/* =========================================================
-   MODE: ISLAM
-========================================================= */
-function handleIslam(q) {
-  const t = q.toLowerCase();
+function handleIslam(t) {
+  const lower = t.toLowerCase().trim();
 
-  if (t.includes("salam") || t.includes("assalam")) {
-    addMsg("Wa Alaikum Assalam wa Rahmatullahi wa Barakatuh 🌙", "bot");
+  if (lower === "dua list" || lower === "menu") {
+    addMsg(getIslamMenu(), "bot");
     return;
   }
 
-  if (t.includes("dua") && t.includes("sleep")) {
-    addMsg("Dua before sleeping:\n\nبِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا\n\nTransliteration: Bismika Allahumma amootu wa ahyaa", "bot");
+  if (lower.includes("enter home")) {
+    addMsg(
+      "🏠 Dua to Enter Home\n\n" +
+        "Arabic:\nبِسْمِ اللَّهِ وَلَجْنَا، وَبِسْمِ اللَّهِ خَرَجْنَا، وَعَلَى اللَّهِ رَبِّنَا تَوَكَّلْنَا\n\n" +
+        "Transliteration:\nBismillahi walajna, wa bismillahi kharajna, wa ‘alallahi rabbina tawakkalna.\n\n" +
+        "Meaning:\nIn the name of Allah we enter, in the name of Allah we leave, and upon our Lord we rely.",
+      "bot"
+    );
     return;
   }
 
-  addMsg(
-    "Islam Mode:\n" +
-    "Ask me:\n" +
-    "• A dua\n" +
-    "• Islamic reminder\n" +
-    "• Salam\n",
-    "bot"
-  );
+  if (lower.includes("leave home")) {
+    addMsg(
+      "🚪 Dua to Leave Home\n\n" +
+        "Arabic:\nبِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ\n\n" +
+        "Transliteration:\nBismillah, tawakkaltu ‘alallah, wa la hawla wa la quwwata illa billah.\n\n" +
+        "Meaning:\nIn the name of Allah, I trust in Allah, and there is no power and no strength except with Allah.",
+      "bot"
+    );
+    return;
+  }
+
+  if (lower.includes("enter mosque")) {
+    addMsg(
+      "🕌 Dua Before Entering the Mosque\n\n" +
+        "Arabic:\nاللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ\n\n" +
+        "Transliteration:\nAllahumma iftah li abwaba rahmatik.\n\n" +
+        "Meaning:\nO Allah, open for me the doors of Your mercy.",
+      "bot"
+    );
+    return;
+  }
+
+  if (lower.includes("leave mosque")) {
+    addMsg(
+      "🕌 Dua When Leaving the Mosque\n\n" +
+        "Arabic:\nاللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ\n\n" +
+        "Transliteration:\nAllahumma inni as’aluka min fadlik.\n\n" +
+        "Meaning:\nO Allah, I ask You from Your bounty.",
+      "bot"
+    );
+    return;
+  }
+
+  if (lower.includes("trouble") || lower.includes("in trouble")) {
+    addMsg(
+      "😣 Dua When In Trouble / Hardship\n\n" +
+        "Arabic:\nحَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ\n\n" +
+        "Transliteration:\nHasbunallahu wa ni‘mal wakeel.\n\n" +
+        "Meaning:\nAllah is sufficient for us, and He is the best disposer of affairs.",
+      "bot"
+    );
+    return;
+  }
+
+  if (lower.includes("debt") || lower.includes("worry")) {
+    addMsg(
+      "💰 Dua for Debt and Worry\n\n" +
+        "Arabic:\nاللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَأَعُوذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ، وَأَعُوذُ بِكَ مِنَ الْجُبْنِ وَالْبُخْلِ، وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ وَقَهْرِ الرِّجَالِ\n\n" +
+        "Transliteration:\nAllahumma inni a‘udhu bika minal-hammi wal-hazan, wa a‘udhu bika minal-‘ajzi wal-kasal, wa a‘udhu bika minal-jubni wal-bukhl, wa a‘udhu bika min ghalabatid-dayni wa qahrir-rijal.\n\n" +
+        "Meaning:\nO Allah, I seek refuge in You from worry and grief, from weakness and laziness, from cowardice and stinginess, and from being heavily in debt and from being overpowered by men.",
+      "bot"
+    );
+    return;
+  }
+
+  addMsg("Type: dua list", "bot");
 }
 
 /* =========================================================
-   EVENTS (THIS IS WHAT MAKES BUTTONS WORK)
+   EVENTS (THIS IS WHY BUTTONS WORK)
 ========================================================= */
-document.addEventListener("DOMContentLoaded", () => {
+function bindEvents() {
+  // Header buttons
+  themeBtn.addEventListener("click", toggleTheme);
+  exportBtn.addEventListener("click", exportChat);
+  resetBtn.addEventListener("click", resetAll);
 
-  // restore theme
+  // Auth buttons
+  signupBtn.addEventListener("click", signup);
+  loginBtn.addEventListener("click", login);
+  guestBtn.addEventListener("click", guest);
+  logoutBtn.addEventListener("click", logout);
+
+  // Tabs
+  document.querySelectorAll(".tab").forEach((b) => {
+    b.addEventListener("click", () => setMode(b.dataset.mode));
+  });
+
+  // Send
+  sendBtn.addEventListener("click", send);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") send();
+  });
+}
+
+/* =========================================================
+   INIT
+========================================================= */
+(function init() {
+  // Theme load
   const light = lsGet("sb_theme_light", false);
   if (light) document.body.classList.add("light");
 
-  // auto login
+  // Bind events
+  bindEvents();
+
+  // Auto login if user exists
   const saved = lsGet("sb_currentUser", null);
   if (saved) {
     currentUser = saved;
@@ -724,28 +737,4 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     showPage("page-login");
   }
-
-  // AUTH buttons
-  signupBtn.addEventListener("click", signup);
-  loginBtn.addEventListener("click", login);
-  guestBtn.addEventListener("click", guest);
-  logoutBtn.addEventListener("click", logout);
-
-  // header buttons
-  themeBtn.addEventListener("click", toggleTheme);
-  exportBtn.addEventListener("click", exportChat);
-  resetBtn.addEventListener("click", resetAll);
-
-  // send
-  sendBtn.addEventListener("click", send);
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") send();
-  });
-
-  // tabs
-  document.querySelectorAll(".tab").forEach(btn => {
-    btn.addEventListener("click", () => {
-      setMode(btn.dataset.mode);
-    });
-  });
-});
+})();
