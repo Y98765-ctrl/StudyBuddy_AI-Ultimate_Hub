@@ -232,4 +232,7 @@ loadChat();
 // If no chat saved, show welcome
 if (chatHistory.length === 0) {
   addMsg("👋 Assalamualaikum! I am your Islamic AI. Ask me any dua or question 😊", "ai");
-}
+themeBtn.addEventListener("click", toggleTheme);
+  exportBtn.addEventListener("click", exportChat);
+  resetBtn.addEventListener("click", resetAll);
+});
