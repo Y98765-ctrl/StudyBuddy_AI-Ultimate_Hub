@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>StudyBuddy AI OS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="loadingScreen">
+    <h1>Initializing StudyBuddy AI OS...</h1>
+    <div id="progressBar">
+        <div id="progress"></div>
+    </div>
+    <p>Loading 7B Parameter Model...</p>
+</div>
+
+<div id="mainUI" class="hidden">
+
+    <h1>?? StudyBuddy AI OS</h1>
+
+    <div id="chatbox"></div>
+
+    <div class="inputArea">
+        <input type="text" id="userInput" placeholder="Speak or type here...">
+        <button onclick="send()">Send</button>
+        <button onclick="startListening()">??</button>
+        <button onclick="toggleCalculator()">Calculator</button>
+    </div>
+
+    <div id="calculator" class="hidden">
+        <input type="text" id="calcInput" placeholder="Enter math expression">
+        <button onclick="calculate()">Solve</button>
+    </div>
+
+    <div id="stats">
+        <p>Messages: <span id="msgCount">0</span></p>
+        <p>AI Confidence: <span id="confidence">--</span>%</p>
+    </div>
+
+</div>
+
+<!-- Scripts at bottom (IMPORTANT) -->
+<script src="simulation.js"></script>
+<script src="memory.js"></script>
+<script src="analytics.js"></script>
+<script src="brain.js"></script>
+<script src="voice.js"></script>
+<script src="calculator.js"></script>
+
+</body>
+</html>
