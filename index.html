@@ -1,34 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>AURA - Architect Intelligence</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- 3D CANVAS BACKGROUND -->
 <canvas id="bgCanvas"></canvas>
 
-<div class="chat-container">
-    <h1>🧠 AURA - Architect Intelligence</h1>
+<div class="main-wrapper">
+    <div class="chat-container">
+        <h1 id="systemTitle">🧠 AURA - Architect Intelligence</h1>
 
-    <div id="chat"></div>
+        <div id="chat"></div>
 
-    <div class="input-area">
-        <input type="text" id="userInput" placeholder="Speak...">
-        <button id="sendBtn">Send</button>
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Speak...">
+            <button id="sendBtn">Send</button>
+        </div>
     </div>
 </div>
 
-<script src="memory.js"></script>
-<script src="calculator.js"></script>
-<script src="simulation.js"></script>
-<script src="analytics.js"></script>
-<script src="voice.js"></script>
 <script src="brain.js"></script>
 
 <script>
-/* FIX SEND BUTTON + ENTER KEY */
+/* ===== SEND BUTTON FIX ===== */
+
 document.getElementById("sendBtn").addEventListener("click", sendMessage);
 
 document.getElementById("userInput").addEventListener("keypress", function(e){
@@ -37,62 +35,56 @@ document.getElementById("userInput").addEventListener("keypress", function(e){
     }
 });
 
-/* ===============================
-   SIMPLE 3D STARFIELD ENGINE
-   (Fully Offline)
-================================ */
+/* ===== RESPONSIVE 3D STARFIELD ===== */
 
 const canvas = document.getElementById("bgCanvas");
 const ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+function resizeCanvas(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
 
 let stars = [];
 
-for(let i=0;i<300;i++){
-    stars.push({
-        x: Math.random()*canvas.width,
-        y: Math.random()*canvas.height,
-        z: Math.random()*1000
-    });
+function initStars(){
+    stars = [];
+    for(let i=0;i<250;i++){
+        stars.push({
+            x: Math.random()*canvas.width - canvas.width/2,
+            y: Math.random()*canvas.height - canvas.height/2,
+            z: Math.random()*1000
+        });
+    }
 }
+initStars();
 
 function animateStars(){
     ctx.fillStyle = "black";
     ctx.fillRect(0,0,canvas.width,canvas.height);
 
-    for(let i=0;i<stars.length;i++){
-        let star = stars[i];
-
+    for(let star of stars){
         star.z -= 2;
+        if(star.z <= 0) star.z = 1000;
 
-        if(star.z <= 0){
-            star.z = 1000;
-        }
-
-        let k = 128.0 / star.z;
+        let k = 200 / star.z;
         let px = star.x * k + canvas.width/2;
         let py = star.y * k + canvas.height/2;
 
-        if(px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height){
-            let size = (1 - star.z/1000) * 3;
-            ctx.fillStyle = "white";
-            ctx.beginPath();
-            ctx.arc(px, py, size, 0, Math.PI*2);
-            ctx.fill();
-        }
+        let size = (1 - star.z/1000) * 3;
+
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        ctx.arc(px, py, size, 0, Math.PI*2);
+        ctx.fill();
     }
 
     requestAnimationFrame(animateStars);
 }
 
 animateStars();
-
-window.addEventListener("resize",()=>{
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-});
 </script>
 
 </body>
