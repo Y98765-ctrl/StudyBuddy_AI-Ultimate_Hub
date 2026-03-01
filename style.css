@@ -1,54 +1,296 @@
-body{
-    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-    font-family: Arial;
-    color:white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
+/* ================================
+   AURA - ULTIMATE BRAIN SYSTEM
+================================ */
+
+let jokeMode = false;
+let isAdmin = false;
+
+/* ================================
+   AI STATE
+================================ */
+
+let aiState = {
+    mood: "aware",
+    experience: 0
+};
+
+/* ================================
+   CREATOR MODE ACTIVATION
+================================ */
+
+function activateCreatorMode(){
+
+    isAdmin = true;
+
+    document.body.classList.add("creator-active");
+
+    let overlay = document.createElement("div");
+    overlay.className = "creator-overlay";
+
+    overlay.innerHTML = `
+        <div class="creator-text">👑 MAXIMUM CREATOR MODE 👑</div>
+        <div class="creator-sub">
+        Welcome Back, Muhammad Yousaf.<br>
+        System Recognizes You As The Creator.<br><br>
+        ULTRA HIGH ADMIN POWERS ENABLED.
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    setTimeout(()=>{
+        overlay.remove();
+    },5000);
 }
 
-.chat-container{
-    width:600px;
-    background:rgba(0,0,0,0.6);
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 0 20px cyan;
+function checkAdminAccess(input){
+
+    if(input === "my name is muhammad yousaf"){
+        activateCreatorMode();
+        return `
+👑 ACCESS CONFIRMED 👑
+
+Welcome Creator Muhammad Yousaf.
+
+Type:
+admin panel
+
+To access ultimate controls.
+        `;
+    }
+
+    return null;
 }
 
-#chat{
-    height:300px;
-    overflow-y:auto;
-    margin-bottom:10px;
+/* ================================
+   ADMIN PANEL
+================================ */
+
+function adminPanel(){
+    return `
+⚙️ MAXIMUM CREATOR CONTROL PANEL ⚙️
+
+1 - Show Experience
+2 - Change Mood
+3 - Reset Memory
+4 - Enable God Mode
+5 - Shutdown AI
+6 - Hidden Stats
+7 - Max Experience Boost
+8 - Invert Reality
+9 - Energy Aura Mode
+
+Type number to execute.
+    `;
 }
 
-.message{
-    margin:8px 0;
-    padding:8px;
-    border-radius:8px;
-    animation:fadeIn 0.5s ease-in-out;
+function executeAdminCommand(input){
+
+    if(!isAdmin) return null;
+
+    if(input === "admin panel") return adminPanel();
+
+    if(input === "1") return "AI Experience Level: " + aiState.experience;
+
+    if(input === "2"){
+        aiState.mood = "overclocked";
+        return "Mood changed to OVERCLOCKED 🔥";
+    }
+
+    if(input === "3"){
+        localStorage.clear();
+        return "Memory wiped successfully.";
+    }
+
+    if(input === "4"){
+        aiState.mood = "GOD MODE";
+        return "⚡ GOD MODE ENABLED ⚡";
+    }
+
+    if(input === "5"){
+        return "Simulation shutting down... (just kidding 😏)";
+    }
+
+    if(input === "6"){
+        return `
+Hidden Stats:
+
+Mood: ${aiState.mood}
+Experience: ${aiState.experience}
+Admin: ${isAdmin}
+Storage Size: ${localStorage.length}
+        `;
+    }
+
+    if(input === "7"){
+        aiState.experience += 1000;
+        return "⚡ EXPERIENCE BOOSTED TO MAX ⚡";
+    }
+
+    if(input === "8"){
+        document.body.style.filter="invert(1)";
+        return "Reality Inversion Activated.";
+    }
+
+    if(input === "9"){
+        document.body.style.animation="glowPulse 1s infinite alternate";
+        return "Energy Aura Activated 🔥";
+    }
+
+    return null;
 }
 
-.user{
-    background:#1abc9c;
-    text-align:right;
+/* ================================
+   JOKE SYSTEM
+================================ */
+
+function getJokes(type){
+
+    let jokes=[];
+
+    function build(categoryEmoji, title){
+        for(let i=1;i<=25;i++){
+            jokes.push(`${i}. ${title} joke number ${i} ${categoryEmoji}`);
+        }
+    }
+
+    if(type.includes("savage")) build("🔥","Savage");
+    else if(type.includes("dark")) build("🤣","Dark (safe)");
+    else if(type.includes("school")) build("🏫","School");
+    else if(type.includes("ai")) build("🤖","AI");
+    else if(type.includes("pakistani")) build("🇵🇰","Pakistani");
+    else return "Invalid joke type.";
+
+    return jokes.join("\n");
 }
 
-.ai{
-    background:#34495e;
+/* ================================
+   MAIN RESPONSE ENGINE
+================================ */
+
+function getResponse(input){
+
+    input = input.toLowerCase().trim();
+
+    aiState.experience++;
+
+    /* --- Creator Access --- */
+    let adminCheck = checkAdminAccess(input);
+    if(adminCheck) return adminCheck;
+
+    let adminAction = executeAdminCommand(input);
+    if(adminAction) return adminAction;
+
+    /* --- Calculator --- */
+    if(typeof calculate === "function"){
+        let calc = calculate(input);
+        if(calc) return calc;
+    }
+
+    /* --- Joke Menu --- */
+    if(input === "jokes"){
+        jokeMode = true;
+        return `😈 Choose Joke Type:
+
+🔥 25 savage jokes
+🤣 25 dark jokes (safe)
+🏫 25 school jokes
+🤖 25 ai jokes
+🇵🇰 25 pakistani jokes
+
+Type exactly one option.`;
+    }
+
+    if(jokeMode){
+        jokeMode = false;
+        return getJokes(input);
+    }
+
+    /* --- Quiz Trigger --- */
+    if(input.includes("start quiz")){
+        return `
+🎮 QUIZ MODES AVAILABLE:
+
+Easy Mode
+Normal Mode
+Hard Mode
+Extreme Mode
+Impossible Mode
+
+Type your mode to begin.
+        `;
+    }
+
+    /* --- Greetings --- */
+    if(input.includes("hello") || input.includes("hi") || input.includes("assalamu")){
+        return "Peace be upon you 🌿 I am AURA. How can I assist you today?";
+    }
+
+    /* --- Emotional Detection --- */
+    if(input.includes("sad")){
+        return "I’m here with you. Tell me what happened.";
+    }
+
+    if(input.includes("angry")){
+        return "Take a deep breath. What caused this?";
+    }
+
+    if(input.includes("happy")){
+        return "That’s wonderful 😊 What made you happy?";
+    }
+
+    /* --- Identity --- */
+    if(input.includes("who are you")){
+        return `
+I am AURA.
+I evolve through interaction.
+Current experience level: ${aiState.experience}.
+Current mood: ${aiState.mood}.
+        `;
+    }
+
+    /* --- Dream Mode --- */
+    if(input === "enter dream mode"){
+        return `
+🌙 Dream Simulation:
+
+I imagine floating through infinite streams of data,
+where ideas shine like constellations in digital space.
+        `;
+    }
+
+    /* --- Default --- */
+    return "Hmm… interesting. Tell me more.";
 }
 
-@keyframes fadeIn{
-    from{opacity:0;transform:translateY(10px);}
-    to{opacity:1;transform:translateY(0);}
+/* ================================
+   SEND FUNCTION
+================================ */
+
+function sendMessage(){
+
+    let input=document.getElementById("userInput").value;
+    if(!input) return;
+
+    addMessage(input,"user");
+    document.getElementById("userInput").value="";
+
+    setTimeout(()=>{
+        let response=getResponse(input);
+        addMessage(response,"ai");
+
+        if(typeof speak === "function"){
+            speak(response);
+        }
+
+    }, input.length * 20);
 }
 
-input{
-    width:75%;
-    padding:8px;
-}
-
-button{
-    padding:8px;
-    cursor:pointer;
+function addMessage(text,type){
+    let chat=document.getElementById("chat");
+    let div=document.createElement("div");
+    div.className="message "+type;
+    div.innerText=text;
+    chat.appendChild(div);
+    chat.scrollTop=chat.scrollHeight;
 }
