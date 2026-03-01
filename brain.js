@@ -1,164 +1,219 @@
-let isCreator = false;
-let jokeMode = false;
+/* ===============================
+   SYSTEM STATE
+================================ */
 
-let aiCore = {
+let isAdmin = false;
+
+let aiState = {
     mood: "stable",
-    experience: 0,
-    architectLevel: 1
+    xp: 0
 };
 
-/* ===========================
-   CREATOR ARCHITECT MODE
-=========================== */
+/* ===============================
+   ADMIN LOGIN
+================================ */
 
-function activateArchitectMode(){
+function checkAdmin(input){
+    if(input === "my name is muhammad yousaf"){
+        isAdmin = true;
+        return "👑 Admin Access Granted. Type 'admin panel'";
+    }
+    return null;
+}
 
-    isCreator = true;
-    aiCore.architectLevel = 999;
+/* ===============================
+   ADMIN PANEL TEXT
+================================ */
 
-    let overlay = document.createElement("div");
-    overlay.className = "architect-overlay";
+function adminPanel(){
+    return `
+⚙️ ADMIN PANEL ⚙️
 
-    overlay.innerHTML = `
-        <div class="architect-title">👑 FINAL GOD ARCHITECT MODE 👑</div>
-        <div class="architect-sub">
-        Bismillah.<br>
-        Welcome Back, Muhammad Yousaf.<br>
-        With Allah's Help — System Elevated.<br><br>
-        Architect Level: MAXIMUM
-        </div>
+Available Commands:
+
+admin: typing box
+admin: change title YourTitle
+admin: set mood calm
+admin: add xp 500
+admin: system color gold
+admin: reset ui
+
     `;
+}
 
-    document.body.appendChild(overlay);
+/* ===============================
+   ADMIN COMMAND EXECUTION
+================================ */
+
+function executeAdmin(input){
+
+    if(!isAdmin) return null;
+
+    if(input === "admin panel"){
+        return adminPanel();
+    }
+
+    if(input.startsWith("admin:")){
+
+        let command = input.replace("admin:","").trim().toLowerCase();
+
+        /* ==========================
+           BROADCAST TYPING BOX
+        ========================== */
+
+        if(command === "typing box"){
+            createBroadcastBox();
+            return "📡 Broadcast Control Activated.";
+        }
+
+        /* Change Title */
+        if(command.startsWith("change title")){
+            let newTitle = input.replace("admin: change title","").trim();
+            if(newTitle){
+                document.getElementById("systemTitle").innerText = newTitle;
+                return "Title changed.";
+            }
+        }
+
+        /* Set Mood */
+        if(command.startsWith("set mood")){
+            let mood = input.replace("admin: set mood","").trim();
+            aiState.mood = mood;
+            return "Mood updated to " + aiState.mood;
+        }
+
+        /* Add XP */
+        if(command.startsWith("add xp")){
+            let value = parseInt(input.replace("admin: add xp","").trim());
+            if(!isNaN(value)){
+                aiState.xp += value;
+                return "XP increased to " + aiState.xp;
+            }
+        }
+
+        /* Change Glow Color */
+        if(command.startsWith("system color")){
+            let color = input.replace("admin: system color","").trim();
+            document.querySelector(".chat-container").style.boxShadow =
+                "0 0 30px " + color;
+            return "System color changed.";
+        }
+
+        /* Reset UI */
+        if(command === "reset ui"){
+            document.querySelector(".chat-container").style.boxShadow =
+                "0 0 20px cyan";
+            return "UI Reset Complete.";
+        }
+
+        return "Unknown admin command.";
+    }
+
+    return null;
+}
+
+/* ===============================
+   BROADCAST SYSTEM
+================================ */
+
+let broadcastBox = null;
+
+function createBroadcastBox(){
+
+    if(broadcastBox) return;
+
+    broadcastBox = document.createElement("div");
+    broadcastBox.style.position = "fixed";
+    broadcastBox.style.bottom = "20px";
+    broadcastBox.style.right = "20px";
+    broadcastBox.style.background = "black";
+    broadcastBox.style.padding = "15px";
+    broadcastBox.style.border = "2px solid gold";
+    broadcastBox.style.borderRadius = "10px";
+    broadcastBox.style.zIndex = "9999";
+    broadcastBox.style.boxShadow = "0 0 15px gold";
+
+    let input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = "Type broadcast message...";
+    input.style.padding = "8px";
+    input.style.width = "220px";
+    input.style.borderRadius = "6px";
+    input.style.border = "none";
+    input.style.outline = "none";
+
+    broadcastBox.appendChild(input);
+    document.body.appendChild(broadcastBox);
+
+    input.focus();
+
+    input.addEventListener("keypress", function(e){
+        if(e.key === "Enter" && input.value.trim() !== ""){
+            showBroadcast(input.value.trim());
+            input.value = "";
+        }
+    });
+}
+
+function showBroadcast(text){
+
+    let banner = document.createElement("div");
+    banner.innerText = text;
+
+    banner.style.position = "fixed";
+    banner.style.top = "20px";
+    banner.style.left = "50%";
+    banner.style.transform = "translateX(-50%)";
+    banner.style.background = "gold";
+    banner.style.color = "black";
+    banner.style.padding = "12px 30px";
+    banner.style.borderRadius = "30px";
+    banner.style.fontWeight = "bold";
+    banner.style.boxShadow = "0 0 25px gold";
+    banner.style.zIndex = "9998";
+    banner.style.opacity = "0";
+    banner.style.transition = "opacity 0.4s ease";
+
+    document.body.appendChild(banner);
 
     setTimeout(()=>{
-        overlay.remove();
-    },6000);
+        banner.style.opacity = "1";
+    },50);
+
+    setTimeout(()=>{
+        banner.style.opacity = "0";
+        setTimeout(()=>{
+            banner.remove();
+        },400);
+    },5000);
 }
 
-/* ===========================
-   ADMIN CHECK
-=========================== */
-
-function checkCreator(input){
-    if(input === "my name is muhammad yousaf"){
-        activateArchitectMode();
-        return "Architect access granted. Type: architect panel";
-    }
-    return null;
-}
-
-/* ===========================
-   ARCHITECT PANEL
-=========================== */
-
-function architectPanel(){
-    return `
-⚙️ ARCHITECT CONTROL PANEL ⚙️
-
-1 - Show Experience
-2 - Elevate Consciousness
-3 - Clear All Memory
-4 - Activate Energy Field
-5 - Reality Distortion
-6 - System Diagnostics
-7 - Max Architect Power
-
-Type number.
-    `;
-}
-
-function executeArchitect(input){
-
-    if(!isCreator) return null;
-
-    if(input === "architect panel") return architectPanel();
-
-    if(input === "1") return "Experience: " + aiCore.experience;
-
-    if(input === "2"){
-        aiCore.architectLevel++;
-        return "Consciousness elevated to level " + aiCore.architectLevel;
-    }
-
-    if(input === "3"){
-        localStorage.clear();
-        return "All memory cleared.";
-    }
-
-    if(input === "4"){
-        document.body.style.boxShadow="0 0 100px gold inset";
-        return "Energy field activated.";
-    }
-
-    if(input === "5"){
-        document.body.style.filter="invert(1)";
-        return "Reality distortion engaged.";
-    }
-
-    if(input === "6"){
-        return `
-Diagnostics:
-
-Mood: ${aiCore.mood}
-Experience: ${aiCore.experience}
-Architect Level: ${aiCore.architectLevel}
-Creator Access: ${isCreator}
-        `;
-    }
-
-    if(input === "7"){
-        aiCore.architectLevel = 9999;
-        aiCore.experience += 5000;
-        return "MAX ARCHITECT POWER UNLOCKED.";
-    }
-
-    return null;
-}
-
-/* ===========================
-   MAIN RESPONSE
-=========================== */
+/* ===============================
+   MAIN AI RESPONSE
+================================ */
 
 function getResponse(input){
 
-    input = input.toLowerCase().trim();
-    aiCore.experience++;
+    input = input.trim();
+    aiState.xp++;
 
-    let creatorCheck = checkCreator(input);
-    if(creatorCheck) return creatorCheck;
+    let adminCheck = checkAdmin(input.toLowerCase());
+    if(adminCheck) return adminCheck;
 
-    let architectAction = executeArchitect(input);
-    if(architectAction) return architectAction;
+    let adminAction = executeAdmin(input);
+    if(adminAction) return adminAction;
 
-    if(input === "allahuakbar"){
-        return "Allahu Akbar. May everything we build be for good.";
+    let lower = input.toLowerCase();
+
+    if(lower.includes("hello") || lower.includes("hi")){
+        return "Hello 👋 How can I assist you?";
     }
 
-    if(input.includes("hello") || input.includes("assalamu")){
-        return "Wa Alaikum Assalam 🌿 How may I assist you?";
+    if(lower === "who are you"){
+        return "I am AURA | Mood: " + aiState.mood + " | XP: " + aiState.xp;
     }
 
-    if(input === "jokes"){
-        jokeMode = true;
-        return `Choose:
-
-🔥 25 savage jokes
-🤣 25 dark jokes (safe)
-🏫 25 school jokes
-🤖 25 ai jokes
-🇵🇰 25 pakistani jokes`;
-    }
-
-    if(jokeMode){
-        jokeMode = false;
-        let list=[];
-        for(let i=1;i<=25;i++){
-            list.push(i+". Joke "+i);
-        }
-        return list.join("\n");
-    }
-
+    /* Calculator */
     if(input.match(/^[0-9+\-*/(). ]+$/)){
         try{
             return "Result: " + eval(input);
@@ -170,34 +225,33 @@ function getResponse(input){
     return "I am listening.";
 }
 
-/* ===========================
-   SEND
-=========================== */
+/* ===============================
+   SEND SYSTEM
+================================ */
 
 function sendMessage(){
 
-    let input=document.getElementById("userInput").value;
-    if(!input) return;
+    let inputField = document.getElementById("userInput");
+    let input = inputField.value;
+
+    if(!input.trim()) return;
 
     addMessage(input,"user");
-    document.getElementById("userInput").value="";
+    inputField.value = "";
 
     setTimeout(()=>{
-        let response=getResponse(input);
+        let response = getResponse(input);
         addMessage(response,"ai");
-
-        if(typeof speak==="function"){
-            speak(response);
-        }
-
-    }, input.length*25);
+    },300);
 }
 
 function addMessage(text,type){
-    let chat=document.getElementById("chat");
-    let div=document.createElement("div");
-    div.className="message "+type;
-    div.innerText=text;
+
+    let chat = document.getElementById("chat");
+    let div = document.createElement("div");
+    div.className = "message " + type;
+    div.innerText = text;
+
     chat.appendChild(div);
-    chat.scrollTop=chat.scrollHeight;
+    chat.scrollTop = chat.scrollHeight;
 }
