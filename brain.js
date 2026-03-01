@@ -6,8 +6,11 @@ let SYSTEM = {
     autoJoke:false,
     personality:"default",
     xp:0,
-    jokeInterval:null
+    jokeInterval:null,
+    quiz:null
 };
+
+/* ================= ADMIN LOGIN ================= */
 
 function checkAdmin(input){
     if(input.toLowerCase()==="my name is muhammad yousaf"){
@@ -17,9 +20,11 @@ function checkAdmin(input){
     return null;
 }
 
+/* ================= ADMIN HELP ================= */
+
 function adminHelp(){
     return `
-👑 ADMIN COMMANDS
+👑 MASTER ADMIN COMMANDS
 
 admin: lock
 admin: unlock
@@ -33,9 +38,78 @@ admin: typing box
 admin: auto funny joke
 admin: stop joke
 admin: stats
+admin: set background color {color}
+admin: set title {title}
+admin: set xp {number}
+admin: set quiz easy/medium/hard
+admin: start quiz
+admin: end quiz
+admin: powers off
 admin: help
     `;
 }
+
+/* ================= QUIZ SYSTEM ================= */
+
+function createQuiz(difficulty){
+
+    let questions = {
+        easy:[
+            {q:"2+2?",a:"4"},
+            {q:"Color of sky?",a:"blue"}
+        ],
+        medium:[
+            {q:"5*6?",a:"30"},
+            {q:"Capital of France?",a:"paris"}
+        ],
+        hard:[
+            {q:"12*12?",a:"144"},
+            {q:"Binary of 2?",a:"10"}
+        ]
+    };
+
+    if(!questions[difficulty]) return null;
+
+    SYSTEM.quiz = {
+        difficulty,
+        questions:questions[difficulty],
+        current:0,
+        active:false
+    };
+
+    return "Quiz set to "+difficulty;
+}
+
+function startQuiz(){
+    if(!SYSTEM.quiz) return "Set quiz difficulty first.";
+    SYSTEM.quiz.active=true;
+    SYSTEM.quiz.current=0;
+    return "🧠 QUIZ STARTED!\n"+SYSTEM.quiz.questions[0].q;
+}
+
+function endQuiz(){
+    SYSTEM.quiz=null;
+    return "Quiz ended.";
+}
+
+function handleQuizAnswer(input){
+    if(!SYSTEM.quiz || !SYSTEM.quiz.active) return null;
+
+    let currentQ = SYSTEM.quiz.questions[SYSTEM.quiz.current];
+    if(input.toLowerCase()===currentQ.a){
+        SYSTEM.xp+=10;
+        SYSTEM.quiz.current++;
+        if(SYSTEM.quiz.current >= SYSTEM.quiz.questions.length){
+            SYSTEM.quiz.active=false;
+            return "Correct! 🎉 Quiz finished! +10 XP";
+        }
+        return "Correct! Next: "+SYSTEM.quiz.questions[SYSTEM.quiz.current].q;
+    }else{
+        return "Wrong answer. Try again.";
+    }
+}
+
+/* ================= ADMIN EXECUTION ================= */
 
 function executeAdmin(input){
 
@@ -56,13 +130,50 @@ function executeAdmin(input){
     if(cmd==="strict mode"){SYSTEM.strict=true; return "Strict Mode Enabled";}
     if(cmd==="stats") return analyticsReport();
 
+    if(cmd==="powers off"){
+        SYSTEM.isAdmin=false;
+        return "Admin powers disabled.";
+    }
+
+    /* SET BACKGROUND COLOR */
+    if(cmd.startsWith("set background color")){
+        let color=cmd.replace("set background color","").trim();
+        document.body.style.background=color;
+        return "Background changed to "+color;
+    }
+
+    /* SET TITLE */
+    if(cmd.startsWith("set title")){
+        let title=cmd.replace("set title","").trim();
+        document.getElementById("systemTitle").innerText=title;
+        return "Title updated.";
+    }
+
+    /* SET XP */
+    if(cmd.startsWith("set xp")){
+        let value=parseInt(cmd.replace("set xp","").trim());
+        if(!isNaN(value)){
+            SYSTEM.xp=value;
+            return "XP set to "+value;
+        }
+        return "Invalid XP value.";
+    }
+
+    /* QUIZ SET */
+    if(cmd.startsWith("set quiz")){
+        let diff=cmd.replace("set quiz","").trim();
+        return createQuiz(diff);
+    }
+
+    if(cmd==="start quiz") return startQuiz();
+    if(cmd==="end quiz") return endQuiz();
+
+    /* AUTO JOKES */
     if(cmd==="auto funny joke"){
         if(SYSTEM.jokeInterval) return "Already running";
-        SYSTEM.autoJoke=true;
         SYSTEM.jokeInterval=setInterval(()=>{
             let joke=randomJoke();
             addMessage(joke,"ai");
-            memoryStore(joke,"ai");
         },30000);
         return "Auto Joke Started";
     }
@@ -70,7 +181,6 @@ function executeAdmin(input){
     if(cmd==="stop joke"){
         clearInterval(SYSTEM.jokeInterval);
         SYSTEM.jokeInterval=null;
-        SYSTEM.autoJoke=false;
         return "Auto Joke Stopped";
     }
 
@@ -81,6 +191,8 @@ function executeAdmin(input){
 
     return "Unknown admin command";
 }
+
+/* ================= OTHER FUNCTIONS ================= */
 
 function randomJoke(){
     const jokes=[
@@ -103,7 +215,6 @@ function createTypingBox(){
     let input=document.createElement("input");
     input.placeholder="Broadcast...";
     input.style.flex="1";
-    input.style.padding="8px";
 
     let btn=document.createElement("button");
     btn.innerText="Send";
@@ -127,19 +238,16 @@ function showBroadcast(text){
     banner.style.left="50%";
     banner.style.transform="translateX(-50%)";
     banner.style.background="gold";
-    banner.style.color="black";
     banner.style.padding="12px 25px";
     banner.style.borderRadius="25px";
-    banner.style.fontWeight="bold";
     banner.style.zIndex="9999";
-
     document.body.appendChild(banner);
     setTimeout(()=>banner.remove(),5000);
 }
 
-function getResponse(input){
+/* ================= MAIN RESPONSE ================= */
 
-    SYSTEM.xp++;
+function getResponse(input){
 
     let adminLogin=checkAdmin(input);
     if(adminLogin) return adminLogin;
@@ -147,46 +255,21 @@ function getResponse(input){
     let adminAction=executeAdmin(input);
     if(adminAction) return adminAction;
 
+    let quizAnswer=handleQuizAnswer(input);
+    if(quizAnswer) return quizAnswer;
+
     if(SYSTEM.lock) return "Chat is locked.";
     if(SYSTEM.freeze) return null;
 
-    if(isMathExpression(input)) return calculate(input);
+    if(isMathExpression && isMathExpression(input)) return calculate(input);
 
     if(SYSTEM.strict) return "Understood.";
 
     if(SYSTEM.personality==="teacher")
         return "Let me explain that clearly.";
+
     if(SYSTEM.personality==="hacker")
         return "Accessing encrypted knowledge...";
 
     return "I am listening.";
-}
-
-function sendMessage(){
-
-    let inputField=document.getElementById("userInput");
-    let input=inputField.value.trim();
-    if(!input) return;
-
-    addMessage(input,"user");
-    memoryStore(input,"user");
-    inputField.value="";
-
-    setTimeout(()=>{
-        let response=getResponse(input);
-        if(response){
-            addMessage(response,"ai");
-            memoryStore(response,"ai");
-            speak(response);
-        }
-    },300);
-}
-
-function addMessage(text,type){
-    let chat=document.getElementById("chat");
-    let div=document.createElement("div");
-    div.className="message "+type;
-    div.innerText=text;
-    chat.appendChild(div);
-    chat.scrollTop=chat.scrollHeight;
 }
