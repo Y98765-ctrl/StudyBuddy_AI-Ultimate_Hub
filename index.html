@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>StudyBuddy AI - Ultimate</title>
+    <title>AURA - Architect Intelligence</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<!-- 3D CANVAS BACKGROUND -->
+<canvas id="bgCanvas"></canvas>
+
 <div class="chat-container">
-    <h1>StudyBuddy AI - With Ultimate Power Of ALLAH</h1>
+    <h1>🧠 AURA - Architect Intelligence</h1>
 
     <div id="chat"></div>
 
     <div class="input-area">
-        <input type="text" id="userInput" placeholder="Speak or Type">
-        <button onclick="sendMessage()">Send</button>
+        <input type="text" id="userInput" placeholder="Speak...">
+        <button id="sendBtn">Send</button>
     </div>
 </div>
 
@@ -23,6 +26,74 @@
 <script src="analytics.js"></script>
 <script src="voice.js"></script>
 <script src="brain.js"></script>
+
+<script>
+/* FIX SEND BUTTON + ENTER KEY */
+document.getElementById("sendBtn").addEventListener("click", sendMessage);
+
+document.getElementById("userInput").addEventListener("keypress", function(e){
+    if(e.key === "Enter"){
+        sendMessage();
+    }
+});
+
+/* ===============================
+   SIMPLE 3D STARFIELD ENGINE
+   (Fully Offline)
+================================ */
+
+const canvas = document.getElementById("bgCanvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let stars = [];
+
+for(let i=0;i<300;i++){
+    stars.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        z: Math.random()*1000
+    });
+}
+
+function animateStars(){
+    ctx.fillStyle = "black";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    for(let i=0;i<stars.length;i++){
+        let star = stars[i];
+
+        star.z -= 2;
+
+        if(star.z <= 0){
+            star.z = 1000;
+        }
+
+        let k = 128.0 / star.z;
+        let px = star.x * k + canvas.width/2;
+        let py = star.y * k + canvas.height/2;
+
+        if(px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height){
+            let size = (1 - star.z/1000) * 3;
+            ctx.fillStyle = "white";
+            ctx.beginPath();
+            ctx.arc(px, py, size, 0, Math.PI*2);
+            ctx.fill();
+        }
+    }
+
+    requestAnimationFrame(animateStars);
+}
+
+animateStars();
+
+window.addEventListener("resize",()=>{
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+</script>
 
 </body>
 </html>
