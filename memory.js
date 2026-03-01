@@ -1,10 +1,7 @@
-let userName=localStorage.getItem("ai_username") || null;
-
-function saveName(name){
-    userName=name;
-    localStorage.setItem("ai_username",name);
+function saveMemory(key,value){
+    localStorage.setItem(key,JSON.stringify(value));
 }
 
-function getName(){
-    return userName;
+function getMemory(key){
+    return JSON.parse(localStorage.getItem(key));
 }
