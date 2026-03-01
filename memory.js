@@ -1,5 +1,10 @@
-function addMessage(sender, text){
-    let chat = document.getElementById("chatbox");
-    chat.innerHTML += "<p><b>" + sender + ":</b> " + text + "</p>";
-    chat.scrollTop = chat.scrollHeight;
+let userName=localStorage.getItem("ai_username") || null;
+
+function saveName(name){
+    userName=name;
+    localStorage.setItem("ai_username",name);
+}
+
+function getName(){
+    return userName;
 }
